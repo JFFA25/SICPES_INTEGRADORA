@@ -62,7 +62,7 @@ SICPES es una innovadora plataforma web diseñada para proporcionar a los estudi
 |---|------------------------|--------------|--------|---------|
 |04|[ Practica 04 - Bussines Model Canvas Interactivo del Proyecto Integrador utilizando Achify.](/ModeloCanvas/README.md)|El estudiantes realizara un prompt para solicitar el modelo bussiness canvas de su proyecto integrador SICPES|20|Completada ✅ |
 |05|[Practica 05 - Diagrama de Roles de Usuario del Proyecto Integrador](/RolesDeUsuario/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de roles de usuario del proyecto integrador SICPES |--|Completada ✅ |
-|07|[Practica 07 - Diagrama de Navegacion de Sketches del Proyecto Integrador](/Practica05/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de los sketches de su proyecto integrador SICPES |--|Completada ✅ |
+|07|[Practica 07 - Diagrama de Navegacion de Sketches del Proyecto Integrador](/Sketches/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de los sketches de su proyecto integrador SICPES |--|Completada ✅ |
 
 ## Identidad Visual
 
