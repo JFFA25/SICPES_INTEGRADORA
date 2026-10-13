@@ -60,21 +60,37 @@ SICPES es una innovadora plataforma web diseñada para proporcionar a los estudi
 
 | # | Diagramas | Descripción | Firmas | Estatus |
 |---|------------------------|--------------|--------|---------|
-|04|[ Practica 04 - Bussines Model Canvas Interactivo del Proyecto Integrador utilizando Achify.](/ModeloCanvas/README.md)|El estudiantes realizara un prompt para solicitar el modelo bussiness canvas de su proyecto integrador SICPES|20|Completada ✅ |
-|05|[Practica 05 - Diagrama de Roles de Usuario del Proyecto Integrador](/RolesDeUsuario/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de roles de usuario del proyecto integrador SICPES |--|Completada ✅ |
-|07|[Practica 07 - Diagrama de Navegacion de Sketches del Proyecto Integrador](/Sketches/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de los sketches de su proyecto integrador SICPES |--|Completada ✅ |
+|04|[ Practica 04 - Bussines Model Canvas Interactivo del Proyecto Integrador utilizando Achify.](ModeloCanvas/README.md)|El estudiantes realizara un prompt para solicitar el modelo bussiness canvas de su proyecto integrador SICPES|20|Completada ✅ |
+|05|[Practica 05 - Diagrama de Roles de Usuario del Proyecto Integrador](RolesDeUsuario/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de roles de usuario del proyecto integrador SICPES |--|Completada ✅ |
+|07|[Practica 07 - Diagrama de Navegacion de Sketches del Proyecto Integrador](Sketches/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de los sketches de su proyecto integrador SICPES |--|Completada ✅ |
+
+
+# SICPES - Panel de Navegacion
+
+<p align="center">
+  <img src="/images/SICPES.png" alt="sicpes" />
+
+</p>
+
+
+### Ver en línea (GitHub Pages)
+
+- [Página principal del proyecto](https://jffa25.github.io/index.html)
+- [Práctica 04 · Business Model Canvas](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html)
+- [Práctica 05 · Diagrama de Roles de Usuario](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html)
+- [Práctica 07 · Sketches y navegación](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
 
 ## Identidad Visual
 
 ### Logos del Proyecto
 <p align="center">
-  <img src="/images/SICPES_Empresa.png" alt="Logo Empresa" width="300"/>
-  <img src="/images/SICPES_Producto.png" alt="Logo Producto" width="300"/>
+  <img src="images/SICPES_Empresa.png" alt="Logo Empresa" width="300"/>
+  <img src="images/SICPES_Producto.png" alt="Logo Producto" width="300"/>
 </p>
 
 ### Paleta de Colores
 <p align="center">
-  <img src="/images/colors_sicpes.png" alt="Colores" width="600"/>
+  <img src="images/colors_sicpes.png" alt="Colores" width="600"/>
 </p>
 
 <p align="center">

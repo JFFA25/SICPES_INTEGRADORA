@@ -2,20 +2,20 @@
 
 Business Model Canvas interactivo de **SICPES** (Sistema Integral de Control de Pensión de Estudiantes), generado con **opencode** y **Archify**. Cada bloque es clicable y abre un panel con información detallada sobre la operación del sistema.
 
-**[Ver el canvas en GitHub Pages](https://jffa25.github.io/Practicas_Integradora_230417/Practica04/index.html)**
+**[Ver el canvas en GitHub Pages](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html)**
 
 ### Modelo Canvas - SICPES Version Final
-![Vista previa del Modelo](/images/sicpes_canvas_2.png)
+![Vista previa del Modelo](../images/sicpes_canvas_2.png)
 
 ### Modelo Canvas - SICPES Version Inicial
-![Vista previa del Modelo](/images/sicpes_canvas.png)
+![Vista previa del Modelo](../images/sicpes_canvas.png)
 
 ### Documentación de imágenes
 
 Consulta los créditos, autores y fuentes de las fotografías utilizadas en el canvas en la [documentación de imágenes](./IMAGENES.md).
 
 ## SICPES (Sistema Integral de Control de Pension de Estudiantes) <p align="center">
-  <img src="/images/SICPES_Producto.png" alt="SICPES" width="80" height="80">
+  <img src="../images/SICPES_Producto.png" alt="SICPES" width="80" height="80">
 </p>
 
 SICPES es un sistema de gestión para albergues o pensiones estudiantiles, pensado para controlar reservas, pagos, adeudos, accesos y reportes operativos de forma centralizada. El modelo de negocio se apoya en la operación propia del albergue y en la digitalización de procesos antes manuales.

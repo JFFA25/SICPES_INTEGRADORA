@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SICPES · Proyecto Integrador</title>
+  <meta name="description" content="Sistema Integral de Control de Pensión de Estudiantes: Business Model Canvas, diagrama de roles de usuario y sketches de navegación.">
+  <link rel="icon" href="images/SICPES_Producto.png">
+  <style>
+    :root{
+      --bg:#FDFBF7; --card:#FFFFFF; --ink:#12301F; --muted:#4E6357; --line:#DDE5DB;
+      --g1:#2F8A5C; --g2:#4CAF50; --g3:#81C784; --soft:#EAF4EC; --sand:#C7CCB9;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#0E1F16; --card:#14301F; --ink:#EAF4EC; --muted:#A9BFB0; --line:#25472F; --soft:#1B3B28;}
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+    a{color:inherit}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+    header{padding:48px 0 28px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+    header img{width:92px;height:92px;border-radius:50%;background:#fff;object-fit:cover;border:1px solid var(--line)}
+    h1{margin:0;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1}
+    h1 span{color:var(--g1)}
+    .sub{margin:6px 0 0;color:var(--muted);max-width:60ch}
+    .quote{margin:6px 0 0;font-style:italic;color:var(--g1)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;padding:12px 0 8px}
+    .card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;transition:transform .15s,box-shadow .15s,border-color .15s}
+    .card:hover,.card:focus-visible{transform:translateY(-3px);box-shadow:0 10px 26px rgba(18,48,31,.14);border-color:var(--g2);outline:none}
+    .card:focus-visible{outline:3px solid var(--g3);outline-offset:2px}
+    .thumb{aspect-ratio:16/9;background:var(--soft);overflow:hidden;border-bottom:1px solid var(--line)}
+    .thumb img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+    .body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .tag{font:600 .72rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--g1)}
+    .body h2{margin:0;font-size:1.25rem}
+    .body p{margin:0;color:var(--muted);font-size:.95rem}
+    .go{margin-top:auto;padding-top:8px;font-weight:600;color:var(--g1)}
+    section.team{padding:32px 0 8px}
+    section.team h2{font-size:1.1rem;margin:0 0 12px}
+    .people{display:flex;flex-wrap:wrap;gap:8px}
+    .people a{padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);text-decoration:none;font-size:.9rem}
+    .people a:hover{border-color:var(--g2)}
+    footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem}
+    footer a{color:var(--g1)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="images/SICPES_Producto.png" alt="Logo de SICPES">
+      <div>
+        <h1>Proyecto Integrador <span>SICPES</span></h1>
+        <p class="sub">Sistema Integral de Control de Pensión de Estudiantes. Entregables interactivos de las prácticas del proyecto.</p>
+        <p class="quote">“Una pensión más ordenada para un mejor estudiar”</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <a class="card" href="ModeloCanvas/index.html">
+          <div class="thumb"><img src="images/sicpes_canvas_2.png" alt="Vista previa del Business Model Canvas de SICPES" loading="lazy"></div>
+          <div class="body">
+            <span class="tag">Práctica 04</span>
+            <h2>Business Model Canvas</h2>
+            <p>Los nueve bloques del modelo de negocio, cada uno con su detalle.</p>
+            <span class="go">Abrir →</span>
+          </div>
+        </a>
+
+        <a class="card" href="RolesDeUsuario/diagrama-roles-usuario-sicpes.html">
+          <div class="thumb"><img src="RolesDeUsuario/sicpes_roles.png" alt="Vista previa del diagrama de roles de usuario de SICPES" loading="lazy"></div>
+          <div class="body">
+            <span class="tag">Práctica 05</span>
+            <h2>Diagrama de Roles de Usuario</h2>
+            <p>Roles, responsabilidades y matriz de permisos del sistema.</p>
+            <span class="go">Abrir →</span>
+          </div>
+        </a>
+
+        <a class="card" href="Sketches/index.html">
+          <div class="thumb"><img src="Sketches/DiagramadeNavegacion.png" alt="Vista previa del diagrama de navegación de sketches de SICPES" loading="lazy"></div>
+          <div class="body">
+            <span class="tag">Práctica 07</span>
+            <h2>Sketches y navegación</h2>
+            <p>Prototipo móvil y PWA con el diagrama de navegación entre pantallas.</p>
+            <span class="go">Abrir →</span>
+          </div>
+        </a>
+      </div>
+
+      <section class="team" aria-labelledby="team-title">
+        <h2 id="team-title">Equipo</h2>
+        <div class="people">
+          <a href="https://github.com/JFFA25">Jose Francisco Flores Amador</a>
+          <a href="https://github.com/Edgar-Cbr">Edgar Cabrera Velázquez</a>
+          <a href="https://github.com/Edwinhdzcm">Edwin Hernández Campos</a>
+          <a href="https://github.com/giova0412">Giovany Raul Pazos Cruz</a>
+          <a href="https://github.com/Brisgregorio">Brisa Nallely Garcia Gregorio</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Código y documentación en <a href="https://github.com/JFFA25/SICPES_INTEGRADORA">GitHub</a>.
+    </footer>
+  </div>
+</body>
+</html>

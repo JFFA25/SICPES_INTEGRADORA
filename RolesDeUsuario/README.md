@@ -2,18 +2,18 @@
 
 Diagrama interactivo de **Roles de Usuario** de **SICPES** (Sistema Integral de Control de Pensión de Estudiantes) que cubre **todo el sistema** —cuenta y acceso, cuartos y reservas, pagos y evaluación del servicio—, tomando la historia **HU-SIC-05: Evaluación del servicio recibido por el cliente** como uno más de sus módulos. Cada rol es clicable: resalta sus flujos, marca su columna en la matriz de permisos y abre un panel con su objetivo, sus módulos, lo que puede y no puede hacer y con qué roles interactúa.
 
-**[Ver el diagrama de roles en GitHub Pages](https://jffa25.github.io/Practicas_Integradora_230417/Practica05/diagrama-roles-usuario-sicpes.html)**
+**[Ver el diagrama de roles en GitHub Pages](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html)**
 
 
 ### Diagrama de Roles de Usuario - SICPES
-![Vista previa del diagrama de roles de usuario](/RolesDeUsuario/sicpes_roles.png)
+![Vista previa del diagrama de roles de usuario](sicpes_roles.png)
 
 ### Documentación de la historia de usuario
 
 Consulta la historia completa, los criterios de aceptación, las reglas de negocio y los supuestos por validar en la [documentación de la historia de usuario](./HU-Evaluacion-Servicio.md).
 
 ## SICPES (Sistema Integral de Control de Pension de Estudiantes) <p align="center">
-  <img src="/images/SICPES_Producto.png" alt="SICPES" width="80" height="80">
+  <img src="../images/SICPES_Producto.png" alt="SICPES" width="80" height="80">
 </p>
 
 SICPES es un sistema de gestión para albergues o pensiones estudiantiles, pensado para controlar reservas, pagos, adeudos, accesos y reportes operativos de forma centralizada. La historia HU-SIC-05 propone una capacidad nueva dentro de la aplicación móvil: que el estudiante alojado califique el servicio recibido y la administración use esa información para mejorar.

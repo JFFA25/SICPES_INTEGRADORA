@@ -4,24 +4,24 @@ Prototipo interactivo de sketches en HTML, CSS y JavaScript puros para la Práct
 
 ## Ver en línea
 
-**[Sketches de SICPES](https://jffa25.github.io/SICPES_SKETCHES/index.html)**
+**[Sketches de SICPES](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)**
  
-[![Abrir prototipo](https://img.shields.io/badge/Abrir%20prototipo-GitHub%20Pages-16a34a?style=for-the-badge)](https://jffa25.github.io/SICPES_SKETCHES/)
+[![Abrir prototipo](https://img.shields.io/badge/Abrir%20prototipo-GitHub%20Pages-16a34a?style=for-the-badge)](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
 
 
 
 ## Visualización
 
 ### Móvil
-![Sketches de SICPES](/Sketches/sketches.png)
+![Sketches de SICPES](sketches.png)
 
 ### PWA
 
-![Sketches de SICPES](/Sketches/pwa.png)
+![Sketches de SICPES](pwa.png)
 
 ## Diagrama de Navegación
 
-![Sketches de SICPES](/Sketches//DiagramadeNavegacion.png)
+![Sketches de SICPES](DiagramadeNavegacion.png)
 
 
 ## Cómo abrirlo
