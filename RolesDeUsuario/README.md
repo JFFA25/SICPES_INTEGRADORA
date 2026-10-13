@@ -6,7 +6,7 @@ Diagrama interactivo de **Roles de Usuario** de **SICPES** (Sistema Integral de 
 
 
 ### Diagrama de Roles de Usuario - SICPES
-![Vista previa del diagrama de roles de usuario](/Practica05/sicpes_roles.png)
+![Vista previa del diagrama de roles de usuario](/RolesDeUsuario/sicpes_roles.png)
 
 ### Documentación de la historia de usuario
 
