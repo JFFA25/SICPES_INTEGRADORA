@@ -60,8 +60,9 @@ SICPES es una innovadora plataforma web diseñada para proporcionar a los estudi
 
 | # | Diagramas | Descripción | Firmas | Estatus |
 |---|------------------------|--------------|--------|---------|
-|01|[Bussines Model Canvas Interactivo del Proyecto Integrador utilizando Achify.](/ModeloCanvas/README.md)|El estudiantes realizara un prompt para solicitar el modelo bussiness canvas para una herramienta multiplataforma que exista o use en su vida cotidianda.|20|Completada ✅ |
-|05|[Diagrama de Roles de Usuario del Proyecto Integrador](/Practica05/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de roles de usuario a partir de la historia HU-SIC-05 (Evaluación del servicio recibido por el cliente) del proyecto SICPES, con matriz de permisos por rol, publicado en GitHub Pages.|20|Completada ✅ |
+|04|[ Practica 04 - Bussines Model Canvas Interactivo del Proyecto Integrador utilizando Achify.](/ModeloCanvas/README.md)|El estudiantes realizara un prompt para solicitar el modelo bussiness canvas para una herramienta multiplataforma que exista o use en su vida cotidianda.|20|Completada ✅ |
+|05|[Practica 05 - Diagrama de Roles de Usuario del Proyecto Integrador](/Practica05/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de roles de usuario a partir de la historia HU-SIC-05 (Evaluación del servicio recibido por el cliente) del proyecto SICPES, con matriz de permisos por rol, publicado en GitHub Pages.|--|Completada ✅ |
+|07|[Practica 06 - Diagrama de Navegacion de Sketches del Proyecto Integrador](/Practica05/README.md)|El estudiante realizará un prompt para generar un diagrama interactivo de los sketches de su proyecto integrador |--|Completada ✅ |
 
 ## Identidad Visual
 
