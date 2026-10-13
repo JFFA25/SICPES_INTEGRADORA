@@ -75,7 +75,7 @@ SICPES es una innovadora plataforma web diseñada para proporcionar a los estudi
 
 ### Ver en línea (GitHub Pages)
 
-- [Página principal del proyecto](https://jffa25.github.io/index.html)
+- [Página principal del proyecto](https://jffa25.github.io/SICPES_INTEGRADORA/index.html)
 - [Práctica 04 · Business Model Canvas](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html)
 - [Práctica 05 · Diagrama de Roles de Usuario](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html)
 - [Práctica 07 · Sketches y navegación](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
