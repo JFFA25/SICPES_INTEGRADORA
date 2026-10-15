@@ -100,7 +100,7 @@ SICPES es una innovadora plataforma web diseñada para proporcionar a los estudi
 ## Gestión del Proyecto
 
 ### Estructura Organizacional
-![Organigrama](images/Organigrama-SIPCES.png)
+
 
 ### Cronograma (Gantt)
 ![Gantt](images/Diagrama_Gantt_SICPES.jpeg)
