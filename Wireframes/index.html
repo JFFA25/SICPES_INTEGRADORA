@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SICPES · Wireframes interactivos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="toolbar"><div><b class="brand-mark">S</b><strong>SICPES</strong><span class="toolbar-sub">Wireframes interactivos</span></div><div class="toolbar-actions"><button id="viewAll" class="tool-btn active">Todas las pantallas</button><button id="navMode" class="tool-btn">Modo navegar</button><span class="screen-count">13 pantallas</span></div></header>
+  <main>
+    <section class="screen-picker" aria-label="Selector de rol y pantalla">
+      <div class="picker-heading"><div><span class="picker-kicker">VISTA INTERACTIVA</span><h1>Pantallas del rol</h1><p>Selecciona un rol y luego la pantalla que quieres abrir.</p></div><div class="role-switch" role="group" aria-label="Seleccionar rol"><button type="button" class="role-button active" data-role="student" aria-pressed="true">Rol Estudiante</button><button type="button" class="role-button" data-role="admin" aria-pressed="false">Rol Administrador</button></div></div>
+      <div class="screen-picker-body"><nav class="screen-menu" id="screenMenu" aria-label="Pantallas disponibles"></nav><div class="picker-hint"><span class="hint-dot"></span><span>Acci?n principal</span><span class="picker-count" id="pickerCount">7 pantallas ? Rol Estudiante</span></div></div>
+    </section>
+    <div class="group-title"><span>01 ? EXPERIENCIA DEL ESTUDIANTE</span><i></i></div><section id="studentScreens" class="canvas"></section><div class="group-title admin-title"><span>02 ? PANEL ADMINISTRATIVO</span><i></i></div><section id="adminScreens" class="canvas"></section>
+  </main>
+  <script src="app.js"></script>
+</body></html>
