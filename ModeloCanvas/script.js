@@ -75,6 +75,19 @@
 
     meta.appendChild(make('span', 'panel__subtitle', block.subtitle));
     meta.appendChild(make('span', 'panel__metric', block.metric));
+
+    if (block.logo) {
+      var brand = make('span', 'panel__brand');
+      var brandLogo = make('img', 'panel__brand-logo');
+      brandLogo.src = block.logo.src;
+      brandLogo.alt = block.logo.alt;
+      brandLogo.width = 26;
+      brandLogo.height = 26;
+      brand.appendChild(brandLogo);
+      brand.appendChild(make('span', 'panel__brand-label', block.logo.label));
+      meta.appendChild(brand);
+    }
+
     body.appendChild(meta);
     body.appendChild(make('p', 'panel__eyebrow', 'Detalle completo'));
 
@@ -334,5 +347,32 @@
     focusable[next].focus();
   }
 
+  function initTheme() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+
+    function apply(theme) {
+      root.setAttribute('data-theme', theme);
+      btn.textContent = theme === 'dark' ? 'Tema claro' : 'Tema oscuro';
+      btn.setAttribute('aria-pressed', String(theme === 'light'));
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro');
+    }
+
+    // La preferencia inicial ya la fijó el script del <head>; se lee para sincronizar el botón.
+    apply(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      apply(next);
+      try {
+        localStorage.setItem('sicpes-canvas-theme', next);
+      } catch (e) {
+        /* almacenamiento no disponible: se ignora */
+      }
+    });
+  }
+
   render();
+  initTheme();
 })();

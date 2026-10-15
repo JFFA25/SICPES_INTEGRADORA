@@ -469,8 +469,8 @@ dialog.is-closing[open]::backdrop{animation:bd-out 150ms ease-in both}
           <g class="card-icon"><path d="M860 996 v-16 l14 -8 l14 8 v16"/><path d="M866 996 v-10 h16 v10"/><path d="M856 1000 h36"/></g>
           <text class="card-title" x="908" y="988">Propietario / Dueño <tspan class="ast">*</tspan></text>
           <text class="card-tag" x="908" y="1010">Propuesta por validar *</text>
-          <text class="bullet" x="866" y="1050"><tspan class="dot">•</tspan>  Consulta adeudos <tspan class="ast">*</tspan></text>
-          <text class="bullet" x="866" y="1082"><tspan class="dot">•</tspan>  Revisa reportes operativos <tspan class="ast">*</tspan></text>
+          <text class="bullet" x="866" y="1050"><tspan class="dot">•</tspan>  Agrega datos de su pensión <tspan class="ast">*</tspan></text>
+          <text class="bullet" x="866" y="1082"><tspan class="dot">•</tspan>  Consulta adeudos y reportes <tspan class="ast">*</tspan></text>
         </g>
       </svg>
     </div>
@@ -678,9 +678,12 @@ dialog.is-closing[open]::backdrop{animation:bd-out 150ms ease-in both}
     own:{
       kicker:"Propuesta por validar · rol interno",
       title:"Propietario / Dueño de la pensión",
-      objective:"Propuesta: supervisar adeudos y reportes operativos. El README menciona adeudos y reportes, pero no define este rol.",
-      modules:["Pagos","Reportes (propuesto)"],
+      objective:"Propuesta: el arrendador registra y mantiene la información de su casa o pensión, y supervisa sus adeudos y reportes operativos. El README no define este rol.",
+      modules:["Pensión / Inmueble (propuesto)","Pagos","Reportes (propuesto)"],
       can:[
+        {t:"Agregar la información de su casa o pensión: nombre, dirección, fotos y descripción.", p:true},
+        {t:"Registrar habitaciones, cupos, precios y reglas de la pensión.", p:true},
+        {t:"Actualizar disponibilidad y modalidades o planes de renta.", p:true},
         {t:"Consultar adeudos.", p:true},
         {t:"Revisar reportes operativos.", p:true}
       ],

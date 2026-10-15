@@ -30,6 +30,7 @@ SICPES es un sistema de gestión para albergues o pensiones estudiantiles, pensa
 | v4 | Más información en bloques amplios y presentación ordenada en tarjetas | Mejor lectura en móvil y escritorio |
 | v5 | Viñetas verdes consistentes y detalles desplegables en cada elemento | Interacción uniforme y accesible |
 | v6 | Sección en el README principal para enlazar los créditos de imágenes | Navegación directa a la documentación |
+| v7 | Unificar la identidad visual con el diagrama de roles (paleta verde, tema claro/oscuro, animaciones) y ampliar el contenido del canvas | Fotografías libres alternativas (Flickr/StockSnap vía Openverse) por indisponibilidad de Unsplash |
 
 <details>
 <summary>Prompt v1</summary>
@@ -127,6 +128,30 @@ En el README principal, agrega una sección con un título de nivel ### llamada 
 ```
 </details>
 
+<details>
+<summary>Prompt v7 — Identidad visual unificada y contenido ampliado</summary>
+
+```
+Trabaja únicamente dentro de la carpeta ModeloCanvas (no modifiques Sketches ni RolesDeUsuario) y no hagas commit ni push.
+
+A) Identidad visual y animaciones:
+- Unifica la apariencia del canvas con el diagrama de roles (RolesDeUsuario/diagrama-roles-usuario-sicpes.html): misma paleta verde, tipografía y estilo de tarjetas.
+- Agrega un conmutador de tema claro/oscuro con las mismas convenciones (guarda la preferencia, respeta prefers-color-scheme y usa atributos aria).
+- Incorpora animaciones sutiles de entrada (solo opacidad y transform, sin animaciones infinitas) y respeta prefers-reduced-motion.
+- No rompas la interacción de expandir y contraer bloques.
+
+B) Contenido del canvas (data.js):
+- Corrige y amplía el contenido de los nueve bloques del Business Model Canvas con enfoque en la operación de una pensión estudiantil.
+- Redacta en español (México) y no inventes cifras, proveedores ni acuerdos: marca lo no confirmado como propuesta o aproximación por validar.
+
+C) Fotografías:
+- Usa fotografías reales de estudiantes acordes a cada bloque, con licencia libre de uso, guardadas localmente en images/.
+
+D) Verificación:
+- Comprueba que todo funcione en móvil y escritorio, sin desbordamiento horizontal, que las rutas relativas funcionen en GitHub Pages y que los logos y el favicon carguen.
+```
+</details>
+
 ## Revisión del resultado
 
 - 9 bloques en posición clásica del canvas: sí
@@ -134,6 +159,9 @@ En el README principal, agrega una sección con un título de nivel ### llamada 
 - Se ve bien en celular y escritorio: sí
 - Código ordenado en archivos separados: sí
 - Rutas de recursos configuradas para funcionar bien en GitHub Pages: sí
+- Identidad visual unificada con el diagrama de roles (paleta verde, tema claro/oscuro, animaciones): sí
+- Fotografías reales con licencia libre, guardadas localmente y documentadas: sí
+- Rutas y recursos verificados por servidor local (página, CSS, JS, datos, imágenes y logos responden 200): sí
 
 ## Descripción del modelo
 

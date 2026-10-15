@@ -5,24 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Business Model Canvas — SICPES</title>
   <meta name="description" content="Business Model Canvas interactivo de SICPES: Sistema Integral de Control de Pensión de Estudiantes.">
+  <link rel="icon" href="../images/SICPES_Producto.png">
+  <link rel="apple-touch-icon" href="../images/SICPES_Producto.png">
   <link rel="stylesheet" href="./styles.css">
+  <!-- Tema inicial sin parpadeo: respeta la preferencia guardada o del sistema. -->
+  <script>
+    (function () {
+      var t = 'dark';
+      try {
+        t = localStorage.getItem('sicpes-canvas-theme');
+        if (!t) {
+          t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+        }
+      } catch (e) {
+        t = 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    })();
+  </script>
 </head>
 <body>
 
   <!-- ============ Encabezado e identidad visual ============ -->
   <header class="masthead">
-    <span class="masthead__logo" aria-hidden="true">
-      <svg viewBox="0 0 48 48" focusable="false">
-        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"></circle>
-        <path d="M10 21 24 14l14 7-14 7-14-7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-        <path d="M16 24.5V31c0 2.2 3.6 4 8 4s8-1.8 8-4v-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-        <path d="M38 21v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      </svg>
-    </span>
-    <div class="masthead__text">
-      <h1 class="masthead__title">Business Model Canvas <span class="masthead__brand">— SICPES</span></h1>
-      <p class="masthead__tagline">Sistema Integral de Control de Pensión de Estudiantes</p>
+    <div class="masthead__id">
+      <span class="masthead__logos">
+        <img class="masthead__logo" src="../images/SICPES_Empresa.png" alt="Logotipo de la empresa SICPES" width="48" height="48">
+        <img class="masthead__logo" src="../images/SICPES_Producto.png" alt="Logotipo de la aplicación SICPES" width="48" height="48">
+      </span>
+      <div class="masthead__text">
+        <h1 class="masthead__title">Business Model Canvas <span class="masthead__brand">— SICPES</span></h1>
+        <p class="masthead__tagline">Sistema Integral de Control de Pensión de Estudiantes</p>
+      </div>
     </div>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Cambiar a tema claro">Tema claro</button>
   </header>
 
   <!-- ============ Canvas ============ -->
@@ -30,6 +46,19 @@
     <h2 class="visually-hidden">Los nueve bloques del modelo de negocio de SICPES</h2>
     <section class="canvas" id="canvas" aria-label="Business Model Canvas de SICPES"></section>
   </main>
+
+  <!-- ============ Marcas de producto y empresa ============ -->
+  <footer class="site-foot">
+    <div class="site-foot__brand">
+      <img class="site-foot__logo" src="../images/SICPES_Producto.png" alt="Logotipo de la aplicación SICPES" width="40" height="40">
+      <span class="site-foot__label">Producto</span>
+    </div>
+    <div class="site-foot__brand">
+      <img class="site-foot__logo" src="../images/SICPES_Empresa.png" alt="Logotipo de la empresa SICPES" width="40" height="40">
+      <span class="site-foot__label">Empresa</span>
+    </div>
+    <p class="site-foot__note">SICPES · Sistema Integral de Control de Pensión de Estudiantes</p>
+  </footer>
 
   <!-- ============ Capa de atenuación y cierre ============ -->
   <div class="scrim" id="scrim" hidden></div>

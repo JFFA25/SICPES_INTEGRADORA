@@ -112,7 +112,7 @@ function pwaTopnav(role) {
   const links = role === 'student'
     ? [['home','Inicio'],['reserve','Reservar'],['payments','Pagos'],['profile','Cuenta']]
     : [['reservations','Reservaciones'],['pendingPayments','Pagos pendientes'],['floors','Pisos'],['settings','Configuración']];
-  return `<header class="pwa-app-top"><span class="pwa-app-logo">SICPES <span>/ RESIDENCIAL</span></span><nav class="pwa-app-links">${links.map(([id,label]) => `<button class="pwa-app-link" data-pwa-go="${id}">${label}</button>`).join('')}</nav><div class="pwa-app-user"><span class="pwa-avatar"></span>${role === 'student' ? pwaEsc(PWA_MOCK.student.name) : 'Admin SICPES'}</div></header>`;
+  return `<header class="pwa-app-top"><span class="pwa-app-logo"><img class="pwa-app-logo-img" src="../images/SICPES_Producto.png" alt=""> SICPES <span>/ RESIDENCIAL</span></span><nav class="pwa-app-links">${links.map(([id,label]) => `<button class="pwa-app-link" data-pwa-go="${id}">${label}</button>`).join('')}</nav><div class="pwa-app-user"><span class="pwa-avatar"></span>${role === 'student' ? pwaEsc(PWA_MOCK.student.name) : 'Admin SICPES'}</div></header>`;
 }
 function pwaSidebar(role, active) {
   const items = role === 'student'
@@ -145,7 +145,7 @@ function pwaRegister() {
   return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">NUEVO RESIDENTE</span><h2 class="pwa-auth-title">Crea tu cuenta en minutos</h2><p class="pwa-lead">Registra tus datos una sola vez y administra tu estancia desde la web.</p><ul class="pwa-checklist"><li>Reserva tu habitación</li><li>Sube comprobantes de pago</li><li>Recibe avisos del residencial</li></ul></div><div class="pwa-auth-card"><span class="pwa-eyebrow">CREAR CUENTA</span><h2 class="pwa-card-title">Datos del residente</h2><div class="pwa-form-grid">${pwaField('NOMBRE COMPLETO','Nombre y apellidos')}${pwaField('CORREO ELECTRÓNICO','nombre@correo.com','email')}${pwaField('CONTRASEÑA','Mínimo 8 caracteres','password')}${pwaField('CONFIRMAR CONTRASEÑA','Repite tu contraseña','password')}</div><label class="pwa-checkline"><input type="checkbox"> Acepto los términos y condiciones y el aviso de privacidad.</label><button class="pwa-button pwa-primary pwa-block" data-pwa-action="register">Registrarse</button><p class="pwa-inline-link">¿Ya tienes cuenta? <button data-pwa-go="studentLogin">Iniciar sesión</button></p></div>`);
 }
 function pwaLoading() {
-  return `<div class="pwa-loading"><div class="pwa-image-placeholder pwa-logo-box">SICPES</div><h2 class="pwa-card-title">Preparando tu espacio</h2><p class="pwa-lead">Sincronizando registros residenciales…</p><div class="pwa-progress"><div class="pwa-progress-fill" id="pwaProgressFill"></div></div><div class="pwa-progress-caption"><span id="pwaProgressText">Conectando con SICPES</span><span id="pwaProgressPercent">0%</span></div></div>`;
+  return `<div class="pwa-loading"><img class="pwa-logo-img" src="../images/SICPES_Producto.png" alt="SICPES"><h2 class="pwa-card-title">Preparando tu espacio</h2><p class="pwa-lead">Sincronizando registros residenciales…</p><div class="pwa-progress"><div class="pwa-progress-fill" id="pwaProgressFill"></div></div><div class="pwa-progress-caption"><span id="pwaProgressText">Conectando con SICPES</span><span id="pwaProgressPercent">0%</span></div></div>`;
 }
 function pwaHome() {
   const s = PWA_MOCK.student;
@@ -251,6 +251,7 @@ function pwaRender() {
   setTimeout(() => {
     pwaScreenEl.innerHTML = PWA_RENDERERS[pwaState.screen]();
     pwaScreenEl.classList.remove('leaving');
+    pwaScreenEl.classList.remove('screen-in'); void pwaScreenEl.offsetWidth; pwaScreenEl.classList.add('screen-in');
     const comment = pwaScreenEl.querySelector('#pwaRateComment');
     if (comment) comment.addEventListener('input', () => { const count = pwaScreenEl.querySelector('#pwaRateCount'); if (count) count.textContent = `${comment.value.length} / 500`; });
     document.querySelector('#pwaScreenLabel').textContent = PWA_SCREENS[pwaState.screen].label;

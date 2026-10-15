@@ -1,15 +1,19 @@
 # Créditos de fotografías
 
-Las fotografías de `images/*.jpg` se descargaron desde Unsplash y se guardan localmente para que la página no dependa de enlaces remotos. La licencia estándar de Unsplash permite descargar, copiar, modificar, distribuir y usar las imágenes, incluso con fines comerciales, sin exigir atribución; se incluyen los créditos como reconocimiento a sus autores. [Licencia de Unsplash](https://unsplash.com/license)
+Las fotografías de `images/*.jpg` se guardan localmente para que la página no dependa de enlaces remotos. Se obtuvieron a través del agregador de contenido libre [Openverse](https://openverse.org/), que reúne material de Flickr y StockSnap, y se seleccionaron versiones con licencias de uso y modificación permitidos (CC BY, CC BY-SA y CC0). Se incluyen los créditos y enlaces a la página original de cada fotografía como reconocimiento a sus autores.
 
-| Archivo | Autor | Fotografía |
-| --- | --- | --- |
-| `partners.jpg` | Vitaly Gariev | [Business professionals collaborating in a modern office meeting](https://unsplash.com/photos/business-professionals-collaborating-in-a-modern-office-meeting-Cnsh9WwhVCw) |
-| `activities.jpg` | Vitaly Gariev | [Diverse group of students gathered around a laptop](https://unsplash.com/photos/diverse-group-of-students-gathered-around-a-laptop-8gAbl776pc0) |
-| `resources.jpg` | Hasnain Ayaz | [Person working on a laptop, coding and analyzing data](https://unsplash.com/photos/person-working-on-a-laptop-coding-and-analyzing-data-Su1XYFlftXA) |
-| `value.jpg` | Loyd Benedict Benedicto | [Clean, well-lit room with several neatly made beds](https://unsplash.com/photos/clean-well-lit-room-with-several-neatly-made-beds-0xJJ2k72AQs) |
-| `relations.jpg` | Vagaro | [A man wearing a headset sitting in front of a computer](https://unsplash.com/photos/a-man-wearing-a-headset-sitting-in-front-of-a-computer-5skDrjF5EMw) |
-| `channels.jpg` | Lorin Both | [A hand holds up a smartphone](https://unsplash.com/photos/a-hand-holds-up-a-smartphone-_Q5HFTpOvDI) |
-| `segments.jpg` | Dennis Zhang | [A group of people sitting on the ground in front of a building](https://unsplash.com/photos/a-group-of-people-sitting-on-the-ground-in-front-of-a-building-J16r3dyRM-M) |
-| `costs.jpg` | Sasun Bughdaryan | [Us dollar bills and a calculator on blue background](https://unsplash.com/photos/us-dollar-bills-and-a-calculator-on-blue-background-y1vS_aBALGc) |
-| `revenue.jpg` | Vitaly Gariev | [Man holding credit card while looking at laptop](https://unsplash.com/photos/man-holding-credit-card-while-looking-at-laptop-4OPaeyML_lM) |
+> Nota: la fuente habitual (Unsplash) no estuvo accesible durante esta actualización, por lo que se usaron fotografías libres alternativas. Todas son reales y de temática acorde a cada bloque del canvas.
+
+| Archivo | Autor | Licencia | Fotografía |
+| --- | --- | --- | --- |
+| `partners.jpg` | hackNY | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | [hackNY Hackathon S2015](https://www.flickr.com/photos/61623410@N08/17010470631) |
+| `activities.jpg` | hackNY | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | [hackNY Hackathon S2015](https://www.flickr.com/photos/61623410@N08/16391229643) |
+| `resources.jpg` | SFU - Communications & Marketing | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [Continuing Studies](https://www.flickr.com/photos/45160304@N02/5404766001) |
+| `value.jpg` | Editor B | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [My Minimalistic Dorm Room](https://www.flickr.com/photos/11018968@N00/8000806187) |
+| `relations.jpg` | Poldavo (Alex) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [Answering Students Mails](https://www.flickr.com/photos/63315403@N00/513519412) |
+| `channels.jpg` | Josh Felise | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [Iphone Texting](https://stocksnap.io/photo/iphone-texting-HP2MPJT5B6) |
+| `segments.jpg` | COD Newsroom | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [New Student Orientation Fall 2013 47](https://www.flickr.com/photos/41431665@N07/9515056203) |
+| `costs.jpg` | Images_of_Money | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [Calculator and Money](https://www.flickr.com/photos/59937401@N07/5474825330) |
+| `revenue.jpg` | nenadstojkovicart | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [Person completing online shopping transaction using credit card at a laptop](https://www.flickr.com/photos/202846129@N03/54555523188) |
+</content>
+</invoke>
