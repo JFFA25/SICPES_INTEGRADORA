@@ -138,7 +138,7 @@ SICPES sigue una **arquitectura cliente-servidor en capas**: clientes (Web React
 
 <p align="center">
   <a href="https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html">
-    <img src="DiagramaDeArquitectura/arquitectura.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
+    <img src="/DiagramaDeArquitectura/arquitectura-sicpes.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
   </a>
 </p>
 
