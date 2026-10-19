@@ -105,9 +105,44 @@ Hoy, encontrar y administrar una pensión estudiantil depende de procesos inform
 | Capa | Herramientas | ¿Para qué se usa en SICPES? |
 | :--- | :--- | :--- |
 | **Frontend** | React, TypeScript, TailwindCSS ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) | **React** construye la interfaz por pantallas reutilizables; **TypeScript** añade tipos para detectar errores antes de ejecutar; **TailwindCSS** da estilos consistentes y diseño adaptable a celular y escritorio. |
-| **Backend** | Node.js, Express, FastAPI (Python) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white) | **Node.js + Express** exponen la API REST con la lógica de negocio (cuentas, reservas, pagos) y la autenticación; **FastAPI** aporta servicios en Python con documentación automática de sus endpoints. |
+| **Backend** | Node.js, Express, FastAPI (Python) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white) | **Node.js + Express** exponen la API REST con la lógica de negocio (cuentas, reservas, pagos) y la autenticación, y manejan **WebSockets** para la comunicación en tiempo real; **FastAPI** aporta servicios en Python con documentación automática de sus endpoints. |
 | **Bases de Datos** | MySQL, MongoDB ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) | **MySQL** guarda la información estructurada: usuarios, habitaciones, reservas, pagos y adeudos. **MongoDB** se contempla para datos más flexibles que no encajan en tablas. |
+| **Infraestructura** | Docker, Render, TiDB Serverless ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Render](https://img.shields.io/badge/Render-46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) | **Docker** empaqueta frontend, backend y API en contenedores; **Render** los despliega con HTTPS automático; **TiDB Serverless** aloja la base de datos MySQL con conexión cifrada. |
 | **Documentación** | Swagger/OpenAPI, Markdown ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white) | **Swagger/OpenAPI** describe cada endpoint de la API para probarlo y entenderlo; **Markdown** documenta el proyecto en este repositorio. |
+
+## Web services y APIs externas
+
+SICPES se apoya en servicios de terceros para capacidades que no conviene construir desde cero. Cada uno se muestra en el [Diagrama de Arquitectura](DiagramaDeArquitectura/README.md), con quién lo llama.
+
+| Servicio | ¿Para qué se usa en SICPES? | Lo llama |
+| :--- | :--- | :--- |
+| **Geolocation API (HTML5)** | Obtiene la ubicación del dispositivo, solo con consentimiento del usuario. | Web |
+| **Google Maps Embed** | Muestra la ubicación de la pensión en un mapa interactivo. | Web |
+| **Mailtrap API** | Envía correos transaccionales: confirmación de cuenta y código de verificación en dos pasos por correo. | Backend |
+| **Twilio API** | Servicio adicional para enviar mensajes y notificaciones por WhatsApp. | Backend |
+| **PDFmonkey API** | Genera contratos de arrendamiento, recibos y reportes en PDF. | Backend |
+| **OSRM API** | Calcula la ruta a pie y la distancia exacta hasta la pensión. | API complementaria |
+
+## Diagramas del Proyecto / Modelos
+
+| Entregable | Descripción | Documentación |
+| :--- | :--- | :--- |
+| **Business Model Canvas** | Los nueve bloques del modelo de negocio. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html) |
+| **Diagrama de Roles de Usuario** | Roles, responsabilidades y matriz de permisos. | [README](RolesDeUsuario/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html) |
+| **Sketches y navegación** | Prototipo móvil y PWA con el diagrama de navegación entre pantallas. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
+| **Diagrama de Arquitectura** | Capas, tecnologías, bases de datos, servicios externos y despliegue, de forma interactiva. | [README](DiagramaDeArquitectura/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html) |
+
+### Diagrama de Arquitectura
+
+SICPES sigue una **arquitectura cliente-servidor en capas**: clientes (Web React, y a futuro app Flutter y PWA) que consumen por HTTPS (REST / JSON) un Backend en Node.js y una API en FastAPI; ambos guardan los datos en MySQL (TiDB Serverless) y MongoDB, e integran seis servicios externos. Todo se despliega con Docker en Render.
+
+<p align="center">
+  <a href="https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html">
+    <img src="DiagramaDeArquitectura/arquitectura.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
+  </a>
+</p>
+
+El diagrama es interactivo: al hacer clic en cada componente se abre su detalle, hay flujos animados (registro, búsqueda de pensión y generación de contrato) y se distingue lo existente de lo planeado. Más información en el [README del diagrama](DiagramaDeArquitectura/README.md).
 
 
 # SICPES - Panel de Navegacion
@@ -123,6 +158,7 @@ Hoy, encontrar y administrar una pensión estudiantil depende de procesos inform
 - [Práctica 04 · Business Model Canvas](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html)
 - [Práctica 05 · Diagrama de Roles de Usuario](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html)
 - [Práctica 07 · Sketches y navegación](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
+- [Diagrama de Arquitectura](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html)
 
 ## Identidad Visual
 
