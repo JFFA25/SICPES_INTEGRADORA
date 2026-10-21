@@ -13,8 +13,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pwa.css">
+  <link rel="stylesheet" href="pencil.css">
   <script src="app.js" defer></script>
   <script src="pwa.js" defer></script>
+  <script src="rough.min.js" defer></script>
+  <script src="pencil-screens.js" defer></script>
+  <script src="pencil.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -22,6 +26,7 @@
     <div class="pwa-view-switch" role="tablist" aria-label="Sección del prototipo">
       <button type="button" class="pwa-view-tab active" data-view="mobile">Sketches móviles</button>
       <button type="button" class="pwa-view-tab" data-view="pwa">PWA</button>
+      <button type="button" class="pwa-view-tab" data-view="pencil">Dibujos a lápiz</button>
     </div>
     <div class="role-switch" data-view-for="mobile" role="tablist" aria-label="Seleccionar rol">
       <button type="button" class="role-tab" data-role="student">Rol Estudiante</button>
@@ -103,6 +108,50 @@
     </div>
     <div class="pwa-map-canvas" id="pwaMapCanvas"></div>
   </section>
+
+  <section id="pencilView" class="pencil-view" aria-label="Dibujos a lápiz" hidden>
+    <div class="pencil-header">
+      <div class="pencil-heading">
+        <span class="pencil-eyebrow">BOCETOS A LÁPIZ</span>
+        <h2>Dibujos a lápiz</h2>
+        <p>23 láminas basadas en los mismos datos de pantallas. Apariencia de boceto a grafito sobre papel.</p>
+      </div>
+      <div class="pencil-controls" role="group" aria-label="Controles de vista de lápiz">
+        <div class="pencil-role-switch" role="tablist" aria-label="Seleccionar rol para dibujos">
+          <button type="button" class="pencil-role-tab active" data-pencil-role="student">Estudiante</button>
+          <button type="button" class="pencil-role-tab" data-pencil-role="admin">Administrador</button>
+        </div>
+        <button type="button" class="pencil-quiet-button" id="pencilDownloadAll">Descargar todas</button>
+      </div>
+    </div>
+    <div class="pencil-gallery-wrap">
+      <div id="pencilGallery" class="pencil-gallery" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <div id="pencilModal" class="pencil-modal" role="dialog" aria-modal="true" aria-labelledby="pencilModalTitle" hidden>
+    <div class="pencil-modal-backdrop" data-pencil-close></div>
+    <div class="pencil-modal-content" role="document">
+      <div class="pencil-modal-header">
+        <div>
+          <div class="pencil-modal-kicker"><span id="pencilModalCode"></span> · <span id="pencilModalRole"></span></div>
+          <h3 id="pencilModalTitle" class="pencil-modal-title"></h3>
+        </div>
+        <div class="pencil-modal-actions">
+          <button type="button" class="pencil-quiet-button" id="pencilDownloadOne">Descargar lámina (PNG)</button>
+          <button type="button" class="pencil-icon-button" data-pencil-close aria-label="Cerrar">×</button>
+        </div>
+      </div>
+      <div class="pencil-modal-body">
+        <button type="button" class="pencil-nav-button pencil-nav-prev" id="pencilNavPrev" aria-label="Pantalla anterior">←</button>
+        <div class="pencil-modal-sheet" id="pencilModalSheet" aria-live="polite"></div>
+        <button type="button" class="pencil-nav-button pencil-nav-next" id="pencilNavNext" aria-label="Pantalla siguiente">→</button>
+      </div>
+      <div class="pencil-modal-footer">
+        <span class="pencil-note">Dibujo a lápiz generado desde los datos del prototipo. Uso con fines de boceto.</span>
+      </div>
+    </div>
+  </div>
 
   <div class="pwa-toast" id="pwaToast" role="status" aria-live="polite"></div>
 </body>

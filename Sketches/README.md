@@ -37,6 +37,12 @@ Google Fonts se usa como mejora tipográfica; sin conexión, la página conserva
 
 **Administrador (8):** Login admin, Reservaciones, Asignar habitación, Pagos pendientes, Validar pago, Adeudos, Pisos y Configuración global.
 
+## Dibujos a lápiz
+
+Nueva pestaña "Dibujos a lápiz" que muestra las 23 pantallas como bocetos a lápiz sobre papel. Usa los mismos datos de `app.js` y `pwa.js` para generar las láminas (sin duplicar contenido). Permite filtrar por rol (Estudiante/Administrador), alternar entre marco móvil y escritorio, ampliar con modal, navegar con flechas o teclado (←/→/Esc) y descargar láminas en PNG (individual o todas).
+
+![Dibujos a lápiz](lapiz.png)
+
 ## Mapa de navegación
 
 | Origen | Acción | Destino |

@@ -478,18 +478,28 @@ function pwaBuildMap() {
 }
 function pwaSetView(view) {
   const isPwa = view === 'pwa';
+  const isPencil = view === 'pencil';
   document.body.classList.toggle('pwa-mode', isPwa);
   document.querySelectorAll('.pwa-view-tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   const mobileView = document.querySelector('#mobileView');
   const pwaView = document.querySelector('#pwaView');
-  if (mobileView) mobileView.hidden = isPwa;
+  const pencilView = document.querySelector('#pencilView');
+  if (mobileView) mobileView.hidden = isPwa || isPencil;
   if (pwaView) pwaView.hidden = !isPwa;
-  document.querySelectorAll('[data-view-for="mobile"]').forEach(el => { el.hidden = isPwa; });
+  if (pencilView) pencilView.hidden = !isPencil;
+  document.querySelectorAll('[data-view-for="mobile"]').forEach(el => { el.hidden = isPwa || isPencil; });
   document.querySelectorAll('[data-view-for="pwa"]').forEach(el => { el.hidden = !isPwa; });
   if (isPwa) {
     const diagram = document.querySelector('#diagramView');
     if (diagram) diagram.hidden = true;
+    const pwaMap = document.querySelector('#pwaMapView');
+    if (pwaMap) pwaMap.hidden = true;
     pwaRender();
+  } else if (isPencil) {
+    const diagram = document.querySelector('#diagramView');
+    if (diagram) diagram.hidden = true;
+    const pwaMap = document.querySelector('#pwaMapView');
+    if (pwaMap) pwaMap.hidden = true;
   } else {
     const pwaMap = document.querySelector('#pwaMapView');
     if (pwaMap) pwaMap.hidden = true;
