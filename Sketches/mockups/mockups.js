@@ -216,9 +216,9 @@
     return `<div class="mk-browser"><span class="mk-browser-dots"><i></i><i></i><i></i></span><span class="mk-browser-url">app.sicpes.mx${esc(route || '/')}</span><span class="mk-browser-mini">◻ ◻</span></div>`;
   }
 
-  function navItems(role) {
+  function navItems(role, platform) {
     return role === 'student'
-      ? [['home', 'home', 'Inicio'], ['reserve', 'calendar', 'Reservar'], ['payments', 'card', 'Pagos'], ['profile', 'user', 'Cuenta']]
+      ? [['home', 'home', 'Inicio'], ['reserve', 'calendar', platform === 'pwa' ? 'Reservar' : 'Peticiones'], ['payments', 'card', 'Pagos'], ['profile', 'user', 'Cuenta']]
       : [['reservations', 'calendar', 'Reservaciones'], ['pendingPayments', 'wallet', 'Pagos'], ['floors', 'building', 'Pisos'], ['settings', 'settings', 'Configuración']];
   }
   function activeNav(id) {
@@ -246,14 +246,14 @@
         </div>
       </header>
       <main class="mk-scroll">${content}</main>
-      <nav class="mk-bottomnav" aria-label="Navegación principal">${navItems(role).map(([id, ic, label]) => `<button type="button" class="mk-navitem${active === id ? ' active' : ''}" data-mk-go="${id}">${icon(ic, 20)}<span>${label}</span></button>`).join('')}</nav>
+      <nav class="mk-bottomnav" aria-label="Navegación principal">${navItems(role, 'mobile').map(([id, ic, label]) => `<button type="button" class="mk-navitem${active === id ? ' active' : ''}" data-mk-go="${id}">${icon(ic, 20)}<span>${label}</span></button>`).join('')}</nav>
     </div>`;
   }
 
   function pwaShell(role, active, content) {
     const M = data();
     const name = role === 'student' ? M.student.name : 'Admin SICPES';
-    const links = navItems(role);
+    const links = navItems(role, 'pwa');
     const route = (D.pwaScreens[state.screen] && D.pwaScreens[state.screen].route) || '/';
     return `<div class="mk-app mk-pwa-app">
       ${browserBar(route)}
@@ -822,6 +822,7 @@
     renderDestinations();
     fitMockup();
     if (state.screen === 'loading') startLoading();
+    if(window.SicpesShell&&window.SicpesShell.getState().section==='mockups'){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:'mockups',platform:state.platform,screen:state.screen,role:state.role}}));}
   }
 
   function startLoading() {
@@ -842,17 +843,24 @@
 
   function fitMockup() {
     const frame = $('#mkFrame');
-    const stage = document.querySelector('.mk-stage');
-    if (!frame || !stage || !canvas) return;
+    if (!frame || !canvas) return;
     const mobile = state.platform === 'mobile';
     const dw = mobile ? 390 : 1440;
     const dh = mobile ? 844 : 900;
+    frame.classList.toggle('is-pwa', !mobile);
+    frame.classList.toggle('is-mobile', mobile);
+    if (window.SicpesShell) {
+      canvas.style.transform = 'translateX(-50%)';
+      frame.style.width = dw + 'px';
+      frame.style.height = dh + 'px';
+      return;
+    }
+    const stage = document.querySelector('.mk-stage');
+    if (!stage) return;
     const availW = Math.max(280, stage.clientWidth - 8);
     const availH = Math.max(360, window.innerHeight - 230);
     const scale = Math.min(1, availW / dw, availH / dh);
     canvas.style.transform = `translateX(-50%) scale(${scale})`;
-    frame.classList.toggle('is-pwa', !mobile);
-    frame.classList.toggle('is-mobile', mobile);
     frame.style.width = Math.round(dw * scale) + 'px';
     frame.style.height = Math.round(dh * scale) + 'px';
   }

@@ -1,169 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Patrick+Hand&display=swap');
+/* ============================================================
+   SICPES · Estilos de Bocetos a Lápiz (Rough.js)
+   Interacción directa, zonas clicables y modal de presentación.
+   ============================================================ */
 
-.pencil-view {
-  background: #0f1620;
-  padding: 28px clamp(16px, 4vw, 48px) 70px;
-  color: #111;
-  font-family: 'Caveat', 'Patrick Hand', cursive;
-}
-
-.pencil-view[hidden] {
-  display: none !important;
-}
-
-.pencil-header {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-bottom: 26px;
-  color: #f5f7fa;
-}
-
-.pencil-heading h2 {
-  margin: 6px 0 8px;
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 700;
-}
-
-.pencil-heading p {
-  margin: 0;
-  color: #c9d1d9;
-  font-size: 16px;
-}
-
-.pencil-eyebrow {
-  font-family: 'Patrick Hand', cursive;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-size: 12px;
-  color: #9aa5b1;
-}
-
-.pencil-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.pencil-role-switch {
-  display: flex;
-  padding: 4px;
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-}
-
-.pencil-role-tab {
-  border: 0;
-  background: transparent;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 15px;
-  cursor: pointer;
-  color: #f5f7fa;
-}
-
-.pencil-role-tab.active {
-  background: rgba(255,255,255,0.18);
-}
-
-.pencil-quiet-button {
-  border: 1px solid rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.12);
-  padding: 9px 16px;
-  border-radius: 8px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 15px;
-  cursor: pointer;
-  color: #f5f7fa;
-}
-
-.pencil-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
-  gap: 26px;
-}
-
-.pencil-sheet {
+#pencilStage {
   position: relative;
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 18px 18px 22px;
-  box-shadow: 0 28px 60px rgba(0,0,0,0.35);
-  border: 1px solid rgba(0,0,0,0.12);
-  cursor: pointer;
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  overflow: hidden;
-}
-
-.pencil-sheet:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 36px 70px rgba(0,0,0,0.42);
-}
-
-.pencil-sheet:focus-visible {
-  outline: 2px dashed rgba(0,0,0,0.4);
-  outline-offset: 4px;
-}
-
-.pencil-sheet-header {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
-  z-index: 1;
-}
-
-.pencil-sheet-topline {
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
-  font-size: 16px;
-  text-decoration: underline;
-  text-decoration-style: wavy;
-}
-
-.pencil-sheet-subline {
-  font-family: 'Caveat', cursive;
-  font-size: 14px;
-}
-
-.pencil-sheet-frame {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  z-index: 1;
-}
-
-.pencil-duo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
   width: 100%;
+  height: 100%;
 }
 
-.pencil-duo svg {
-  flex: 1 1 0;
-  min-width: 0;
+#pencilStage svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+  border-radius: 4px;
+  filter: drop-shadow(0 22px 36px rgba(15, 20, 28, 0.35));
+  transition: filter 220ms ease;
 }
 
-.pencil-arrow-big {
-  flex: 0 0 60px;
-  height: 60px;
+#pencilStage:focus-visible {
+  outline: 2px dashed rgba(47, 138, 92, 0.65);
+  outline-offset: 10px;
+}
+
+/* ---------- Elementos interactivos en el boceto ---------- */
+.pencil-interactive {
+  cursor: pointer !important;
+  transition: transform 120ms ease, opacity 120ms ease;
+  outline: none;
+}
+
+.pencil-interactive:hover {
+  filter: drop-shadow(0 3px 8px rgba(47, 138, 92, 0.42));
+}
+
+.pencil-interactive:hover rect,
+.pencil-interactive:hover path {
+  stroke: #2F8A5C !important;
+}
+
+.pencil-interactive:hover text {
+  fill: #153B28 !important;
+  font-weight: 700;
+}
+
+.pencil-interactive:active {
+  transform: scale(0.985);
+}
+
+.pencil-interactive:focus-visible {
+  outline: 2px dashed #2F8A5C;
+  outline-offset: 3px;
+}
+
+/* Indicador de zonas clicables en bocetos a lápiz */
+.shell-zones-on .pencil-interactive rect:not([fill="transparent"]),
+.shell-zones-on .pencil-interactive path:not([stroke="none"]) {
+  stroke: #2F8A5C !important;
+  stroke-width: 2.4px !important;
+  stroke-dasharray: 4 2 !important;
+}
+
+.shell-zones-on .pencil-interactive rect[fill="transparent"] {
+  fill: rgba(76, 175, 80, 0.12) !important;
+  stroke: #2F8A5C !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 4 2 !important;
+}
+
+.shell-zones-on .pencil-interactive text {
+  font-weight: 700 !important;
+}
+
+/* Botón flotante para ampliar lámina de boceto */
+.pencil-zoom-fab {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: rgba(251, 248, 239, 0.94);
+  color: #171717;
+  border: 1px solid rgba(23, 23, 23, 0.35);
+  border-radius: 999px;
+  font-family: 'Patrick Hand', 'Caveat', cursive;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.pencil-zoom-fab:hover {
+  background: #FFFDF8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+  border-color: #2F8A5C;
+  color: #153B28;
+}
+
+.pencil-sheet-index {
+  font-family: 'Patrick Hand', 'Caveat', cursive;
+  font-size: 13px;
+  color: #5b564a;
+  margin-left: 8px;
+}
+
+body.pencil-modal-open {
+  overflow: hidden;
 }
 
 .pencil-modal {
   position: fixed;
   inset: 0;
-  z-index: 2000;
+  z-index: 2400;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 18px;
 }
 
 .pencil-modal[hidden] {
@@ -173,58 +132,90 @@
 .pencil-modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10,14,20,0.7);
+  background: rgba(9, 14, 20, 0.74);
+  backdrop-filter: blur(3px);
 }
 
 .pencil-modal-content {
   position: relative;
-  width: min(1500px, 98vw);
-  max-height: 94vh;
-  background: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
+  width: min(1180px, 98vw);
+  max-height: 95vh;
+  color: #171717;
+  background: #fbf8ef;
+  border: 1px solid rgba(23, 23, 23, 0.28);
+  border-radius: 6px;
+  box-shadow: 0 38px 90px rgba(0, 0, 0, 0.55);
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.18);
 }
 
 .pencil-modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 22px 10px;
+  gap: 18px;
+  padding: 18px 22px 12px;
+  border-bottom: 1px dashed rgba(23, 23, 23, 0.28);
 }
 
 .pencil-modal-kicker {
-  font-family: 'Patrick Hand', cursive;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-family: 'Patrick Hand', 'Caveat', cursive;
   font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5b564a;
 }
 
 .pencil-modal-title {
   margin: 4px 0 0;
-  font-size: 24px;
-  font-family: 'Caveat', cursive;
+  font-family: 'Caveat', 'Patrick Hand', cursive;
+  font-size: clamp(23px, 3vw, 31px);
+  line-height: 1.05;
 }
 
 .pencil-modal-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+}
+
+.pencil-quiet-button {
+  border: 1px solid rgba(23, 23, 23, 0.48);
+  background: transparent;
+  color: #171717;
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-family: 'Patrick Hand', 'Caveat', cursive;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.pencil-quiet-button:hover {
+  background: rgba(23, 23, 23, 0.07);
 }
 
 .pencil-icon-button {
-  border: 1px solid rgba(0,0,0,0.5);
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 38px;
   height: 38px;
+  border: 1px solid rgba(23, 23, 23, 0.55);
   border-radius: 50%;
+  background: transparent;
+  color: #171717;
+  font-family: 'Patrick Hand', 'Caveat', cursive;
   font-size: 22px;
+  line-height: 1;
   cursor: pointer;
-  font-family: 'Patrick Hand', cursive;
+  transition: background 140ms ease;
+}
+
+.pencil-icon-button:hover {
+  background: rgba(23, 23, 23, 0.08);
 }
 
 .pencil-modal-body {
@@ -232,43 +223,103 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 10px 18px 18px;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px 18px;
   overflow: auto;
 }
 
 .pencil-modal-sheet {
-  position: relative;
-  width: min(1500px, 94vw);
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+}
+
+.pencil-modal-sheet svg {
+  display: block;
+  width: auto;
+  height: min(70vh, 720px);
+  max-width: 100%;
+  border-radius: 2px;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
 }
 
 .pencil-nav-button {
-  border: 1px solid rgba(0,0,0,0.5);
-  background: rgba(255,255,255,0.9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
   width: 44px;
   height: 44px;
+  border: 1px solid rgba(23, 23, 23, 0.45);
   border-radius: 50%;
-  font-family: 'Patrick Hand', cursive;
+  background: #fffdf8;
+  color: #171717;
   font-size: 20px;
   cursor: pointer;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.pencil-nav-button:hover {
+  background: #f0ebdc;
+  transform: scale(1.05);
+}
+
+.pencil-nav-button:active {
+  transform: scale(0.95);
 }
 
 .pencil-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   padding: 0 22px 18px;
-  font-family: 'Patrick Hand', cursive;
+  font-family: 'Patrick Hand', 'Caveat', cursive;
+  font-size: 13px;
+  color: #5b564a;
 }
 
-@media (max-width: 1100px) {
-  .pencil-gallery {
-    grid-template-columns: 1fr;
+.pencil-note {
+  max-width: 66ch;
+}
+
+@media (max-width: 760px) {
+  .pencil-modal {
+    padding: 8px;
   }
-  .pencil-duo {
+
+  .pencil-modal-header {
     flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px 10px;
   }
-  .pencil-arrow-big {
-    transform: rotate(90deg);
+
+  .pencil-modal-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pencil-modal-body {
+    gap: 6px;
+    padding: 8px 6px;
+  }
+
+  .pencil-nav-button {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .pencil-modal-sheet svg {
+    height: min(62vh, 560px);
+  }
+
+  .pencil-modal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 14px 12px;
   }
 }

@@ -59,7 +59,7 @@ const PWA_ADMIN = ['adminLogin','reservations','assignRoom','pendingPayments','v
 const PWA_ROOTS = new Set(['home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Acciones disponibles por pantalla: [destino, texto visible]. */
 const PWA_ACTIONS = {
-  landing:[['studentLogin','Iniciar sesión'],['roomDetail','Explorar habitaciones']],
+  landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada']],
   studentLogin:[['loading','Entrar al panel'],['forgotPassword','¿Olvidaste tu contraseña?'],['register','Crear una cuenta nueva']],
   forgotPassword:[['studentLogin','Enviar enlace de recuperación']],
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
@@ -67,13 +67,13 @@ const PWA_ACTIONS = {
   loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
   home:[['reserve','Tarjeta Reservar'],['requestStatus','Tarjeta Estado de mi petición'],['payments','Tarjeta Próximo pago'],['roomDetail','Habitación destacada'],['rateService','Evaluar el servicio'],['profile','Barra lateral: Cuenta']],
   reserve:[['roomDetail','Ver detalle de habitación'],['requestStatus','Confirmar reservación'],['payments','Barra lateral: Pagos'],['profile','Barra lateral: Cuenta']],
-  roomDetail:[['reserve','Solicitar esta habitación']],
-  requestStatus:[['home','Volver al inicio']],
+  roomDetail:[['requestStatus','Solicitar esta habitación'],['reserve','Volver al catálogo']],
+  requestStatus:[['home','Volver al inicio'],['reserve','Explorar más habitaciones']],
   payments:[['paymentDetail','Detalle de pago'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['profile','Barra lateral: Cuenta']],
   paymentDetail:[['payments','Volver a pagos']],
   rateService:[['rateConfirm','Enviar evaluación'],['home','Barra lateral: Inicio'],['profile','Barra lateral: Cuenta']],
   rateConfirm:[['home','Volver a Inicio']],
-  profile:[['studentLogin','Cerrar sesión'],['rateService','Evaluar el servicio'],['home','Barra lateral: Inicio']],
+  profile:[['studentLogin','Cerrar sesión'],['rateService','Evaluar el servicio'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['payments','Barra lateral: Pagos']],
   adminLogin:[['loading','Entrar al panel administrativo']],
   reservations:[['assignRoom','Seleccionar solicitud'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos'],['settings','Panel superior: Configuración']],
   assignRoom:[['reservations','Asignar / Rechazar']],
@@ -111,7 +111,7 @@ function pwaField(label, placeholder, type = 'text', value = '') {
 function pwaTopnav(role) {
   const links = role === 'student'
     ? [['home','Inicio'],['reserve','Reservar'],['payments','Pagos'],['profile','Cuenta']]
-    : [['reservations','Reservaciones'],['pendingPayments','Pagos pendientes'],['floors','Pisos'],['settings','Configuración']];
+    : [['reservations','Reservaciones'],['pendingPayments','Pagos'],['floors','Pisos'],['settings','Configuración']];
   return `<header class="pwa-app-top"><span class="pwa-app-logo"><img class="pwa-app-logo-img" src="../images/SICPES_Producto.png" alt=""> SICPES <span>/ RESIDENCIAL</span></span><nav class="pwa-app-links">${links.map(([id,label]) => `<button class="pwa-app-link" data-pwa-go="${id}">${label}</button>`).join('')}</nav><div class="pwa-app-user"><span class="pwa-avatar"></span>${role === 'student' ? pwaEsc(PWA_MOCK.student.name) : 'Admin SICPES'}</div></header>`;
 }
 function pwaSidebar(role, active) {
@@ -258,10 +258,10 @@ function pwaRender() {
     document.querySelector('#pwaRoute').textContent = PWA_SCREENS[pwaState.screen].route;
     document.querySelector('#pwaRoleCaption').textContent = pwaState.role === 'student' ? 'ESTUDIANTE' : 'ADMINISTRADOR';
     document.querySelectorAll('.pwa-role-tab').forEach(b => b.classList.toggle('active', b.dataset.pwaRole === pwaState.role));
-    document.body.classList.toggle('pwa-zones-on', pwaState.zones);
     document.querySelector('#pwaBack').hidden = PWA_ROOTS.has(pwaState.screen);
     pwaRenderPanel();
     if (pwaState.screen === 'loading') pwaRunLoading();
+    if(!window.SicpesShell||window.SicpesShell.getState().platform==='pwa'){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:'wireframes',platform:'pwa',screen:pwaState.screen,role:pwaState.role}}));}
   }, 110);
 }
 function pwaRenderPanel() {
@@ -494,9 +494,18 @@ function pwaSetView(view) {
     if (diagram) diagram.hidden = true;
     const pwaMap = document.querySelector('#pwaMapView');
     if (pwaMap) pwaMap.hidden = true;
-pwaRender();
+    pwaRender();
+  } else if (isPencil) {
+    const diagram = document.querySelector('#diagramView');
+    if (diagram) diagram.hidden = true;
+    const pwaMap = document.querySelector('#pwaMapView');
+    if (pwaMap) pwaMap.hidden = true;
+  } else {
+    const pwaMap = document.querySelector('#pwaMapView');
+    if (pwaMap) pwaMap.hidden = true;
+  }
+}
 
-/* Puente de la sección Wireframes PWA: abre una pantalla conservando el rol. */
 window.SicpesWireframePwa = {
   showScreen: function (id, role) {
     if (!PWA_SCREENS[id]) return;
@@ -509,16 +518,6 @@ window.SicpesWireframePwa = {
   getScreen: function () { return pwaState.screen; },
   getRole: function () { return pwaState.role; }
 };
-  } else if (isPencil) {
-    const diagram = document.querySelector('#diagramView');
-    if (diagram) diagram.hidden = true;
-    const pwaMap = document.querySelector('#pwaMapView');
-    if (pwaMap) pwaMap.hidden = true;
-  } else {
-    const pwaMap = document.querySelector('#pwaMapView');
-    if (pwaMap) pwaMap.hidden = true;
-  }
-}
 
 /* Un solo controlador delega los clics de las pantallas dinámicas. */
 document.addEventListener('click', e => {
