@@ -494,7 +494,21 @@ function pwaSetView(view) {
     if (diagram) diagram.hidden = true;
     const pwaMap = document.querySelector('#pwaMapView');
     if (pwaMap) pwaMap.hidden = true;
+pwaRender();
+
+/* Puente de la sección Wireframes PWA: abre una pantalla conservando el rol. */
+window.SicpesWireframePwa = {
+  showScreen: function (id, role) {
+    if (!PWA_SCREENS[id]) return;
+    if (role === 'student' || role === 'admin') pwaState.role = role;
+    else if (PWA_SCREENS[id].role === 'student' || PWA_SCREENS[id].role === 'admin') pwaState.role = PWA_SCREENS[id].role;
+    pwaState.screen = id;
+    pwaState.history = [];
     pwaRender();
+  },
+  getScreen: function () { return pwaState.screen; },
+  getRole: function () { return pwaState.role; }
+};
   } else if (isPencil) {
     const diagram = document.querySelector('#diagramView');
     if (diagram) diagram.hidden = true;

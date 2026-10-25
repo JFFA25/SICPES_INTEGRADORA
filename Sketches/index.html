@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#153B28">
-  <title>SICPES · Sketches de navegación</title>
+  <title>SICPES · Sketches, Wireframes y Mockups</title>
   <link rel="icon" type="image/png" href="../images/SICPES_Producto.png">
   <link rel="apple-touch-icon" href="../images/SICPES_Producto.png">
   <script>try{var _st=localStorage.getItem("sicpes-sketches-theme")||((window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark");document.documentElement.dataset.theme=_st;}catch(e){document.documentElement.dataset.theme="dark";}</script>
@@ -14,53 +14,69 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pwa.css">
   <link rel="stylesheet" href="pencil.css">
+  <link rel="stylesheet" href="wireframes.css">
+  <link rel="stylesheet" href="sections.css">
+  <link rel="stylesheet" href="mockups/mockups.css">
   <script src="app.js" defer></script>
   <script src="pwa.js" defer></script>
+  <script src="data.js" defer></script>
   <script src="rough.min.js" defer></script>
   <script src="pencil-screens.js" defer></script>
   <script src="pencil.js" defer></script>
+  <script src="mockups/mockups.js" defer></script>
+  <script src="fidelity.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#" data-go="landing" aria-label="Ir al inicio"><img class="brand-logo" src="../images/SICPES_Empresa.png" alt="SICPES"><img class="brand-logo" src="../images/SICPES_Producto.png" alt="SICPES Residencial"><span class="brand-text">SICPES<span> / SKETCHES</span></span></a>
-    <div class="pwa-view-switch" role="tablist" aria-label="Sección del prototipo">
-      <button type="button" class="pwa-view-tab active" data-view="mobile">Sketches móviles</button>
-      <button type="button" class="pwa-view-tab" data-view="pwa">PWA</button>
-      <button type="button" class="pwa-view-tab" data-view="pencil">Dibujos a lápiz</button>
+    <a class="brand" href="#" data-go="landing" aria-label="Ir al inicio"><img class="brand-logo" src="../images/SICPES_Empresa.png" alt="SICPES"><img class="brand-logo" src="../images/SICPES_Producto.png" alt="SICPES Residencial"><span class="brand-text">SICPES<span> / Prototipo</span></span></a>
+    <div class="fidelity-switch" role="tablist" aria-label="Nivel de fidelidad">
+      <button type="button" class="fidelity-tab" data-fidelity="sketches">Sketches</button>
+      <button type="button" class="fidelity-tab active" data-fidelity="wireframes">Wireframes</button>
+      <button type="button" class="fidelity-tab" data-fidelity="mockups">Mockups</button>
     </div>
-    <div class="role-switch" data-view-for="mobile" role="tablist" aria-label="Seleccionar rol">
-      <button type="button" class="role-tab" data-role="student">Rol Estudiante</button>
-      <button type="button" class="role-tab" data-role="admin">Rol Administrador</button>
+    <div class="wireframe-tools" id="wireframeTools">
+      <div class="platform-switch" role="tablist" aria-label="Plataforma de wireframes">
+        <button type="button" class="platform-tab active" data-wire-platform="mobile">Móvil</button>
+        <button type="button" class="platform-tab" data-wire-platform="pwa">PWA</button>
+      </div>
+      <div class="role-switch" data-view-for="mobile" role="tablist" aria-label="Seleccionar rol">
+        <button type="button" class="role-tab" data-role="student">Rol Estudiante</button>
+        <button type="button" class="role-tab" data-role="admin">Rol Administrador</button>
+      </div>
+      <div class="top-actions" data-view-for="mobile">
+        <button type="button" id="zonesToggle" class="quiet-button">Mostrar zonas clicables</button>
+        <button type="button" id="diagramToggle" class="dark-button">Ver diagrama</button>
+      </div>
+      <div class="top-actions" data-view-for="pwa" hidden>
+        <button type="button" id="pwaZones" class="quiet-button">Mostrar zonas clicables</button>
+        <button type="button" id="pwaMap" class="dark-button">Ver mapa de navegación</button>
+      </div>
     </div>
-    <div class="top-actions" data-view-for="mobile">
-      <button type="button" id="zonesToggle" class="quiet-button">Mostrar zonas clicables</button>
-      <button type="button" id="diagramToggle" class="dark-button">Ver diagrama</button>
+    <div class="topbar-end">
+      <button type="button" id="fidelityJump" class="quiet-button fidelity-jump" title="Sketch → Wireframe → Mockup">Ver en otra fidelidad</button>
+      <button type="button" id="themeToggle" class="quiet-button theme-toggle" aria-pressed="false" aria-label="Cambiar a tema claro">Tema claro</button>
     </div>
-    <div class="top-actions" data-view-for="pwa" hidden>
-      <button type="button" id="pwaZones" class="quiet-button">Mostrar zonas clicables</button>
-      <button type="button" id="pwaMap" class="dark-button">Ver mapa de navegación</button>
-    </div>
-    <button type="button" id="themeToggle" class="quiet-button theme-toggle" aria-pressed="false" aria-label="Cambiar a tema claro">Tema claro</button>
   </header>
+
   <main id="mobileView" class="workspace">
-    <section class="stage" aria-label="Prototipo móvil">
+    <section class="stage" aria-label="Wireframe móvil">
       <div class="device-label"><span id="screenLabel">LANDING</span><span>390 × 844</span></div>
       <div class="phone-holder"><div class="phone"><div class="phone-screen" id="phoneScreen" aria-live="polite"></div></div></div>
-      <div class="stage-footer"><button class="back-button" id="backButton" type="button">← Atrás</button><span id="roleCaption">ESTUDIANTE</span><span>WIREFRAME · V1.0</span></div>
+      <div class="stage-footer"><button class="back-button" id="backButton" type="button">← Atrás</button><span id="roleCaption">ESTUDIANTE</span><span>WIREFRAME MÓVIL · V1.0</span></div>
     </section>
-    <aside class="screen-panel" aria-label="Pantallas del rol"><div class="panel-heading"><span class="eyebrow">PRÁCTICA 07</span><h1>Pantallas del rol</h1><p>Selecciona una pantalla para abrirla.</p></div><div id="roleScreens" class="role-screens"></div></aside>
+    <aside class="screen-panel" aria-label="Pantallas del rol"><div class="panel-heading"><span class="eyebrow">WIREFRAME · MÓVIL</span><h1>Pantallas del rol</h1><p>Selecciona una pantalla para abrirla.</p></div><div id="roleScreens" class="role-screens"></div></aside>
     <aside class="navigation-panel" aria-label="Destinos de navegación"><section class="destinations"><h2>Desde aquí puedes ir a:</h2><div id="screenDestinations"></div></section><div class="panel-legend"><i></i> Acción principal</div><div id="screenCount" class="screen-count"></div></aside>
   </main>
+
   <section id="diagramView" class="diagram-view" aria-label="Diagrama de navegación" hidden>
-    <div class="diagram-heading"><div><span class="eyebrow">MAPA DE PANTALLAS</span><h2>Diagrama de navegación</h2><p>Selecciona una miniatura para abrir esa pantalla en el prototipo.</p></div><div class="diagram-actions"><button class="quiet-button" id="downloadDiagram" type="button">Descargar como imagen</button><button class="dark-button" type="button" data-close-diagram>Cerrar diagrama</button><button class="diagram-x" type="button" data-close-diagram aria-label="Cerrar diagrama">×</button></div></div>
+    <div class="diagram-heading"><div><span class="eyebrow">MAPA DE PANTALLAS · WIREFRAME MÓVIL</span><h2>Diagrama de navegación</h2><p>Selecciona una miniatura para abrir esa pantalla en el prototipo.</p></div><div class="diagram-actions"><button class="quiet-button" id="downloadDiagram" type="button">Descargar como imagen</button><button class="dark-button" type="button" data-close-diagram>Cerrar diagrama</button><button class="diagram-x" type="button" data-close-diagram aria-label="Cerrar diagrama">×</button></div></div>
     <div class="diagram-canvas" id="diagramCanvas"></div>
   </section>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <main id="pwaView" class="pwa-workspace" hidden aria-label="Prototipo PWA de escritorio">
+  <main id="pwaView" class="pwa-workspace" hidden aria-label="Wireframe PWA de escritorio">
     <aside class="pwa-panel pwa-screen-panel" aria-label="Pantallas del rol PWA">
       <div class="pwa-panel-heading">
-        <span class="pwa-eyebrow">SECCIÓN PWA · PRÁCTICA 07</span>
+        <span class="pwa-eyebrow">WIREFRAME · PWA</span>
         <h1>Pantallas del rol</h1>
         <p>Selecciona una pantalla para abrirla en el marco web.</p>
       </div>
@@ -71,7 +87,7 @@
       <div id="pwaScreenList" class="pwa-screen-list"></div>
     </aside>
 
-    <section class="pwa-stage" aria-label="Prototipo de escritorio">
+    <section class="pwa-stage" aria-label="Wireframe de escritorio">
       <div class="pwa-stage-label"><span id="pwaScreenLabel">LANDING</span><span>1440 × 900</span></div>
       <div class="pwa-window" role="region" aria-label="Ventana del navegador">
         <div class="pwa-window-bar">
@@ -81,7 +97,7 @@
         </div>
         <div class="pwa-window-screen" id="pwaScreen" aria-live="polite"></div>
       </div>
-      <div class="pwa-stage-footer"><button class="pwa-back-button" id="pwaBack" type="button">← Atrás</button><span id="pwaRoleCaption">ESTUDIANTE</span><span>WIREFRAME WEB · V1.0</span></div>
+      <div class="pwa-stage-footer"><button class="pwa-back-button" id="pwaBack" type="button">← Atrás</button><span id="pwaRoleCaption">ESTUDIANTE</span><span>WIREFRAME PWA · V1.0</span></div>
     </section>
 
     <aside class="pwa-panel pwa-nav-panel" aria-label="Destinos de navegación PWA">
@@ -97,7 +113,7 @@
   <section id="pwaMapView" class="pwa-map-view" aria-label="Mapa de navegación PWA" hidden>
     <div class="pwa-map-heading">
       <div>
-        <span class="pwa-eyebrow">MAPA DE PANTALLAS · PWA</span>
+        <span class="pwa-eyebrow">MAPA DE PANTALLAS · WIREFRAME PWA</span>
         <h2>Mapa de navegación de escritorio</h2>
         <p>Selecciona una miniatura para abrir esa pantalla en el prototipo.</p>
       </div>
@@ -109,19 +125,24 @@
     <div class="pwa-map-canvas" id="pwaMapCanvas"></div>
   </section>
 
-  <section id="pencilView" class="pencil-view" aria-label="Dibujos a lápiz" hidden>
+  <section id="pencilView" class="pencil-view" aria-label="Sketches de baja fidelidad" hidden>
     <div class="pencil-header">
       <div class="pencil-heading">
-        <span class="pencil-eyebrow">BOCETOS A LÁPIZ</span>
-        <h2>Dibujos a lápiz</h2>
-        <p>23 láminas basadas en los mismos datos de pantallas. Apariencia de boceto a grafito sobre papel.</p>
+        <span class="pencil-eyebrow">SKETCHES · BAJA FIDELIDAD</span>
+        <h2>Sketches</h2>
+        <p>23 láminas de lápiz sobre papel generadas con los mismos datos de pantallas. Sin color de marca, solo cajas, líneas y notas a mano.</p>
       </div>
-      <div class="pencil-controls" role="group" aria-label="Controles de vista de lápiz">
-        <div class="pencil-role-switch" role="tablist" aria-label="Seleccionar rol para dibujos">
+      <div class="pencil-controls" role="group" aria-label="Controles de la sección Sketches">
+        <div class="pencil-role-switch" role="tablist" aria-label="Seleccionar rol para sketches">
           <button type="button" class="pencil-role-tab active" data-pencil-role="student">Estudiante</button>
           <button type="button" class="pencil-role-tab" data-pencil-role="admin">Administrador</button>
         </div>
+        <div class="pencil-platform-switch" role="tablist" aria-label="Seleccionar plataforma para sketches">
+          <button type="button" class="pencil-platform-tab active" data-pencil-platform="mobile">Móvil</button>
+          <button type="button" class="pencil-platform-tab" data-pencil-platform="pwa">PWA</button>
+        </div>
         <button type="button" class="pencil-quiet-button" id="pencilDownloadAll">Descargar todas</button>
+        <button type="button" class="pencil-quiet-button" data-fidelity-jump>Ver en otra fidelidad</button>
       </div>
     </div>
     <div class="pencil-gallery-wrap">
@@ -138,6 +159,7 @@
           <h3 id="pencilModalTitle" class="pencil-modal-title"></h3>
         </div>
         <div class="pencil-modal-actions">
+          <button type="button" class="pencil-quiet-button" data-fidelity-jump>Ver en otra fidelidad</button>
           <button type="button" class="pencil-quiet-button" id="pencilDownloadOne">Descargar lámina (PNG)</button>
           <button type="button" class="pencil-icon-button" data-pencil-close aria-label="Cerrar">×</button>
         </div>
@@ -153,6 +175,46 @@
     </div>
   </div>
 
+  <main id="mockupsView" class="mk-workspace" hidden aria-label="Mockups de alta fidelidad">
+    <aside class="mk-panel mk-screens-panel" aria-label="Pantallas del rol en mockups">
+      <div class="mk-panel-heading">
+        <span class="mk-eyebrow">MOCKUPS · ALTA FIDELIDAD</span>
+        <h1>Pantallas del rol</h1>
+        <p>Diseño final con identidad SICPES, estados, imágenes e interacción.</p>
+      </div>
+      <div class="mk-role-switch" role="tablist" aria-label="Seleccionar rol en mockups">
+        <button type="button" class="mk-role-tab active" data-mk-role="student">Estudiante</button>
+        <button type="button" class="mk-role-tab" data-mk-role="admin">Administrador</button>
+      </div>
+      <div class="mk-platform-switch" role="tablist" aria-label="Seleccionar plataforma en mockups">
+        <button type="button" class="mk-platform-tab active" data-mk-platform="mobile">Móvil</button>
+        <button type="button" class="mk-platform-tab" data-mk-platform="pwa">PWA</button>
+      </div>
+      <div id="mkScreenList" class="mk-screen-list"></div>
+    </aside>
+
+    <section class="mk-stage" aria-label="Vista de mockup">
+      <div class="mk-stage-label"><span id="mkScreenLabel">E1 · LANDING</span><span id="mkSize">390 × 844</span></div>
+      <div class="mk-frame" id="mkFrame"><div class="mk-viewport" id="mkCanvas" aria-live="polite"></div></div>
+      <div class="mk-stage-footer">
+        <button type="button" class="mk-back" id="mkBack">← Atrás</button>
+        <span id="mkRoleCaption">ESTUDIANTE</span>
+        <button type="button" class="mk-jump" data-fidelity-jump>Ver en otra fidelidad</button>
+      </div>
+    </section>
+
+    <aside class="mk-panel mk-nav-panel" aria-label="Destinos de navegación del mockup">
+      <section class="mk-destinations">
+        <h2>Desde aquí puedes ir a:</h2>
+        <div id="mkDestinations"></div>
+      </section>
+      <div class="mk-legend"><i></i> Acción principal</div>
+      <div id="mkScreenCount" class="mk-screen-count"></div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="pwa-toast" id="pwaToast" role="status" aria-live="polite"></div>
+  <div class="mk-toast" id="mkToast" role="status" aria-live="polite"></div>
 </body>
 </html>

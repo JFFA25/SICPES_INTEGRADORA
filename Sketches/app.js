@@ -458,6 +458,20 @@ document.addEventListener('change',e=>{
 });
   document.querySelector('#backButton').addEventListener('click',back);
 
+/* Puente de la sección Wireframes: conserva el rol al saltar entre fidelidades. */
+window.SicpesWireframeMobile = {
+  showScreen: function (id, role) {
+    if (!SCREENS[id]) return;
+    if (role === 'student' || role === 'admin') state.role = role;
+    else if (SCREENS[id].role === 'student' || SCREENS[id].role === 'admin') state.role = SCREENS[id].role;
+    state.screen = id;
+    state.history = [];
+    render();
+  },
+  getScreen: function () { return state.screen; },
+  getRole: function () { return state.role; }
+};
+
 document.querySelector('#diagramToggle').addEventListener('click',openDiagram);
 document.querySelector('#downloadDiagram').addEventListener('click',downloadDiagramPNG);
 document.querySelector('#zonesToggle').addEventListener('click',()=>{state.zones=!state.zones;document.body.classList.toggle('zones-on',state.zones);document.querySelector('#zonesToggle').textContent=state.zones?'Ocultar zonas clicables':'Mostrar zonas clicables';});
