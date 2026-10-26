@@ -15,8 +15,9 @@
   height: 100%;
   cursor: default;
   border-radius: 4px;
-  filter: drop-shadow(0 22px 36px rgba(15, 20, 28, 0.35));
-  transition: filter 220ms ease;
+  /* Sin filter/drop-shadow aquí: un filtro CSS sobre el <svg> dentro de la lámina
+     escalada (transform: scale) hace que Chrome rasterice el boceto a otra escala
+     y los trazos/ textos se desalineen y "se muevan". La sombra la da .surface-viewport. */
 }
 
 #pencilStage:focus-visible {

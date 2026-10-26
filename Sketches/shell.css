@@ -503,7 +503,8 @@ body.shell-section-mockups {
   top: 0;
   left: 0;
   transform-origin: top left;
-  will-change: transform;
+  /* Sin will-change: transform: Chrome fija la rasterización a la escala inicial y el
+     boceto/pantalla se recorta o se desalinea cuando refit() cambia el scale. */
 }
 
 .render-surface[hidden],

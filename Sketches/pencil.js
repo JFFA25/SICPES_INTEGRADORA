@@ -70,7 +70,12 @@
       const r = rough.svg(svg);
       const api = {};
       ['rectangle', 'line', 'circle', 'ellipse', 'path', 'polygon', 'linearPath', 'curve', 'arc'].forEach(function (name) {
-        api[name] = function () { return r[name].apply(r, arguments); };
+        api[name] = function () {
+          // rough.svg() solo CREA el nodo; hay que insertarlo para que se dibuje
+          const el = r[name].apply(r, arguments);
+          if (el && el.nodeType === 1) svg.appendChild(el);
+          return el;
+        };
       });
       return api;
     }
@@ -283,9 +288,14 @@
       if (p.style === 'hatched') {
         cR.rectangle(p.x, p.y, p.w, p.h, {
           stroke: PEN, strokeWidth: 2.2, fill: PEN, fillStyle: 'hachure',
-          fillWeight: 1.5, hachureAngle: -42, hachureGap: 3.2, roughness: 0.85
+          fillWeight: 1.2, hachureAngle: -42, hachureGap: 4.5, roughness: 0.85
         });
-        centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: '#FFFDF8', weight: 700, display: true });
+        const label = centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: PEN, weight: 700, display: true });
+        // Halo de papel para que el texto se lea sobre el sombreado
+        label.setAttribute('stroke', '#FFFDF8');
+        label.setAttribute('stroke-width', '4');
+        label.setAttribute('stroke-linejoin', 'round');
+        label.setAttribute('paint-order', 'stroke');
       } else if (p.style === 'link') {
         text(container, p.x, p.y + (p.h || 20) / 2 + 5, p.text || '', 12, { weight: 700, fill: PEN });
         line(cR, p.x, p.y + (p.h || 20) / 2 + 8, p.x + Math.min(p.w, p.text.length * 7), p.y + (p.h || 20) / 2 + 8, 1.2);
@@ -559,7 +569,9 @@
       return svg;
     }
 
-    const group = node('g', { filter: 'url(#pencil-wobble)' });
+    // Sin filtro SVG: feDisplacementMap + escala CSS desalineaba los trazos respecto al texto.
+    // rough.js ya da el aspecto de trazo a mano.
+    const group = node('g', {});
     svg.appendChild(group);
 
     const r = roughIn(group);
