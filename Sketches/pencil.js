@@ -1,89 +1,811 @@
-/* Pencil renderer using declarative specs */
 (function () {
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  const PEN = '#111111';
-  const RED = '#D32F2F';
-  const BLUE = '#80DEEA';
-  const YELLOW = '#FFF176';
+  'use strict';
 
-  const state = { role: 'student', activeIndex: 0, sheets: [] };
+  const NS = 'http://www.w3.org/2000/svg';
+  const PEN = '#171717';
+  const PAPER = '#FFFDF8';
+  const NOTE = '#FFF2A8';
+  const STICKY_TEXT = '#3D3520';
+  const HAND = "'Patrick Hand', 'Caveat', cursive, system-ui";
+  const DISPLAY = "'Caveat', 'Patrick Hand', cursive, system-ui";
+
+  const STUDENT = ['landing', 'studentLogin', 'forgotPassword', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile'];
+  const ADMIN = ['adminLogin', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings'];
+  const NAV_SCREENS = new Set(['home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings']);
+
+  function activeNav(id) {
+    if (id === 'home' || id === 'requestStatus' || id === 'rateConfirm') return 'home';
+    if (id === 'reserve' || id === 'roomDetail') return 'reserve';
+    if (id === 'payments' || id === 'paymentDetail') return 'payments';
+    if (id === 'profile' || id === 'rateService') return 'profile';
+    if (id === 'reservations' || id === 'assignRoom') return 'reservations';
+    if (id === 'pendingPayments' || id === 'validatePayment' || id === 'debts') return 'pendingPayments';
+    if (id === 'floors') return 'floors';
+    if (id === 'settings') return 'settings';
+    return '';
+  }
+
+  function menuFor(role, platform) {
+    return role === 'admin'
+      ? [['reservations', 'Reservaciones'], ['pendingPayments', 'Pagos'], ['floors', 'Pisos'], ['settings', 'Configuración']]
+      : [['home', 'Inicio'], ['reserve', platform === 'pwa' ? 'Reservar' : 'Peticiones'], ['payments', 'Pagos'], ['profile', 'Cuenta']];
+  }
 
   const META = {
-    landing:{code:'E1',title:'LANDING',sketch:1}, studentLogin:{code:'E2',title:'INICIAR SESIÓN',sketch:2}, forgotPassword:{code:'E3',title:'RECUPERAR CONTRASEÑA',sketch:3}, register:{code:'E4',title:'CREAR CUENTA',sketch:4}, verifyEmail:{code:'E5',title:'VERIFICAR CORREO',sketch:5}, loading:{code:'E6',title:'SINCRONIZANDO',sketch:6}, home:{code:'E7',title:'INICIO',sketch:7}, reserve:{code:'E8',title:'RESERVAR HABITACIÓN',sketch:8}, roomDetail:{code:'E9',title:'DETALLE DE HABITACIÓN',sketch:9}, requestStatus:{code:'E10',title:'ESTADO DE MI PETICIÓN',sketch:10}, payments:{code:'E11',title:'GESTIÓN DE PAGOS',sketch:11}, paymentDetail:{code:'E12',title:'DETALLE DE PAGO',sketch:12}, rateService:{code:'E13',title:'EVALUAR EL SERVICIO',sketch:13}, rateConfirm:{code:'E14',title:'EVALUACIÓN ENVIADA',sketch:14}, profile:{code:'E15',title:'CUENTA / PERFIL',sketch:15},
-    adminLogin:{code:'A1',title:'ACCESO ADMINISTRADOR',sketch:16}, reservations:{code:'A2',title:'RESERVACIONES',sketch:17}, assignRoom:{code:'A3',title:'ASIGNAR HABITACIÓN',sketch:18}, pendingPayments:{code:'A4',title:'PAGOS PENDIENTES',sketch:19}, validatePayment:{code:'A5',title:'VALIDAR PAGO',sketch:20}, debts:{code:'A6',title:'ADEUDOS',sketch:21}, floors:{code:'A7',title:'PISOS',sketch:22}, settings:{code:'A8',title:'CONFIGURACIÓN GLOBAL',sketch:23}
+    landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
+    forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, register: { code: 'E4', title: 'CREAR CUENTA' },
+    verifyEmail: { code: 'E5', title: 'VERIFICAR CORREO' }, loading: { code: 'E6', title: 'SINCRONIZANDO' },
+    home: { code: 'E7', title: 'INICIO' }, reserve: { code: 'E8', title: 'RESERVAR HABITACIÓN' },
+    roomDetail: { code: 'E9', title: 'DETALLE DE HABITACIÓN' }, requestStatus: { code: 'E10', title: 'ESTADO DE MI PETICIÓN' },
+    payments: { code: 'E11', title: 'GESTIÓN DE PAGOS' }, paymentDetail: { code: 'E12', title: 'DETALLE DE PAGO' },
+    rateService: { code: 'E13', title: 'EVALUAR EL SERVICIO' }, rateConfirm: { code: 'E14', title: 'EVALUACIÓN ENVIADA' },
+    profile: { code: 'E15', title: 'CUENTA / PERFIL' }, adminLogin: { code: 'A1', title: 'ACCESO ADMINISTRADOR' },
+    reservations: { code: 'A2', title: 'RESERVACIONES' }, assignRoom: { code: 'A3', title: 'ASIGNAR HABITACIÓN' },
+    pendingPayments: { code: 'A4', title: 'PAGOS PENDIENTES' }, validatePayment: { code: 'A5', title: 'VALIDAR PAGO' },
+    debts: { code: 'A6', title: 'ADEUDOS' }, floors: { code: 'A7', title: 'PISOS' }, settings: { code: 'A8', title: 'CONFIGURACIÓN GLOBAL' }
   };
 
-  const IDS_ST = ['landing','studentLogin','forgotPassword','register','verifyEmail','loading','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile'];
-  const IDS_AD = ['adminLogin','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings'];
+  const CODE_TO_ID = {};
+  Object.keys(META).forEach(function (id) {
+    CODE_TO_ID[META[id].code] = id;
+  });
 
-  function getR(svg){
-    const g=rough.svg(svg);const w={};
-    ['rectangle','line','circle','ellipse','path','polygon','linearPath','curve','arc'].forEach(function(k){
-      w[k]=function(){const n=g[k].apply(g,arguments);svg.appendChild(n);return n;};
+  const state = { role: 'student', platform: 'mobile', screen: 'landing' };
+  let lastFocus = null;
+
+  function node(name, attrs) {
+    const item = document.createElementNS(NS, name);
+    Object.keys(attrs || {}).forEach(function (key) { item.setAttribute(key, attrs[key]); });
+    return item;
+  }
+
+  function sizeFor(platform) {
+    return platform === 'pwa'
+      ? { width: 1200, height: 820, tx: 0 }
+      : { width: 440, height: 880, tx: 0 };
+  }
+
+  function roughIn(svg) {
+    if (typeof rough !== 'undefined') {
+      const r = rough.svg(svg);
+      const api = {};
+      ['rectangle', 'line', 'circle', 'ellipse', 'path', 'polygon', 'linearPath', 'curve', 'arc'].forEach(function (name) {
+        api[name] = function () {
+          // rough.svg() solo CREA el nodo; hay que insertarlo para que se dibuje
+          const el = r[name].apply(r, arguments);
+          if (el && el.nodeType === 1) svg.appendChild(el);
+          return el;
+        };
+      });
+      return api;
+    }
+    // Fallback simple si rough no está cargado
+    return {
+      rectangle: function (x, y, w, h, opts) {
+        const el = node('rect', { x: x, y: y, width: w, height: h, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8, rx: 3 });
+        svg.appendChild(el);
+        return el;
+      },
+      line: function (x1, y1, x2, y2, opts) {
+        const el = node('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        svg.appendChild(el);
+        return el;
+      },
+      circle: function (x, y, d, opts) {
+        const el = node('circle', { cx: x, cy: y, r: d / 2, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        svg.appendChild(el);
+        return el;
+      }
+    };
+  }
+
+  function rect(r, x, y, w, h, extra) {
+    const options = Object.assign({ stroke: PEN, strokeWidth: 1.8, roughness: 0.9, bowing: 0.7, fill: PAPER, fillStyle: 'solid' }, extra || {});
+    return r.rectangle(x, y, w, h, options);
+  }
+
+  function line(r, x1, y1, x2, y2, width) {
+    return r.line(x1, y1, x2, y2, { stroke: PEN, strokeWidth: width || 1.8, roughness: 0.8, bowing: 0.6 });
+  }
+
+  function text(svg, x, y, value, size, options) {
+    const opts = options || {};
+    const item = node('text', {
+      x: x, y: y, fill: opts.fill || PEN, 'font-family': opts.display ? DISPLAY : HAND,
+      'font-size': size || 15, 'font-weight': opts.weight || 400, 'text-anchor': opts.anchor || 'start'
     });
-    return w;
-  }
-  function penRect(r,x,y,w,h,o){o=o||{};r.rectangle(x,y,w,h,{stroke:o.stroke||PEN,strokeWidth:o.strokeWidth||2.2,roughness:o.roughness||1.0,bowing:o.bowing||0.8,fill:o.fill,fillStyle:o.fill?'hachure':undefined,fillWeight:o.fillWeight||1.2,hachureAngle:o.hachureAngle||-45,hachureGap:o.hachureGap||4});}
-  function penLine(r,x1,y1,x2,y2,o){o=o||{};r.line(x1,y1,x2,y2,{stroke:o.stroke||PEN,strokeWidth:o.strokeWidth||2.0,roughness:o.roughness||0.9,bowing:o.bowing||0.7});}
-  function txt(svg,x,y,t,s,w){const e=document.createElementNS(SVG_NS,'text');e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('font-family','Caveat, Patrick Hand, cursive');e.setAttribute('font-size',s||18);e.setAttribute('font-weight',w||700);e.setAttribute('fill',PEN);e.textContent=t||'';svg.appendChild(e);return e;}
-
-  function prim(r,svg,p){
-    if(p.type==='browserFrame'){penRect(r,p.x,p.y,p.w,p.h,{strokeWidth:2.2});penLine(r,p.x,p.y+26,p.x+p.w,p.y+26,{strokeWidth:2.0});penLine(r,p.x+14,p.y+13,p.x+22,p.y+13,{strokeWidth:2.4});penLine(r,p.x+30,p.y+13,p.x+38,p.y+13,{strokeWidth:2.4});penLine(r,p.x+46,p.y+13,p.x+54,p.y+13,{strokeWidth:2.4});penRect(r,p.x+72,p.y+8,p.w-140,14,{strokeWidth:1.8});txt(svg,p.x+80,p.y+19,'app.sicpes.mx',10,700);}
-    else if(p.type==='phoneFrame'){penRect(r,p.x,p.y,p.w,p.h,{strokeWidth:2.2});r.rectangle(p.x+8,p.y+8,p.w-16,p.h-16,{stroke:PEN,strokeWidth:1.8,roughness:1.0});penLine(r,p.x+p.w/2-26,p.y+6,p.x+p.w/2+26,p.y+6,{strokeWidth:1.8});}
-    else if(p.type==='sideNav'){r.rectangle(p.x,p.y,p.w,p.h||680,{stroke:PEN,strokeWidth:2.0,roughness:1.0});(p.items||[]).forEach((it,i)=>{txt(svg,p.x+12,p.y+30+i*26,it,14,700);});}
-    else if(p.type==='header'){r.rectangle(p.x,p.y,p.w,p.h,{stroke:'none',fill:BLUE,fillStyle:'solid',roughness:0.6});txt(svg,p.x+12,p.y+18,p.label||'SICPES',16,700);}
-    else if(p.type==='title'){txt(svg,p.x,p.y,p.text||'',p.size||28,700);}
-    else if(p.type==='subtitle'){txt(svg,p.x,p.y,p.text||'',p.size||16,700);}
-    else if(p.type==='paragraph'){for(let i=0;i<(p.lines||3);i++){const len=(p.w||200)*(0.6+Math.random()*0.35);const yy=p.y+i*10;const path=document.createElementNS(SVG_NS,'path');const mx=p.x+len/2+(Math.random()-0.5)*6;path.setAttribute('d',`M ${p.x+(Math.random()-0.5)*2} ${yy} Q ${mx} ${yy+(Math.random()-0.5)*3} ${p.x+len+(Math.random()-0.5)*2} ${yy}`);path.setAttribute('fill','none');path.setAttribute('stroke',PEN);path.setAttribute('stroke-width','2.0');path.setAttribute('stroke-linecap','round');svg.appendChild(path);}}
-    else if(p.type==='image'){penRect(r,p.x,p.y,p.w,p.h,{strokeWidth:2.2});r.rectangle(p.x+3,p.y+3,p.w-6,p.h-6,{stroke:'none',fill:YELLOW,fillStyle:'solid',roughness:0.6});penLine(r,p.x,p.y,p.x+p.w,p.y+p.h,{strokeWidth:2.0});penLine(r,p.x+p.w,p.y,p.x,p.y+p.h,{strokeWidth:2.0});}
-    else if(p.type==='field'){txt(svg,p.x,p.y-4,p.label||'',13,700);penRect(r,p.x,p.y,p.w,24,{strokeWidth:1.8});}
-    else if(p.type==='button'){if(p.style==='hatched'){r.rectangle(p.x,p.y,p.w,p.h,{stroke:PEN,strokeWidth:2.2,fill:PEN,fillStyle:'hachure',fillWeight:1.6,hachureAngle:-45,hachureGap:3,roughness:1.0});}else{penRect(r,p.x,p.y,p.w,p.h,{strokeWidth:2.2});}txt(svg,p.x+p.w/2,p.y+p.h/2+6,p.text||'',p.style==='hatched'?16:16,700);const t=svg.lastChild;if(t)t.setAttribute('text-anchor','middle');if(p.style==='hatched')t.setAttribute('fill','#fff');}
-    else if(p.type==='card'){penRect(r,p.x,p.y,p.w,p.h,{strokeWidth:2.0});}
-    else if(p.type==='table'){penRect(r,p.x,p.y,p.w,26,{strokeWidth:2.0});(p.headers||[]).forEach((h,i)=>{txt(svg,p.x+10+i*90,p.y+18,h,13,700);});(p.rows||[]).forEach((row,ri)=>{penLine(r,p.x,p.y+26+ri*34,p.x+p.w,p.y+26+ri*34,{strokeWidth:1.8});row.forEach((cell,ci)=>{txt(svg,p.x+10+ci*90,p.y+26+ri*34+20,String(cell),14,700);});});}
-    else if(p.type==='tabs'){(p.items||[]).forEach((it,i)=>{const x=p.x+i*90;if(i===p.active){r.rectangle(x,p.y,80,22,{stroke:PEN,strokeWidth:2.0,fill:PEN,fillStyle:'hachure',fillWeight:1.4,hachureAngle:-45,hachureGap:3,roughness:1.0});txt(svg,x+40,p.y+15,it,14,700);const t=svg.lastChild;t.setAttribute('text-anchor','middle');t.setAttribute('fill','#fff');}else{penRect(r,x,p.y,80,22,{strokeWidth:2.0});txt(svg,x+40,p.y+15,it,14,700);const t=svg.lastChild;t.setAttribute('text-anchor','middle');}});}
-    else if(p.type==='bottomNav'){r.rectangle(p.x,p.y,p.w,40,{stroke:PEN,strokeWidth:2.0,roughness:1.0});(p.items||[]).forEach((it,i)=>{const iw=p.w/(p.items.length||4);if(i===p.active){r.rectangle(p.x+i*iw+8,p.y+4,iw-16,32,{stroke:PEN,strokeWidth:2.0,fill:PEN,fillStyle:'hachure',fillWeight:1.2,hachureAngle:-45,hachureGap:3,roughness:1.0});txt(svg,p.x+i*iw+iw/2,p.y+24,it,12,700);const t=svg.lastChild;t.setAttribute('text-anchor','middle');t.setAttribute('fill','#fff');}else{txt(svg,p.x+i*iw+iw/2,p.y+24,it,12,700);const t=svg.lastChild;t.setAttribute('text-anchor','middle');}});}
-    else if(p.type==='chip'){penRect(r,p.x,p.y,p.w||70,p.h||18,{strokeWidth:2.0});txt(svg,p.x+8,p.y+13,p.text||'',12,700);}
-    else if(p.type==='list'){(p.items||[]).forEach((it,i)=>{r.circle(p.x+6,p.y+i*18+6,4,{stroke:PEN,strokeWidth:1.8});txt(svg,p.x+18,p.y+i*18+12,it,14,700);});}
-    else if(p.type==='note'){const ax=p.target&&p.target.x||p.x-40, ay=p.target&&p.target.y||p.y;const path=document.createElementNS(SVG_NS,'path');path.setAttribute('d',`M ${ax} ${ay} Q ${(ax+p.x)/2} ${(ay+p.y)/2 - 10} ${p.x} ${p.y}`);path.setAttribute('fill','none');path.setAttribute('stroke',p.color||RED);path.setAttribute('stroke-width','2.2');path.setAttribute('stroke-linecap','round');svg.appendChild(path);const marker=document.createElementNS(SVG_NS,'marker');marker.setAttribute('id','arr'+Math.random());marker.setAttribute('markerWidth','8');marker.setAttribute('markerHeight','6');marker.setAttribute('refX','7');marker.setAttribute('refY','3');marker.setAttribute('orient','auto');const pm=document.createElementNS(SVG_NS,'path');pm.setAttribute('d','M0,0 L0,6 L8,3 z');pm.setAttribute('fill',p.color||RED);marker.appendChild(pm);if(!svg.querySelector('defs')){const d=document.createElementNS(SVG_NS,'defs');svg.appendChild(d);}svg.querySelector('defs').appendChild(marker);path.setAttribute('marker-end','url(#'+marker.getAttribute('id')+')');const t=txt(svg,p.x+6,p.y-2,p.text||'',p.size||16,700);t.setAttribute('fill',p.color||RED);}
+    if (opts.spacing) item.setAttribute('letter-spacing', opts.spacing);
+    if (opts.transform) item.setAttribute('transform', opts.transform);
+    item.textContent = value == null ? '' : String(value);
+    svg.appendChild(item);
+    return item;
   }
 
-  function drawDuo(svg,id){
-    const r=getR(svg);
-    const spec=(window.PENCIL_SCREENS||{})[id];
-    if(!spec){console.error('[pencil] FALTA DEFINIR',id);const t=txt(svg,200,200,'FALTA DEFINIR '+id,28,700);t.setAttribute('fill',RED);return;}
-    const dw=660, dh=820;
-    const mx=40, mx2=40+dw+120;
-    const gD=document.createElementNS(SVG_NS,'g');gD.setAttribute('transform','translate(0,60)');svg.appendChild(gD);const rD=getR(gD);
-    if(spec.desktop){spec.desktop.forEach(p=>prim(rD,gD,p));}
-    const ap=document.createElementNS(SVG_NS,'path');ap.setAttribute('d',`M ${mx+dw+40} ${90 + (dh-120)/2} L ${mx+dw+80} ${90 + (dh-120)/2} M ${mx+dw+64} ${90 + (dh-120)/2 - 16} L ${mx+dw+80} ${90 + (dh-120)/2} L ${mx+dw+64} ${90 + (dh-120)/2 + 16}`);ap.setAttribute('fill','none');ap.setAttribute('stroke',PEN);ap.setAttribute('stroke-width','2.6');ap.setAttribute('stroke-linecap','round');svg.appendChild(ap);
-    const gM=document.createElementNS(SVG_NS,'g');gM.setAttribute('transform','translate('+mx2+',60)');svg.appendChild(gM);const rM=getR(gM);
-    if(spec.mobile){spec.mobile.forEach(p=>prim(rM,gM,p));}
-    txt(svg,mx,36,`SICPES · ${META[id]&&META[id].code||''} ${META[id]&&META[id].title||id}`,16,700);
-    txt(svg,mx,56,`Sketch #${META[id]&&META[id].sketch||''}`,14,700);
-    txt(svg,mx+10,dh+85,'1440 px',16,700);
-    txt(svg,mx2+10,dh+85,'390 px',16,700);
-    
+  function centeredText(svg, x, y, value, size, options) {
+    return text(svg, x, y, value, size, Object.assign({ anchor: 'middle' }, options || {}));
   }
 
-  function getSheets(){const ids=state.role==='student'?IDS_ST:IDS_AD;return ids.map(id=>({id,...(META[id]||{})}));}
-  function renderGallery(){const g=document.getElementById('pencilGallery');if(!g)return;g.innerHTML='';if(typeof rough==='undefined'){g.innerHTML='<p style="color:#f5f7fa;font-family:sans-serif">No se pudo cargar rough.min.js. Verifica que el archivo exista junto a index.html.</p>';return;}const sheets=getSheets();state.sheets=sheets;sheets.forEach((sheet,idx)=>{const el=document.createElement('article');el.className='pencil-sheet';el.tabIndex=0;const h=document.createElement('div');h.className='pencil-sheet-header';h.innerHTML=`<span class="pencil-sheet-topline">SICPES · ${sheet.code} ${sheet.title}</span><span class="pencil-sheet-subline">Sketch #${sheet.sketch}</span>`;el.appendChild(h);const fw=document.createElement('div');fw.className='pencil-sheet-frame';const svg=document.createElementNS(SVG_NS,'svg');svg.setAttribute('viewBox','0 0 1500 960');svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.setAttribute('width','100%');svg.setAttribute('height','100%');const bg=document.createElementNS(SVG_NS,'rect');bg.setAttribute('x','0');bg.setAttribute('y','0');bg.setAttribute('width','1500');bg.setAttribute('height','960');bg.setAttribute('fill','#ffffff');svg.appendChild(bg);drawDuo(svg,sheet.id);fw.appendChild(svg);el.appendChild(fw);el.addEventListener('click',()=>openModal(idx));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(idx);}});g.appendChild(el);});}
-  function renderModal(){const ms=document.getElementById('pencilModalSheet');if(!ms)return;ms.innerHTML='';const sheet=state.sheets[state.activeIndex];if(!sheet)return;const svg=document.createElementNS(SVG_NS,'svg');svg.setAttribute('viewBox','0 0 1500 960');svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.setAttribute('width','100%');svg.setAttribute('height','auto');const bg=document.createElementNS(SVG_NS,'rect');bg.setAttribute('x','0');bg.setAttribute('y','0');bg.setAttribute('width','1500');bg.setAttribute('height','960');bg.setAttribute('fill','#ffffff');svg.appendChild(bg);drawDuo(svg,sheet.id);ms.appendChild(svg);document.getElementById('pencilModalTitle').textContent=sheet.title;document.getElementById('pencilModalCode').textContent=sheet.code;document.getElementById('pencilModalRole').textContent=sheet.role==='Compartido'?'Compartido/Estudiante':(sheet.role||'');}
-  function openModal(i){state.activeIndex=i;renderModal();document.getElementById('pencilModal').hidden=false;}
-  function closeModal(){document.getElementById('pencilModal').hidden=true;}
-  function nav(d){if(!state.sheets.length)return;state.activeIndex=(state.activeIndex+d+state.sheets.length)%state.sheets.length;renderModal();}
-  function svgToPng(svg,fn){const ser=new XMLSerializer();let s=ser.serializeToString(svg);if(!s.match(/^<svg[^>]+xmlns=/))s=s.replace(/^<svg/,'<svg xmlns="http://www.w3.org/2000/svg"');const blob=new Blob([s],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=function(){const c=document.createElement('canvas');const sc=2;c.width=(img.width||1500)*sc;c.height=(img.height||960)*sc;const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);const a=document.createElement('a');a.download=fn;a.href=c.toDataURL('image/png');a.click();URL.revokeObjectURL(url);};img.src=url;}
-  function dlCur(){const sheet=state.sheets[state.activeIndex];if(!sheet)return;const svg=document.createElementNS(SVG_NS,'svg');svg.setAttribute('viewBox','0 0 1500 960');svg.setAttribute('xmlns',SVG_NS);const bg=document.createElementNS(SVG_NS,'rect');bg.setAttribute('x','0');bg.setAttribute('y','0');bg.setAttribute('width','1500');bg.setAttribute('height','960');bg.setAttribute('fill','#ffffff');svg.appendChild(bg);drawDuo(svg,sheet.id);svgToPng(svg,`sicpes-boceto-${sheet.code}.png`);}
-  async function dlAll(){const sheets=state.sheets;for(let i=0;i<sheets.length;i++){const svg=document.createElementNS(SVG_NS,'svg');svg.setAttribute('viewBox','0 0 1500 960');svg.setAttribute('xmlns',SVG_NS);const bg=document.createElementNS(SVG_NS,'rect');bg.setAttribute('x','0');bg.setAttribute('y','0');bg.setAttribute('width','1500');bg.setAttribute('height','960');bg.setAttribute('fill','#ffffff');svg.appendChild(bg);drawDuo(svg,sheets[i].id);svgToPng(svg,`sicpes-boceto-${sheets[i].code}.png`);await new Promise(r=>setTimeout(r,150));}}
-
-  function init(){
-    document.querySelectorAll('[data-pencil-role]').forEach(b=>b.addEventListener('click',()=>{state.role=b.dataset.pencilRole;document.querySelectorAll('[data-pencil-role]').forEach(x=>x.classList.toggle('active',x===b));renderGallery();}));
-    document.querySelectorAll('[data-pencil-close]').forEach(b=>b.addEventListener('click',closeModal));
-    const d1=document.getElementById('pencilDownloadOne');if(d1)d1.addEventListener('click',dlCur);
-    const da=document.getElementById('pencilDownloadAll');if(da)da.addEventListener('click',dlAll);
-    const np=document.getElementById('pencilNavPrev');const nn=document.getElementById('pencilNavNext');if(np)np.addEventListener('click',()=>nav(-1));if(nn)nn.addEventListener('click',()=>nav(1));
-    window.addEventListener('keydown',e=>{const m=document.getElementById('pencilModal');if(m&&!m.hidden){if(e.key==='Escape'){e.preventDefault();closeModal();}if(e.key==='ArrowRight'){e.preventDefault();nav(1);}if(e.key==='ArrowLeft'){e.preventDefault();nav(-1);}}});
-    document.addEventListener('click',e=>{const vb=e.target.closest('[data-view]');if(vb&&vb.dataset.view==='pencil'){renderGallery();}});
-    renderGallery();
+  function fit(value, max) {
+    const str = String(value == null ? '' : value);
+    return str.length > max ? str.slice(0, Math.max(1, max - 1)) + '…' : str;
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+  function resolveScreenFromCode(str) {
+    if (!str) return null;
+    const match = String(str).match(/\b([EA][1-9]|E1[0-5]|A[1-8])\b/);
+    if (match && CODE_TO_ID[match[1]]) return CODE_TO_ID[match[1]];
+    return null;
+  }
+
+  function wrapInteractive(svg, dest, label, callback) {
+    if (!dest) {
+      callback(svg);
+      return;
+    }
+    const targetMeta = META[dest] || { code: '', title: dest };
+    const titleText = 'Ir a: ' + (targetMeta.code ? targetMeta.code + ' · ' : '') + targetMeta.title;
+    const g = node('g', {
+      'class': 'pencil-interactive clickable',
+      'data-shell-go': dest,
+      'role': 'button',
+      'tabindex': '0',
+      'aria-label': label ? (label + ' (' + titleText + ')') : titleText
+    });
+    const tip = node('title');
+    tip.textContent = titleText;
+    g.appendChild(tip);
+    svg.appendChild(g);
+    callback(g);
+  }
+
+  // 1. Recuadro de etiqueta en la esquina superior izquierda [ E1 · LANDING ]
+  function drawTag(r, svg, p) {
+    const val = p.text || 'PANTALLA';
+    const tagW = Math.max(110, val.length * 7.8 + 22);
+    const tagH = 24;
+    r.rectangle(p.x, p.y, tagW, tagH, { stroke: PEN, strokeWidth: 1.8, fill: '#FFFFFF', fillStyle: 'solid', roughness: 0.6 });
+    text(svg, p.x + 10, p.y + 16, val, 11, { weight: 700, display: false, spacing: '0.08em' });
+  }
+
+  // 2. Marco de teléfono móvil con status bar
+  function drawPhoneFrame(r, svg, p) {
+    // Sombra suave a mano
+    rect(r, p.x + 8, p.y + 10, p.w, p.h, { fill: '#1E1E1E', stroke: '#1E1E1E', roughness: 0.5 });
+    // Carcasa principal
+    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 2.6, roughness: 0.7, fill: '#FFFFFF', fillStyle: 'solid' });
+    // Bocina / Altavoz superior
+    line(r, p.x + p.w / 2 - 32, p.y + 14, p.x + p.w / 2 + 32, p.y + 14, 2);
+    // Cámara frontal (círculo con X pequeño)
+    r.circle(p.x + p.w / 2 - 46, p.y + 14, 7, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
+    line(r, p.x + p.w / 2 - 48, p.y + 12, p.x + p.w / 2 - 44, p.y + 16, 1);
+    line(r, p.x + p.w / 2 - 44, p.y + 12, p.x + p.w / 2 - 48, p.y + 16, 1);
+    // Barra de estado: Hora 9:41 e indicadores simulados
+    text(svg, p.x + 22, p.y + 36, '9:41', 11, { weight: 700 });
+    // Iconos de señal y batería
+    line(r, p.x + p.w - 56, p.y + 33, p.x + p.w - 56, p.y + 26, 1.4);
+    line(r, p.x + p.w - 51, p.y + 33, p.x + p.w - 51, p.y + 23, 1.6);
+    line(r, p.x + p.w - 46, p.y + 33, p.x + p.w - 46, p.y + 20, 1.8);
+    // Batería
+    r.rectangle(p.x + p.w - 38, p.y + 24, 20, 10, { strokeWidth: 1.4, fill: 'none', roughness: 0.6 });
+    r.rectangle(p.x + p.w - 18, p.y + 27, 2.5, 4, { strokeWidth: 1.2, fill: PEN, fillStyle: 'solid' });
+    // Barra inferior home indicator
+    line(r, p.x + p.w / 2 - 45, p.y + p.h - 12, p.x + p.w / 2 + 45, p.y + p.h - 12, 2.8);
+  }
+
+  // 3. Marco de ventana de navegador (PWA) con barra de direcciones
+  function drawBrowserFrame(r, svg, p) {
+    rect(r, p.x + 8, p.y + 10, p.w, p.h, { fill: '#1E1E1E', stroke: '#1E1E1E', roughness: 0.5 });
+    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 2.6, roughness: 0.7, fill: '#FFFFFF', fillStyle: 'solid' });
+    // Barra superior
+    line(r, p.x, p.y + 36, p.x + p.w, p.y + 36, 1.8);
+    // 3 botones de ventana (o o o)
+    [0, 1, 2].forEach(function (i) {
+      r.circle(p.x + 18 + i * 16, p.y + 18, 9, { stroke: PEN, strokeWidth: 1.4, roughness: 0.5, fill: 'none' });
+    });
+    // Barra de direcciones URL
+    const urlBoxW = Math.min(p.w - 180, 560);
+    const urlBoxX = p.x + (p.w - urlBoxW) / 2;
+    rect(r, urlBoxX, p.y + 8, urlBoxW, 20, { strokeWidth: 1.3, roughness: 0.6, fill: '#F8F6F0' });
+    // Icono candado en URL
+    r.circle(urlBoxX + 14, p.y + 17, 6, { stroke: PEN, strokeWidth: 1.2, fill: 'none' });
+    text(svg, urlBoxX + 26, p.y + 22, p.url || 'https://app.sicpes.mx', 10, { fill: '#444' });
+    // Controles de minimizar / cerrar
+    text(svg, p.x + p.w - 48, p.y + 22, '— □ ×', 11, { fill: '#777' });
+  }
+
+  // 4. Imagen: cuadrado / rectángulo cruzado por una gran X
+  function drawImage(r, svg, p) {
+    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 1.9, roughness: 0.8 });
+    // Gran X de esquina a esquina
+    line(r, p.x + 4, p.y + 4, p.x + p.w - 4, p.y + p.h - 4, 1.5);
+    line(r, p.x + p.w - 4, p.y + 4, p.x + 4, p.y + p.h - 4, 1.5);
+    if (p.label) {
+      const lblW = Math.min(p.w - 12, p.label.length * 6.5 + 16);
+      r.rectangle(p.x + (p.w - lblW) / 2, p.y + (p.h - 18) / 2, lblW, 18, { fill: '#FFFDF8', stroke: PEN, strokeWidth: 1.2, roughness: 0.6 });
+      centeredText(svg, p.x + p.w / 2, p.y + (p.h) / 2 + 4, fit(p.label, 30), 10, { weight: 700 });
+    }
+  }
+
+  // 5. Avatar / Foto de perfil: círculo cruzado por una X
+  function drawAvatar(r, svg, p) {
+    const diam = (p.r || 16) * 2;
+    r.circle(p.x, p.y, diam, { stroke: PEN, strokeWidth: 1.8, roughness: 0.7, fill: '#FFFDF8' });
+    const rad = (p.r || 16) * 0.7;
+    line(r, p.x - rad, p.y - rad, p.x + rad, p.y + rad, 1.5);
+    line(r, p.x + rad, p.y - rad, p.x - rad, p.y + rad, 1.5);
+  }
+
+  // 6. Rayas horizontales de texto
+  function drawTextLines(r, svg, p) {
+    const count = p.count || 2;
+    const spacing = 10;
+    const thick = p.thickness || 1.8;
+    for (let i = 0; i < count; i++) {
+      const len = (p.lengths && p.lengths[i]) || (p.w ? p.w * (1 - i * 0.2) : 160);
+      const y = p.y + i * spacing;
+      line(r, p.x, y, p.x + len, y, thick);
+    }
+  }
+
+  // 7. Barra de búsqueda con lupa
+  function drawSearchBar(r, svg, p) {
+    rect(r, p.x, p.y, p.w, p.h || 34, { strokeWidth: 1.8, roughness: 0.75 });
+    // Lupa (círculo con palito)
+    r.circle(p.x + 16, p.y + (p.h || 34) / 2 - 1, 10, { stroke: PEN, strokeWidth: 1.5, fill: 'none' });
+    line(r, p.x + 20, p.y + (p.h || 34) / 2 + 3, p.x + 25, p.y + (p.h || 34) / 2 + 8, 1.8);
+    text(svg, p.x + 34, p.y + (p.h || 34) / 2 + 5, fit(p.placeholder || 'Buscar...', 40), 12, { fill: '#666' });
+  }
+
+  // 8. Chip / Pastilla
+  function drawChip(r, svg, p) {
+    const chipW = p.w || Math.max(50, (p.text || '').length * 7 + 18);
+    const chipH = p.h || 24;
+    const dest = p.go || null;
+    wrapInteractive(svg, dest, p.text, function (container) {
+      const cR = roughIn(container);
+      cR.rectangle(p.x, p.y, chipW, chipH, { stroke: PEN, strokeWidth: 1.6, roughness: 0.7, fill: p.active ? '#EAE5D4' : '#FFFDF8' });
+      centeredText(container, p.x + chipW / 2, p.y + chipH / 2 + 4, fit(p.text || '', 20), 10.5, { weight: p.active ? 700 : 400 });
+      if (dest) {
+        const hit = node('rect', { x: p.x, y: p.y, width: chipW, height: chipH, fill: 'transparent', 'pointer-events': 'all' });
+        container.appendChild(hit);
+      }
+    });
+  }
+
+  // 9. Campo de formulario
+  function drawField(r, svg, p) {
+    text(svg, p.x, p.y - 6, fit(p.label || '', 50), 10, { spacing: '0.08em', weight: 700 });
+    rect(r, p.x, p.y, p.w, 42, { strokeWidth: 1.8, roughness: 0.75 });
+    line(r, p.x + 12, p.y + 28, p.x + Math.min(p.w - 24, 180), p.y + 28, 1.2);
+    text(svg, p.x + 12, p.y + 22, fit(p.placeholder || 'Escribe aquí…', 32), 12, { fill: '#777' });
+  }
+
+  // 10. Botón redondeado con interactividad
+  function drawButton(r, svg, p) {
+    const dest = p.go || null;
+    wrapInteractive(svg, dest, p.text, function (container) {
+      const cR = roughIn(container);
+      if (p.style === 'hatched') {
+        cR.rectangle(p.x, p.y, p.w, p.h, {
+          stroke: PEN, strokeWidth: 2.2, fill: PEN, fillStyle: 'hachure',
+          fillWeight: 1.2, hachureAngle: -42, hachureGap: 4.5, roughness: 0.85
+        });
+        const label = centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: PEN, weight: 700, display: true });
+        // Halo de papel para que el texto se lea sobre el sombreado
+        label.setAttribute('stroke', '#FFFDF8');
+        label.setAttribute('stroke-width', '4');
+        label.setAttribute('stroke-linejoin', 'round');
+        label.setAttribute('paint-order', 'stroke');
+      } else if (p.style === 'link') {
+        text(container, p.x, p.y + (p.h || 20) / 2 + 5, p.text || '', 12, { weight: 700, fill: PEN });
+        line(cR, p.x, p.y + (p.h || 20) / 2 + 8, p.x + Math.min(p.w, p.text.length * 7), p.y + (p.h || 20) / 2 + 8, 1.2);
+      } else {
+        rect(cR, p.x, p.y, p.w, p.h, { strokeWidth: 2.0, roughness: 0.8 });
+        centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 14, { weight: 400, display: true });
+      }
+      if (dest) {
+        const hit = node('rect', { x: p.x, y: p.y, width: p.w, height: p.h || 24, fill: 'transparent', 'pointer-events': 'all' });
+        container.appendChild(hit);
+      }
+    });
+  }
+
+  // 11. Barra inferior de navegación (móvil) con iconos circulares con X
+  function drawBottomNav(r, svg, p, role) {
+    rect(r, p.x, p.y, p.w, 48, { strokeWidth: 2.0, roughness: 0.7, fill: '#FFFDF8' });
+    const itemW = p.w / Math.max(1, (p.items || []).length);
+    const menu = menuFor(role, 'mobile');
+
+    (p.items || []).forEach(function (item, index) {
+      const dest = (menu[index] && menu[index][0]) || null;
+      const cx = p.x + itemW * index + itemW / 2;
+      wrapInteractive(svg, dest, item, function (container) {
+        const cR = roughIn(container);
+        if (index === p.active) {
+          cR.rectangle(p.x + itemW * index + 4, p.y + 3, itemW - 8, 42, {
+            stroke: 'none', fill: '#EAE5D4', fillStyle: 'solid', roughness: 0.7
+          });
+        }
+        // Icono circular con X
+        cR.circle(cx, p.y + 16, 15, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
+        line(cR, cx - 4, p.y + 12, cx + 4, p.y + 20, 1.2);
+        line(cR, cx + 4, p.y + 12, cx - 4, p.y + 20, 1.2);
+        // Texto
+        centeredText(container, cx, p.y + 38, fit(item, 12), 10, { weight: index === p.active ? 700 : 400 });
+        const hit = node('rect', { x: p.x + itemW * index, y: p.y, width: itemW, height: 48, fill: 'transparent', 'pointer-events': 'all' });
+        container.appendChild(hit);
+      });
+    });
+  }
+
+  // 12. Barra lateral de navegación (PWA)
+  function drawSideNav(r, svg, p, role) {
+    rect(r, p.x, p.y, p.w, p.h || 650, { strokeWidth: 2.0, roughness: 0.75, fill: '#FFFDF8' });
+    line(r, p.x + 10, p.y + 44, p.x + p.w - 10, p.y + 44, 1.4);
+    text(svg, p.x + 14, p.y + 30, 'SICPES MENÚ', 12, { spacing: '0.12em', weight: 700 });
+
+    const menu = menuFor(role, 'pwa');
+    const activeIndex = Number.isInteger(p.active) ? p.active : 0;
+
+    (p.items || []).forEach(function (item, index) {
+      const dest = (menu[index] && menu[index][0]) || null;
+      wrapInteractive(svg, dest, item, function (container) {
+        const cR = roughIn(container);
+        const iy = p.y + 55 + index * 46;
+        if (index === activeIndex) {
+          cR.rectangle(p.x + 8, iy, p.w - 16, 36, {
+            stroke: 'none', fill: '#EAE5D4', fillStyle: 'solid', roughness: 0.7
+          });
+        }
+        // Icono circular con X
+        cR.circle(p.x + 24, iy + 18, 16, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
+        line(cR, p.x + 20, iy + 14, p.x + 28, iy + 22, 1.2);
+        line(cR, p.x + 28, iy + 14, p.x + 20, iy + 22, 1.2);
+        // Texto
+        text(container, p.x + 44, iy + 22, fit(item, 18), 13.5, { weight: index === activeIndex ? 700 : 400 });
+        const hit = node('rect', { x: p.x + 8, y: iy, width: p.w - 16, height: 36, fill: 'transparent', 'pointer-events': 'all' });
+        container.appendChild(hit);
+      });
+    });
+  }
+
+  // 13. Barra superior de PWA
+  function drawTopNav(r, svg, p) {
+    const items = p.items || [];
+    const count = Math.max(1, items.length);
+    const itemW = p.w / count;
+    items.forEach(function (item, index) {
+      centeredText(svg, p.x + itemW * index + itemW / 2, p.y + 18, fit(item, 14), 12, { weight: 400 });
+    });
+  }
+
+  // 14. Anotación manuscrita con flecha curva
+  function drawNote(r, svg, p, width) {
+    const val = p.text || '';
+    const dest = p.go || resolveScreenFromCode(val);
+    const noteW = Math.min(220, Math.max(85, val.length * 6.5 + 24));
+    const noteH = 28;
+    let nx = p.x;
+    let ny = p.y;
+    if (nx + noteW > width - 10) nx = Math.max(10, width - noteW - 10);
+    const targetX = p.target && Number(p.target.x) || nx - 20;
+    const targetY = p.target && Number(p.target.y) || ny + 10;
+
+    const markerId = 'arrow-' + Math.random().toString(36).slice(2, 8);
+    let defs = svg.querySelector('defs');
+    if (!defs) {
+      defs = node('defs');
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    const marker = node('marker', { id: markerId, markerWidth: 8, markerHeight: 6, refX: 7, refY: 3, orient: 'auto' });
+    marker.appendChild(node('path', { d: 'M0,0 L0,6 L8,3 z', fill: PEN }));
+    defs.appendChild(marker);
+
+    const curve = node('path', {
+      d: 'M ' + (nx + 10) + ' ' + (ny + 14) + ' Q ' + ((nx + targetX) / 2) + ' ' + (targetY + 20) + ' ' + targetX + ' ' + targetY,
+      fill: 'none', stroke: PEN, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-dasharray': '3 2', 'marker-end': 'url(#' + markerId + ')'
+    });
+    svg.appendChild(curve);
+
+    wrapInteractive(svg, dest, val, function (container) {
+      const cR = roughIn(container);
+      const noteRect = cR.rectangle(nx, ny, noteW, noteH, {
+        stroke: dest ? '#2F8A5C' : '#B8A856', strokeWidth: 1.4, fill: NOTE, fillStyle: 'solid', roughness: 1.3
+      });
+      const noteText = text(container, nx + 8, ny + 18, fit(val, 32), 12, { fill: STICKY_TEXT });
+      noteRect.setAttribute('transform', 'rotate(-1.5 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
+      noteText.setAttribute('transform', 'rotate(-1.5 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
+      if (dest) {
+        const hit = node('rect', { x: nx, y: ny, width: noteW, height: noteH, fill: 'transparent', 'pointer-events': 'all' });
+        container.appendChild(hit);
+      }
+    });
+  }
+
+  // 15. Tabs
+  function drawTabs(r, svg, p) {
+    const count = Math.max(1, (p.items || []).length);
+    const width = (p.w || 320) / count;
+    rect(r, p.x, p.y, p.w || 320, 32, { strokeWidth: 1.6, roughness: 0.7 });
+    (p.items || []).forEach(function (item, index) {
+      const x = p.x + index * width;
+      if (index > 0) line(r, x, p.y + 2, x, p.y + 30, 1.2);
+      if (index === p.active) {
+        r.rectangle(x + 4, p.y + 22, width - 8, 4, { stroke: PEN, strokeWidth: 2.8, roughness: 0.6, fill: PEN, fillStyle: 'solid' });
+      }
+      centeredText(svg, x + width / 2, p.y + 19, fit(item, 14), 11, { weight: index === p.active ? 700 : 400 });
+    });
+  }
+
+  // 16. Tabla
+  function drawTable(r, svg, p) {
+    const headers = p.headers || [];
+    const rows = p.rows || [];
+    const col = p.w / Math.max(1, headers.length);
+    const rowH = 34;
+    const h = 30 + rows.length * rowH;
+    rect(r, p.x, p.y, p.w, h, { strokeWidth: 1.8, roughness: 0.75 });
+    r.rectangle(p.x + 2, p.y + 2, p.w - 4, 28, { stroke: 'none', fill: '#ECE7DA', fillStyle: 'solid', roughness: 0.6 });
+
+    headers.forEach(function (header, index) {
+      text(svg, p.x + 8 + index * col, p.y + 20, fit(header, Math.max(5, Math.floor(col / 7))), 11, { weight: 700 });
+    });
+    rows.forEach(function (row, rowIndex) {
+      const y = p.y + 30 + rowIndex * rowH;
+      if (rowIndex > 0) line(r, p.x + 2, y, p.x + p.w - 2, y, 1.1);
+      row.forEach(function (cell, cellIndex) {
+        text(svg, p.x + 8 + cellIndex * col, y + 22, fit(cell, Math.max(5, Math.floor(col / 6.5))), 11, { weight: cellIndex === 0 ? 700 : 400 });
+      });
+    });
+  }
+
+  // 17. 5 Estrellas a lápiz
+  function drawStars(r, svg, p) {
+    for (let index = 0; index < 5; index += 1) {
+      const cx = p.x + 18 + index * 36;
+      const cy = p.y + 12;
+      const points = [];
+      for (let point = 0; point < 10; point += 1) {
+        const radius = point % 2 === 0 ? 15 : 6.5;
+        const angle = -Math.PI / 2 + point * Math.PI / 5;
+        points.push([cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius]);
+      }
+      r.polygon(points, { stroke: PEN, strokeWidth: 1.6, roughness: 0.8, fill: '#FFFDF8' });
+    }
+  }
+
+  // Despachador principal de partes
+  function drawPart(r, svg, p, width, mobileDevice, screenId, role) {
+    if (p.type === 'tag') return drawTag(r, svg, p);
+    if (p.type === 'phoneFrame') return drawPhoneFrame(r, svg, p);
+    if (p.type === 'browserFrame') return drawBrowserFrame(r, svg, p);
+    if (p.type === 'header') {
+      rect(r, p.x, p.y, p.w, p.h || 30, { fill: '#F5F1E5', strokeWidth: 1.8 });
+      text(svg, p.x + 12, p.y + (p.h || 30) - 9, fit(p.label || 'SICPES', 30), 14, { weight: 700, display: true });
+      line(r, p.x + 12, p.y + (p.h || 30) - 4, p.x + Math.min(p.w - 12, 110), p.y + (p.h || 30) - 4, 1.2);
+      return;
+    }
+    if (p.type === 'title') return text(svg, p.x, p.y, fit(p.text || '', 42), p.size || 24, { weight: 700, display: true });
+    if (p.type === 'subtitle') return text(svg, p.x, p.y, fit(p.text || '', 60), p.size || 12, { weight: 400 });
+    if (p.type === 'sectionTitle') {
+      text(svg, p.x, p.y, fit(p.text || '', 45), 14, { weight: 700 });
+      line(r, p.x, p.y + 4, p.x + Math.min(180, (p.text || '').length * 7), p.y + 4, 1.2);
+      return;
+    }
+    if (p.type === 'image') return drawImage(r, svg, p);
+    if (p.type === 'avatar') return drawAvatar(r, svg, p);
+    if (p.type === 'textLines') return drawTextLines(r, svg, p);
+    if (p.type === 'searchBar') return drawSearchBar(r, svg, p);
+    if (p.type === 'chip') return drawChip(r, svg, p);
+    if (p.type === 'field') return drawField(r, svg, p);
+    if (p.type === 'button') return drawButton(r, svg, p);
+    if (p.type === 'card') {
+      const dest = p.go || null;
+      wrapInteractive(svg, dest, 'Tarjeta', function (container) {
+        const cR = roughIn(container);
+        rect(cR, p.x, p.y, p.w, p.h, { strokeWidth: 1.8, roughness: 0.75 });
+        if (dest) {
+          const hit = node('rect', { x: p.x, y: p.y, width: p.w, height: p.h, fill: 'transparent', 'pointer-events': 'all' });
+          container.appendChild(hit);
+        }
+      });
+      return;
+    }
+    if (p.type === 'tabs') return drawTabs(r, svg, p);
+    if (p.type === 'table') return drawTable(r, svg, p);
+    if (p.type === 'stars') return drawStars(r, svg, p);
+    if (p.type === 'divider') {
+      line(r, p.x, p.y, p.x + p.w / 2 - 45, p.y, 1.2);
+      centeredText(svg, p.x + p.w / 2, p.y + 4, fit(p.text || 'O', 25), 10, { fill: '#777' });
+      line(r, p.x + p.w / 2 + 45, p.y, p.x + p.w, p.y, 1.2);
+      return;
+    }
+    if (p.type === 'bottomNav') return drawBottomNav(r, svg, p, role);
+    if (p.type === 'sideNav') return drawSideNav(r, svg, p, role);
+    if (p.type === 'topNav') return drawTopNav(r, svg, p);
+    if (p.type === 'note') return drawNote(r, svg, p, width);
+  }
+
+  function buildSvg(screenId, platform, forDownload) {
+    const spec = (window.PENCIL_SCREENS || {})[screenId];
+    const dimensions = sizeFor(platform);
+    const svg = node('svg', {
+      viewBox: '0 0 ' + dimensions.width + ' ' + dimensions.height,
+      preserveAspectRatio: 'xMidYMid meet',
+      role: 'img',
+      'aria-label': 'Boceto a lápiz de ' + ((META[screenId] && META[screenId].title) || screenId)
+    });
+    if (forDownload) {
+      svg.setAttribute('width', dimensions.width);
+      svg.setAttribute('height', dimensions.height);
+      svg.setAttribute('xmlns', NS);
+    } else {
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+    }
+
+    const defs = node('defs');
+    // Filtro de distorsión orgánica para trazo a mano
+    const filter = node('filter', { id: 'pencil-wobble', x: '-2%', y: '-2%', width: '104%', height: '104%' });
+    const feTurb = node('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.035', numOctaves: '2', result: 'noise' });
+    const feDisp = node('feDisplacementMap', { in: 'SourceGraphic', in2: 'noise', scale: '1.2', xChannelSelector: 'R', yChannelSelector: 'G' });
+    filter.appendChild(feTurb);
+    filter.appendChild(feDisp);
+    defs.appendChild(filter);
+
+    // Patrón de puntos de cuaderno de bocetos
+    const patternId = 'dots-' + screenId + '-' + platform + '-' + Math.random().toString(36).slice(2, 7);
+    const pattern = node('pattern', { id: patternId, width: 20, height: 20, patternUnits: 'userSpaceOnUse' });
+    pattern.appendChild(node('circle', { cx: 2, cy: 2, r: 0.9, fill: '#DDD7C4' }));
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+
+    // Fondo de papel
+    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, fill: '#FAF7EE' }));
+    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, fill: 'url(#' + patternId + ')' }));
+
+    if (!spec) {
+      text(svg, 30, 70, 'FALTA DEFINIR ' + screenId, 22, { fill: '#9B2C2C', weight: 700 });
+      return svg;
+    }
+
+    // Sin filtro SVG: feDisplacementMap + escala CSS desalineaba los trazos respecto al texto.
+    // rough.js ya da el aspecto de trazo a mano.
+    const group = node('g', {});
+    svg.appendChild(group);
+
+    const r = roughIn(group);
+    const parts = platform === 'mobile' ? (spec.mobile || []) : (spec.desktop || []);
+    const currentRole = spec.role === 'Administrador' ? 'admin' : 'student';
+
+    parts.forEach(function (part) {
+      drawPart(r, group, part, dimensions.width, platform === 'mobile', screenId, currentRole);
+    });
+
+    return svg;
+  }
+
+  function stage() { return document.getElementById('pencilStage'); }
+  function modal() { return document.getElementById('pencilModal'); }
+
+  function renderStage() {
+    const host = stage();
+    if (!host) return;
+    host.innerHTML = '';
+    host.appendChild(buildSvg(state.screen, state.platform, false));
+  }
+
+  function renderModal() {
+    const host = document.getElementById('pencilModalSheet');
+    if (!host) return;
+    host.innerHTML = '';
+    host.appendChild(buildSvg(state.screen, state.platform, false));
+    const meta = META[state.screen] || { code: '', title: state.screen };
+    const code = document.getElementById('pencilModalCode');
+    const title = document.getElementById('pencilModalTitle');
+    const role = document.getElementById('pencilModalRole');
+    const screens = screensForRole();
+    const curIdx = screens.indexOf(state.screen) + 1;
+    const total = screens.length;
+
+    if (code) code.textContent = meta.code;
+    if (title) title.textContent = meta.title;
+    if (role) {
+      role.textContent = (state.role === 'admin' ? 'ADMINISTRADOR' : 'ESTUDIANTE') +
+        ' · ' + (state.platform === 'mobile' ? 'MÓVIL' : 'PWA') +
+        ' (Lámina ' + (curIdx || 1) + ' de ' + total + ')';
+    }
+  }
+
+  function openModal() {
+    const dialog = modal();
+    if (!dialog) return;
+    lastFocus = document.activeElement;
+    renderModal();
+    dialog.hidden = false;
+    document.body.classList.add('pencil-modal-open');
+    const close = dialog.querySelector('[data-pencil-close]');
+    if (close) close.focus({ preventScroll: true });
+  }
+
+  function closeModal() {
+    const dialog = modal();
+    if (!dialog) return;
+    dialog.hidden = true;
+    document.body.classList.remove('pencil-modal-open');
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+    lastFocus = null;
+  }
+
+  function screensForRole() { return state.role === 'admin' ? ADMIN : STUDENT; }
+
+  function navigate(delta) {
+    const screens = screensForRole();
+    let index = screens.indexOf(state.screen);
+    if (index < 0) index = delta > 0 ? -1 : 0;
+    const next = screens[(index + delta + screens.length) % screens.length];
+    showScreen(next, state.role, state.platform, true);
+  }
+
+  function showScreen(id, role, platform, fromModal) {
+    if (role === 'student' || role === 'admin') state.role = role;
+    if (platform === 'mobile' || platform === 'pwa') state.platform = platform;
+    if (META[id]) state.screen = id;
+    renderStage();
+    const dialog = modal();
+    if (dialog && !dialog.hidden) renderModal();
+    if (!window.SicpesShell || window.SicpesShell.getState().section === 'sketches') {
+      window.dispatchEvent(new CustomEvent('sicpes:screen', {
+        detail: { section: 'sketches', platform: state.platform, screen: state.screen, role: state.role }
+      }));
+    }
+    if (fromModal && dialog && dialog.hidden) openModal();
+  }
+
+  function download(screenId, platform, role) {
+    const meta = META[screenId] || { code: screenId };
+    const svg = buildSvg(screenId, platform || state.platform, true);
+    const serialized = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
+    image.onload = function () {
+      const scale = 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(sizeFor(platform).width * scale);
+      canvas.height = Math.round(sizeFor(platform).height * scale);
+      const context = canvas.getContext('2d');
+      context.fillStyle = '#FAF7EE';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const link = document.createElement('a');
+      link.download = 'sicpes-sketch-' + (meta.code || screenId) + '-' + (role || state.role) + '-' + (platform || state.platform) + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+    image.onerror = function () {
+      URL.revokeObjectURL(url);
+      if (window.SicpesShell && window.SicpesShell.toast) window.SicpesShell.toast('No se pudo generar la lámina.');
+    };
+    image.src = url;
+  }
+
+  function downloadCurrent() {
+    download(state.screen, state.platform, state.role);
+  }
+
+  async function downloadAll() {
+    const screens = screensForRole();
+    for (let index = 0; index < screens.length; index += 1) {
+      download(screens[index], state.platform, state.role);
+      await new Promise(function (resolve) { setTimeout(resolve, 220); });
+    }
+  }
+
+  function onKeydown(event) {
+    const dialog = modal();
+    if (!dialog || dialog.hidden) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      closeModal();
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      event.stopPropagation();
+      navigate(1);
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      event.stopPropagation();
+      navigate(-1);
+    }
+  }
+
+  function onStageClick(event) {
+    const interactive = event.target.closest('[data-shell-go]');
+    if (interactive) {
+      const dest = interactive.getAttribute('data-shell-go');
+      if (dest) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (window.SicpesShell) {
+          window.SicpesShell.showScreen(dest);
+        } else {
+          showScreen(dest, state.role, state.platform, false);
+        }
+        return;
+      }
+    }
+    if (event.target.closest('[data-pencil-zoom]')) {
+      event.preventDefault();
+      openModal();
+    }
+  }
+
+  function onStageDblClick(event) {
+    if (!event.target.closest('[data-shell-go]')) {
+      openModal();
+    }
+  }
+
+  function onModalSheetClick(event) {
+    const interactive = event.target.closest('[data-shell-go]');
+    if (interactive) {
+      const dest = interactive.getAttribute('data-shell-go');
+      if (dest) {
+        event.preventDefault();
+        event.stopPropagation();
+        showScreen(dest, state.role, state.platform, true);
+        if (window.SicpesShell) {
+          window.SicpesShell.showScreen(dest, { preserveModal: true });
+        }
+      }
+    }
+  }
+
+  function init() {
+    const host = stage();
+    if (host) {
+      host.addEventListener('click', onStageClick);
+      host.addEventListener('dblclick', onStageDblClick);
+    }
+
+    const modalSheet = document.getElementById('pencilModalSheet');
+    if (modalSheet) {
+      modalSheet.addEventListener('click', onModalSheetClick);
+    }
+
+    document.querySelectorAll('[data-pencil-close]').forEach(function (button) {
+      button.addEventListener('click', closeModal);
+    });
+
+    const zoomFab = document.getElementById('pencilZoomFab');
+    if (zoomFab) zoomFab.addEventListener('click', openModal);
+
+    const one = document.getElementById('pencilDownloadOne');
+    const all = document.getElementById('pencilDownloadAll');
+    const prev = document.getElementById('pencilNavPrev');
+    const next = document.getElementById('pencilNavNext');
+    if (one) one.addEventListener('click', downloadCurrent);
+    if (all) all.addEventListener('click', downloadAll);
+    if (prev) prev.addEventListener('click', function () { navigate(-1); });
+    if (next) next.addEventListener('click', function () { navigate(1); });
+    document.addEventListener('keydown', onKeydown);
+    renderStage();
+  }
+
+  window.SicpesSketches = {
+    showScreen: showScreen,
+    getScreen: function () { return state.screen; },
+    getRole: function () { return state.role; },
+    getPlatform: function () { return state.platform; },
+    closeModal: closeModal,
+    openModal: openModal,
+    downloadCurrent: downloadCurrent,
+    downloadAll: downloadAll,
+    refresh: renderStage
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();

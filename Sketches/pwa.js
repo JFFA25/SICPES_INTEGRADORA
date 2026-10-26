@@ -59,7 +59,7 @@ const PWA_ADMIN = ['adminLogin','reservations','assignRoom','pendingPayments','v
 const PWA_ROOTS = new Set(['home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Acciones disponibles por pantalla: [destino, texto visible]. */
 const PWA_ACTIONS = {
-  landing:[['studentLogin','Iniciar sesión'],['roomDetail','Explorar habitaciones']],
+  landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada']],
   studentLogin:[['loading','Entrar al panel'],['forgotPassword','¿Olvidaste tu contraseña?'],['register','Crear una cuenta nueva']],
   forgotPassword:[['studentLogin','Enviar enlace de recuperación']],
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
@@ -67,13 +67,13 @@ const PWA_ACTIONS = {
   loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
   home:[['reserve','Tarjeta Reservar'],['requestStatus','Tarjeta Estado de mi petición'],['payments','Tarjeta Próximo pago'],['roomDetail','Habitación destacada'],['rateService','Evaluar el servicio'],['profile','Barra lateral: Cuenta']],
   reserve:[['roomDetail','Ver detalle de habitación'],['requestStatus','Confirmar reservación'],['payments','Barra lateral: Pagos'],['profile','Barra lateral: Cuenta']],
-  roomDetail:[['reserve','Solicitar esta habitación']],
-  requestStatus:[['home','Volver al inicio']],
+  roomDetail:[['requestStatus','Solicitar esta habitación'],['reserve','Volver al catálogo']],
+  requestStatus:[['home','Volver al inicio'],['reserve','Explorar más habitaciones']],
   payments:[['paymentDetail','Detalle de pago'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['profile','Barra lateral: Cuenta']],
   paymentDetail:[['payments','Volver a pagos']],
   rateService:[['rateConfirm','Enviar evaluación'],['home','Barra lateral: Inicio'],['profile','Barra lateral: Cuenta']],
   rateConfirm:[['home','Volver a Inicio']],
-  profile:[['studentLogin','Cerrar sesión'],['rateService','Evaluar el servicio'],['home','Barra lateral: Inicio']],
+  profile:[['studentLogin','Cerrar sesión'],['rateService','Evaluar el servicio'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['payments','Barra lateral: Pagos']],
   adminLogin:[['loading','Entrar al panel administrativo']],
   reservations:[['assignRoom','Seleccionar solicitud'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos'],['settings','Panel superior: Configuración']],
   assignRoom:[['reservations','Asignar / Rechazar']],
@@ -111,14 +111,14 @@ function pwaField(label, placeholder, type = 'text', value = '') {
 function pwaTopnav(role) {
   const links = role === 'student'
     ? [['home','Inicio'],['reserve','Reservar'],['payments','Pagos'],['profile','Cuenta']]
-    : [['reservations','Reservaciones'],['pendingPayments','Pagos pendientes'],['floors','Pisos'],['settings','Configuración']];
+    : [['reservations','Reservaciones'],['pendingPayments','Pagos'],['floors','Pisos'],['settings','Configuración']];
   return `<header class="pwa-app-top"><span class="pwa-app-logo"><img class="pwa-app-logo-img" src="../images/SICPES_Producto.png" alt=""> SICPES <span>/ RESIDENCIAL</span></span><nav class="pwa-app-links">${links.map(([id,label]) => `<button class="pwa-app-link" data-pwa-go="${id}">${label}</button>`).join('')}</nav><div class="pwa-app-user"><span class="pwa-avatar"></span>${role === 'student' ? pwaEsc(PWA_MOCK.student.name) : 'Admin SICPES'}</div></header>`;
 }
 function pwaSidebar(role, active) {
   const items = role === 'student'
     ? [['home','⌂','Inicio'],['reserve','＋','Reservar'],['payments','$','Pagos'],['profile','◎','Cuenta']]
     : [['reservations','▤','Reservaciones'],['pendingPayments','$','Pagos'],['floors','▥','Pisos'],['settings','⚙','Configuración']];
-  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}</aside>`;
+  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}<div class="pwa-side-help"><span class="pwa-side-label">AYUDA</span><button class="pwa-side-item" data-pwa-go="${role === 'student' ? 'profile' : 'settings'}"><span class="pwa-side-icon">◈</span>Soporte SICPES</button></div></aside>`;
 }
 function pwaShell(role, active, content) {
   return `${pwaTopnav(role)}<div class="pwa-app-body">${pwaSidebar(role,active)}<div class="pwa-app-main">${content}</div></div>`;
@@ -193,7 +193,13 @@ function pwaFloors() {
   return pwaShell('admin','floors',content);
 }
 function pwaSettings() {
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios y datos administrativos.</p></div></div><div class="pwa-form-layout"><article class="pwa-card"><h3 class="pwa-card-title">Precios mensuales</h3><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">Guardar cambios</button></article><article class="pwa-card"><h3 class="pwa-card-title">Notificaciones del sistema</h3>${[['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false]].map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}</article></div>`;
+  const toggles = [['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false],['Reporte semanal',true]];
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios, notificaciones y datos administrativos.</p></div></div>
+<div class="pwa-form-layout">
+<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Precios mensuales</h3><span class="pwa-status pwa-ok">ACTIVO</span></div><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">✓ Guardar cambios</button></article>
+<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Notificaciones del sistema</h3></div>${toggles.map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}<div class="pwa-notice">🔔 Los avisos se envían al correo y a la PWA.</div></article>
+</div>
+<article class="pwa-card pwa-period-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Cierre de periodo</h3>${pwaStatus('Pendiente')}</div><p class="pwa-lead">Cierra el periodo actual para generar los estados de cuenta del siguiente mes.</p><button class="pwa-button pwa-secondary" data-pwa-action="social">Cerrar periodo</button></article>`;
   return pwaShell('admin','settings',content);
 }
 
@@ -258,10 +264,10 @@ function pwaRender() {
     document.querySelector('#pwaRoute').textContent = PWA_SCREENS[pwaState.screen].route;
     document.querySelector('#pwaRoleCaption').textContent = pwaState.role === 'student' ? 'ESTUDIANTE' : 'ADMINISTRADOR';
     document.querySelectorAll('.pwa-role-tab').forEach(b => b.classList.toggle('active', b.dataset.pwaRole === pwaState.role));
-    document.body.classList.toggle('pwa-zones-on', pwaState.zones);
     document.querySelector('#pwaBack').hidden = PWA_ROOTS.has(pwaState.screen);
     pwaRenderPanel();
     if (pwaState.screen === 'loading') pwaRunLoading();
+    if(!window.SicpesShell||window.SicpesShell.getState().platform==='pwa'){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:'wireframes',platform:'pwa',screen:pwaState.screen,role:pwaState.role}}));}
   }, 110);
 }
 function pwaRenderPanel() {
@@ -505,6 +511,19 @@ function pwaSetView(view) {
     if (pwaMap) pwaMap.hidden = true;
   }
 }
+
+window.SicpesWireframePwa = {
+  showScreen: function (id, role) {
+    if (!PWA_SCREENS[id]) return;
+    if (role === 'student' || role === 'admin') pwaState.role = role;
+    else if (PWA_SCREENS[id].role === 'student' || PWA_SCREENS[id].role === 'admin') pwaState.role = PWA_SCREENS[id].role;
+    pwaState.screen = id;
+    pwaState.history = [];
+    pwaRender();
+  },
+  getScreen: function () { return pwaState.screen; },
+  getRole: function () { return pwaState.role; }
+};
 
 /* Un solo controlador delega los clics de las pantallas dinámicas. */
 document.addEventListener('click', e => {

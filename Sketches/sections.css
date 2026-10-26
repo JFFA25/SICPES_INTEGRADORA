@@ -1,0 +1,275 @@
+/* ============================================================
+   SELECTOR DE FIDELIDAD Y CONTROLES COMPARTIDOS
+   Sketches · Wireframes · Mockups
+   ============================================================ */
+
+.topbar {
+  height: auto;
+  min-height: 72px;
+  flex-wrap: wrap;
+  padding: 10px clamp(12px, 3vw, 40px);
+  gap: 10px 14px;
+}
+
+.fidelity-switch {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface3);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.fidelity-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--mid);
+  padding: 9px 15px;
+  border-radius: 7px;
+  font: 700 11px var(--mono);
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: background 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease), transform 200ms var(--ease);
+}
+
+.fidelity-tab:hover {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.fidelity-tab.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .16);
+}
+
+html[data-theme="light"] .fidelity-tab.active {
+  background: var(--forest);
+  border-color: var(--forest);
+}
+
+.fidelity-tab:focus-visible,
+.platform-tab:focus-visible,
+.fidelity-jump:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.wireframe-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wireframe-tools[hidden] {
+  display: none !important;
+}
+
+.platform-switch,
+.pencil-platform-switch {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.platform-tab,
+.pencil-platform-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--mid);
+  padding: 7px 12px;
+  border-radius: 5px;
+  font: 700 10px var(--mono);
+  cursor: pointer;
+}
+
+.platform-tab.active,
+.pencil-platform-tab.active {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+}
+
+.platform-tab:hover,
+.pencil-platform-tab:hover {
+  color: var(--ink);
+}
+
+.topbar-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.fidelity-jump {
+  border-style: dashed !important;
+  white-space: nowrap;
+}
+
+#mobileView[hidden],
+#pwaView[hidden],
+#pencilView[hidden],
+#mockupsView[hidden],
+#diagramView[hidden],
+#pwaMapView[hidden] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   Sketches: el marco usa el tema activo, el papel sigue siendo papel
+   ------------------------------------------------------------ */
+.pencil-view {
+  background:
+    radial-gradient(900px 500px at 12% 0%, rgba(47, 138, 92, .16), transparent 62%),
+    linear-gradient(160deg, var(--bg) 0%, var(--bg2) 60%, var(--bg3) 100%);
+  color: var(--ink);
+}
+
+.pencil-header {
+  color: var(--ink);
+}
+
+.pencil-heading p {
+  color: var(--muted);
+}
+
+.pencil-eyebrow {
+  color: var(--muted);
+}
+
+.pencil-role-switch,
+.pencil-platform-switch {
+  border-color: var(--line);
+  background: var(--surface3);
+}
+
+.pencil-role-tab,
+.pencil-platform-tab {
+  color: var(--ink);
+}
+
+.pencil-role-tab.active,
+.pencil-platform-tab.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+}
+
+.pencil-quiet-button {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.pencil-quiet-button:hover {
+  border-color: var(--line-strong);
+  background: var(--surface3);
+}
+
+.pencil-gallery {
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+}
+
+.pencil-sheet.active {
+  outline: 3px solid var(--green);
+  outline-offset: 3px;
+}
+
+.pencil-nav-button:focus-visible,
+.pencil-icon-button:focus-visible,
+.pencil-quiet-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Dentro del modal el papel es claro: botones legibles sobre blanco. */
+.pencil-modal .pencil-quiet-button {
+  background: #FFFFFF;
+  border-color: #111111;
+  color: #111111;
+  border-radius: 8px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15px;
+  padding: 8px 13px;
+}
+
+.pencil-modal .pencil-quiet-button:hover {
+  background: #F2F2F2;
+}
+
+.pencil-modal-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1180px) {
+  .brand-text {
+    display: none;
+  }
+  .topbar {
+    gap: 8px;
+  }
+  .fidelity-tab {
+    padding: 8px 11px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    justify-content: center;
+  }
+  .brand {
+    order: 1;
+  }
+  .topbar-end {
+    order: 2;
+  }
+  .fidelity-switch {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  .fidelity-tab {
+    flex: 1;
+  }
+  .wireframe-tools {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+  }
+  .wireframe-tools .role-switch {
+    order: 5;
+    width: 100%;
+  }
+  .wireframe-tools .role-tab {
+    flex: 1;
+  }
+  .wireframe-tools .top-actions {
+    order: 6;
+    width: 100%;
+  }
+  .wireframe-tools .top-actions button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  #fidelityJump {
+    font-size: 9px;
+    padding: 8px;
+  }
+  .pencil-footer,
+  .mk-stage-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

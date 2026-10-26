@@ -1,0 +1,191 @@
+/* ============================================================
+   WIREFRAMES · MEDIA FIDELIDAD
+   Escala de grises y neutros. Este archivo se carga después de
+   styles.css y pwa.css para anular los acentos de marca dentro
+   de las pantallas de wireframe, sin tocar las otras secciones.
+   ============================================================ */
+
+#mobileView,
+#pwaView,
+#diagramView,
+#pwaMapView {
+  --forest: #4B5563;
+  --green: #6B7280;
+  --light: #9CA3AF;
+  --sage: #D1D5DB;
+  --cream: #F9FAFB;
+  --ok: #374151;
+  --no: #6B7280;
+  --focus: #111827;
+  --accent-soft: #F3F4F6;
+  --pwa-green: #6B7280;
+  --line: rgba(17, 24, 39, .16);
+  --line-strong: rgba(17, 24, 39, .32);
+}
+
+/* Pantallas móviles: papel blanco, tinta negra y acentos grises. */
+#mobileView .phone-screen {
+  --wire-bg: #FFFFFF;
+  --wire-ink: #1A1A1A;
+  --wire-line: #D7D9D4;
+  --wire-muted: #5C6259;
+  --surface: #FFFFFF;
+  --surface2: #F6F7F4;
+  --surface3: #F0F2ED;
+  --line: var(--wire-line);
+  --line-strong: #B9BDB5;
+  --ink: var(--wire-ink);
+  --ink-soft: #333A32;
+  --muted: var(--wire-muted);
+  --mid: var(--wire-muted);
+  --paper: #F4F6F1;
+  --white: #FFFFFF;
+  --cream: #FFFFFF;
+  --green: #6B7280;
+  --forest: #4B5563;
+  --focus: #111827;
+  --accent-soft: #F1F3EF;
+  --ok: #374151;
+  --no: #6B7280;
+}
+
+/* Ventana PWA: los mismos neutros dentro del marco web. */
+#pwaView .pwa-window {
+  --wire-bg: #FFFFFF;
+  --wire-ink: #1A1A1A;
+  --wire-line: #D7D9D4;
+  --wire-muted: #5C6259;
+  --surface: #FFFFFF;
+  --surface2: #F7F8F5;
+  --surface3: #F0F2ED;
+  --line: var(--wire-line);
+  --line-strong: #B9BDB5;
+  --ink: var(--wire-ink);
+  --ink-soft: #333A32;
+  --muted: var(--wire-muted);
+  --mid: var(--wire-muted);
+  --cream: #FFFFFF;
+  --green: #6B7280;
+  --forest: #4B5563;
+  --focus: #111827;
+  --accent-soft: #F1F3EF;
+  --ok: #374151;
+  --no: #6B7280;
+  --pwa-white: var(--wire-bg);
+  --pwa-paper: #F1F3EF;
+  --pwa-line: var(--wire-line);
+  --pwa-mid: var(--wire-muted);
+  --pwa-ink: var(--wire-ink);
+  --pwa-green: #6B7280;
+}
+
+/* Estados neutros: la fidelidad media no usa semáforos de color. */
+#pwaView .pwa-status,
+#pwaView .pwa-status.pwa-ok,
+#pwaView .pwa-status.pwa-pend,
+#pwaView .pwa-status.pwa-rev,
+#pwaView .pwa-status.pwa-no {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+  color: #374151;
+}
+#pwaView .pwa-button.pwa-primary {
+  background: #4B5563;
+  border-color: #4B5563;
+}
+#pwaView .pwa-button.pwa-primary:hover {
+  background: #374151;
+}
+#pwaView .pwa-notice {
+  border-left-color: #9CA3AF;
+  background: #F3F4F6;
+}
+#pwaView .pwa-notice:hover {
+  background: #ECEEEA;
+}
+#pwaView .pwa-choice.selected {
+  background: #F3F4F6;
+  border-color: #6B7280;
+}
+#pwaView .pwa-inline-link button {
+  color: #374151;
+}
+#pwaView .pwa-back-link {
+  color: #374151;
+}
+#pwaView .pwa-switch:checked {
+  background: #6B7280;
+}
+#pwaView .pwa-progress-fill {
+  background: #6B7280;
+}
+#pwaView .pwa-timeline-item.pwa-done .pwa-dot,
+#pwaView .pwa-timeline-item.pwa-current .pwa-dot {
+  background: #6B7280;
+  border-color: #6B7280;
+  box-shadow: none;
+}
+#pwaView .pwa-rating-cell.selected {
+  background: #4B5563;
+  border-color: #4B5563;
+}
+#pwaView .pwa-code-row input:focus,
+#pwaView .pwa-field input:focus,
+#pwaView .pwa-field select:focus,
+#pwaView .pwa-field textarea:focus {
+  border-color: #6B7280;
+  outline-color: #9CA3AF;
+  box-shadow: none;
+}
+#pwaView .pwa-filter-tab.active {
+  background: #374151;
+  border-color: #374151;
+}
+
+/* La identidad gráfica se sustituye por una marca de posición. */
+#mobileView .app-logo-img,
+#pwaView .pwa-app-logo-img {
+  display: none;
+}
+#mobileView .app-logo::before,
+#pwaView .pwa-app-logo::before {
+  content: "[X]";
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  color: var(--muted);
+  font: 700 9px var(--mono);
+  vertical-align: 1px;
+}
+#mobileView .app-loading-logo,
+#pwaView .pwa-logo-img {
+  display: none;
+}
+
+/* Zonas clicables en gris. */
+.zones-on #mobileView .clickable,
+.zones-on #mobileView .phone-screen .clickable {
+  outline-color: rgba(17, 24, 39, .55) !important;
+}
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-button,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-app-link,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-side-item,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-feature,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-notice,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-file-drop,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-thumb,
+.pwa-zones-on #pwaView .pwa-window-screen .pwa-body-zone {
+  outline-color: rgba(17, 24, 39, .55) !important;
+}
+
+/* Diagramas y mapas de wireframe sin acentos de marca. */
+#diagramCanvas svg,
+#pwaMapCanvas svg {
+  filter: grayscale(1);
+}
+#pwaMapView .pwa-role-note,
+#diagramView .role-note {
+  color: var(--mid);
+}

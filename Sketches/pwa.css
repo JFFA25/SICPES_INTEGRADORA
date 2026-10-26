@@ -349,3 +349,10 @@
 /* Mapa de navegación PWA: paneles de miniaturas en blanco, encabezado verde sin cambios. */
 .pwa-map-card{background:#fff;border-color:#D9DDD3}
 .pwa-map-card .pwa-map-role,.pwa-map-card .pwa-role-note{color:#5C6259}
+
+/* Wireframe: paridad con mockup (Configuración, ayuda en barra lateral) */
+.pwa-side-help{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.pwa-period-card{margin-top:16px}
+.pwa-period-card .pwa-lead{margin:0 0 12px}
+/* La barra lateral y el contenido llenan toda la ventana PWA (como en el mockup) */
+#pwaView .pwa-app-body{min-height:calc(860px - 60px)}

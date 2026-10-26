@@ -64,7 +64,7 @@ const ADMIN_SCREENS = ['adminLogin','reservations','assignRoom','pendingPayments
 const ROOT_SCREENS = new Set(['home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Rutas visibles para el panel lateral: destino y acción que lleva a él. */
 const SCREEN_ACTIONS = {
-  landing:[['studentLogin','Iniciar sesión'],['roomDetail','Explorar habitaciones']],
+  landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada']],
   studentLogin:[['loading','Entrar'],['forgotPassword','¿Olvidaste tu contraseña?'],['register','¿No tienes cuenta? Regístrate']],
   forgotPassword:[['studentLogin','Enviar enlace de recuperación']],
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
@@ -72,8 +72,8 @@ const SCREEN_ACTIONS = {
   loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
   home:[['reserve','Tarjeta Reservar habitación'],['requestStatus','Tarjeta Estado de mi petición'],['payments','Tarjeta Próximo pago'],['roomDetail','Habitación destacada'],['rateService','Evaluar el servicio'],['profile','Cuenta en la barra inferior']],
   reserve:[['roomDetail','Ver detalle de habitación'],['requestStatus','Reservar · Confirmar'],['home','Inicio en la barra inferior'],['payments','Pagos en la barra inferior'],['profile','Cuenta en la barra inferior']],
-  roomDetail:[['reserve','Solicitar esta habitación']],
-  requestStatus:[['home','Volver al inicio']],
+  roomDetail:[['requestStatus','Solicitar esta habitación'],['reserve','Volver al catálogo']],
+  requestStatus:[['home','Volver al inicio'],['reserve','Explorar más habitaciones']],
   payments:[['paymentDetail','Historial de pagos'],['home','Inicio en la barra inferior'],['reserve','Peticiones en la barra inferior'],['profile','Cuenta en la barra inferior']],
   paymentDetail:[['payments','Volver a pagos']],
   rateService:[['rateConfirm','Enviar evaluación'],['home','Inicio en la barra inferior'],['profile','Ir a Cuenta / Perfil']],
@@ -140,7 +140,7 @@ function render() {
   const renderers={landing:screenLanding,studentLogin:screenStudentLogin,forgotPassword:screenForgotPassword,register:screenRegister,verifyEmail:screenVerifyEmail,loading:screenLoading,home:screenHome,reserve:screenReserve,roomDetail:screenRoomDetail,requestStatus:screenRequestStatus,payments:screenPayments,paymentDetail:screenPaymentDetail,rateService:screenRateService,rateConfirm:screenRateConfirm,profile:screenProfile,adminLogin:screenAdminLogin,reservations:screenReservations,assignRoom:screenAssignRoom,pendingPayments:screenPendingPayments,validatePayment:screenValidatePayment,debts:screenDebts,floors:screenFloors,settings:screenSettings};
   if(state.screen!=='loading') clearInterval(state.loadingTimer);
   phone.classList.add('leaving');
-  setTimeout(()=>{ phone.innerHTML=renderers[state.screen](); phone.classList.remove('leaving'); phone.classList.remove('screen-in'); void phone.offsetWidth; phone.classList.add('screen-in'); document.querySelector('#screenLabel').textContent=SCREENS[state.screen].label; document.querySelector('#roleCaption').textContent=state.role==='student'?'ESTUDIANTE':'ADMINISTRADOR'; document.querySelectorAll('.role-tab').forEach(b=>b.classList.toggle('active',b.dataset.role===state.role)); document.body.classList.toggle('zones-on',state.zones); document.querySelector('#backButton').hidden=ROOT_SCREENS.has(state.screen); renderScreenPanel(); if(state.screen==='loading') runLoading(); const rc=phone.querySelector('#rateComment'); if(rc) rc.addEventListener('input',()=>{const el=phone.querySelector('#rateCount'); if(el) el.textContent=`${rc.value.length} / 500`;}); },120);
+  setTimeout(()=>{ phone.innerHTML=renderers[state.screen](); phone.classList.remove('leaving'); phone.classList.remove('screen-in'); void phone.offsetWidth; phone.classList.add('screen-in'); document.querySelector('#screenLabel').textContent=SCREENS[state.screen].label; document.querySelector('#roleCaption').textContent=state.role==='student'?'ESTUDIANTE':'ADMINISTRADOR'; document.querySelectorAll('.role-tab').forEach(b=>b.classList.toggle('active',b.dataset.role===state.role)); document.querySelector('#backButton').hidden=ROOT_SCREENS.has(state.screen); renderScreenPanel(); if(state.screen==='loading') runLoading(); const rc=phone.querySelector('#rateComment'); if(rc) rc.addEventListener('input',()=>{const el=phone.querySelector('#rateCount'); if(el) el.textContent=`${rc.value.length} / 500`;}); if(!window.SicpesShell||window.SicpesShell.getState().platform==='mobile'){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:'wireframes',platform:'mobile',screen:state.screen,role:state.role}}));} },120);
 }
 function renderScreenPanel() {
   const screens=state.role==='student'?STUDENT_SCREENS:ADMIN_SCREENS;
@@ -153,13 +153,17 @@ function renderScreenPanel() {
 }
 /* Escala uniforme el marco completo y reserva su tamaño visible en el layout. */
 function updatePhoneScale() {
-  const headerHeight=document.querySelector('.topbar').getBoundingClientRect().height;
-  const scale=Math.max(.6,Math.min(1,(window.innerHeight-headerHeight-90)/868));
+  if(window.SicpesShell){window.SicpesShell.refit();return;}
+  const topbar=document.querySelector('.topbar');
   const holder=document.querySelector('.phone-holder');
+  const label=document.querySelector('.device-label');
+  if(!topbar||!holder||!label)return;
+  const headerHeight=topbar.getBoundingClientRect().height;
+  const scale=Math.max(.6,Math.min(1,(window.innerHeight-headerHeight-90)/868));
   document.documentElement.style.setProperty('--phone-scale',scale);
   holder.style.width=`${414*scale}px`;
   holder.style.height=`${868*scale}px`;
-  document.querySelector('.device-label').style.width=`${414*scale}px`;
+  label.style.width=`${414*scale}px`;
 }
 function screenAdminLogin() { return `<div class="app-scroll">${header(false)}<div style="height:56px"></div><span class="mono-label">SICPES · ACCESO RESTRINGIDO</span><h1 class="screen-title">Panel administrativo</h1><p class="screen-subtitle">Inicia sesión para gestionar la residencia.</p>${field('CORREO ADMINISTRADOR','admin@sicpes.mx','email')}${field('CONTRASEÑA','••••••••','password')}<button class="button primary clickable" data-action="admin-login">Entrar</button><p class="form-note">Acceso exclusivo para personal autorizado.</p></div>`; }
 function runLoading() { clearInterval(state.loadingTimer); let progress=0; state.loadingTimer=setInterval(()=>{ progress=Math.min(progress+8,100); const fill=document.querySelector('#progressFill'); if(!fill){clearInterval(state.loadingTimer);return;} fill.style.width=`${progress}%`; document.querySelector('#progressPercent').textContent=`${progress}%`; if(progress===100){clearInterval(state.loadingTimer);setTimeout(()=>go(state.role==='admin'?'reservations':'home',{replace:true}),450);} },100); }
@@ -457,6 +461,20 @@ document.addEventListener('change',e=>{
   if([...codes].includes(e.target)){e.target.nextElementSibling?.focus();}
 });
   document.querySelector('#backButton').addEventListener('click',back);
+
+/* Puente de la sección Wireframes: conserva el rol al saltar entre fidelidades. */
+window.SicpesWireframeMobile = {
+  showScreen: function (id, role) {
+    if (!SCREENS[id]) return;
+    if (role === 'student' || role === 'admin') state.role = role;
+    else if (SCREENS[id].role === 'student' || SCREENS[id].role === 'admin') state.role = SCREENS[id].role;
+    state.screen = id;
+    state.history = [];
+    render();
+  },
+  getScreen: function () { return state.screen; },
+  getRole: function () { return state.role; }
+};
 
 document.querySelector('#diagramToggle').addEventListener('click',openDiagram);
 document.querySelector('#downloadDiagram').addEventListener('click',downloadDiagramPNG);
