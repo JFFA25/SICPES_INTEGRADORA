@@ -73,16 +73,17 @@ Google Fonts se usa como mejora tipográfica; sin conexión, la página conserva
 
 ```text
 Sketches/
-├─ index.html          Estructura de las tres secciones
+├─ index.html          Estructura de las tres secciones y visor unificado
+├─ shell.js            Shell compartido: zoom, paneles, búsqueda, atajos y rutas
+├─ shell.css           Estilos del shell unificado y maquetación responsiva
 ├─ data.js             Puente único a los datos de app.js y pwa.js
-├─ fidelity.js         Selector de fidelidad, rutas y conservación de contexto
-├─ sections.css        Barra superior y ajustes de las secciones
-├─ wireframes.css      Tratamiento gris de los wireframes
 ├─ app.js              Wireframe móvil, datos y acciones
 ├─ pwa.js              Wireframe PWA, datos y acciones
 ├─ pencil-screens.js   Especificaciones de las láminas
-├─ pencil.js           Render de sketches y descargas
-├─ pencil.css
+├─ pencil.js           Render de sketches y descargas (Rough.js)
+├─ pencil.css          Estilos de bocetos y modal ampliado
+├─ wireframes.css      Tratamiento gris de los wireframes
+├─ sections.css        Ajustes de secciones
 ├─ mockups/
 │  ├─ mockups.js       Render de alta fidelidad e interacción
 │  └─ mockups.css      Sistema visual de los mockups

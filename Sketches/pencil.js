@@ -70,7 +70,11 @@
       const r = rough.svg(svg);
       const api = {};
       ['rectangle', 'line', 'circle', 'ellipse', 'path', 'polygon', 'linearPath', 'curve', 'arc'].forEach(function (name) {
-        api[name] = function () { return r[name].apply(r, arguments); };
+        api[name] = function () {
+          const el = r[name].apply(r, arguments);
+          if (el) svg.appendChild(el);
+          return el;
+        };
       });
       return api;
     }
@@ -88,6 +92,12 @@
       },
       circle: function (x, y, d, opts) {
         const el = node('circle', { cx: x, cy: y, r: d / 2, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        svg.appendChild(el);
+        return el;
+      },
+      polygon: function (points, opts) {
+        const pts = (points || []).map(function (pt) { return pt[0] + ',' + pt[1]; }).join(' ');
+        const el = node('polygon', { points: pts, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
         svg.appendChild(el);
         return el;
       }
@@ -382,10 +392,11 @@
     const targetY = p.target && Number(p.target.y) || ny + 10;
 
     const markerId = 'arrow-' + Math.random().toString(36).slice(2, 8);
-    let defs = svg.querySelector('defs');
+    const rootSvg = svg.ownerSVGElement || svg;
+    let defs = rootSvg.querySelector('defs');
     if (!defs) {
       defs = node('defs');
-      svg.insertBefore(defs, svg.firstChild);
+      rootSvg.insertBefore(defs, rootSvg.firstChild);
     }
     const marker = node('marker', { id: markerId, markerWidth: 8, markerHeight: 6, refX: 7, refY: 3, orient: 'auto' });
     marker.appendChild(node('path', { d: 'M0,0 L0,6 L8,3 z', fill: PEN }));
@@ -651,8 +662,10 @@
   }
 
   function download(screenId, platform, role) {
+    const plat = platform || state.platform;
+    const curRole = role || state.role;
     const meta = META[screenId] || { code: screenId };
-    const svg = buildSvg(screenId, platform || state.platform, true);
+    const svg = buildSvg(screenId, plat, true);
     const serialized = new XMLSerializer().serializeToString(svg);
     const blob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -660,14 +673,14 @@
     image.onload = function () {
       const scale = 2;
       const canvas = document.createElement('canvas');
-      canvas.width = Math.round(sizeFor(platform).width * scale);
-      canvas.height = Math.round(sizeFor(platform).height * scale);
+      canvas.width = Math.round(sizeFor(plat).width * scale);
+      canvas.height = Math.round(sizeFor(plat).height * scale);
       const context = canvas.getContext('2d');
       context.fillStyle = '#FAF7EE';
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       const link = document.createElement('a');
-      link.download = 'sicpes-sketch-' + (meta.code || screenId) + '-' + (role || state.role) + '-' + (platform || state.platform) + '.png';
+      link.download = 'sicpes-sketch-' + (meta.code || screenId) + '-' + curRole + '-' + plat + '.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
       URL.revokeObjectURL(url);

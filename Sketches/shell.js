@@ -1112,6 +1112,13 @@
       };
     },
     showScreen: navigate,
+    setSection: setSection,
+    setPlatform: setPlatform,
+    setRole: setRole,
+    back: back,
+    step: step,
+    toggleZones: toggleZones,
+    openMap: openMap,
     refit: refit,
     toast: toast
   };
