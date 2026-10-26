@@ -118,7 +118,7 @@ function pwaSidebar(role, active) {
   const items = role === 'student'
     ? [['home','⌂','Inicio'],['reserve','＋','Reservar'],['payments','$','Pagos'],['profile','◎','Cuenta']]
     : [['reservations','▤','Reservaciones'],['pendingPayments','$','Pagos'],['floors','▥','Pisos'],['settings','⚙','Configuración']];
-  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}</aside>`;
+  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}<div class="pwa-side-help"><span class="pwa-side-label">AYUDA</span><button class="pwa-side-item" data-pwa-go="${role === 'student' ? 'profile' : 'settings'}"><span class="pwa-side-icon">◈</span>Soporte SICPES</button></div></aside>`;
 }
 function pwaShell(role, active, content) {
   return `${pwaTopnav(role)}<div class="pwa-app-body">${pwaSidebar(role,active)}<div class="pwa-app-main">${content}</div></div>`;
@@ -193,7 +193,13 @@ function pwaFloors() {
   return pwaShell('admin','floors',content);
 }
 function pwaSettings() {
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios y datos administrativos.</p></div></div><div class="pwa-form-layout"><article class="pwa-card"><h3 class="pwa-card-title">Precios mensuales</h3><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">Guardar cambios</button></article><article class="pwa-card"><h3 class="pwa-card-title">Notificaciones del sistema</h3>${[['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false]].map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}</article></div>`;
+  const toggles = [['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false],['Reporte semanal',true]];
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios, notificaciones y datos administrativos.</p></div></div>
+<div class="pwa-form-layout">
+<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Precios mensuales</h3><span class="pwa-status pwa-ok">ACTIVO</span></div><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">✓ Guardar cambios</button></article>
+<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Notificaciones del sistema</h3></div>${toggles.map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}<div class="pwa-notice">🔔 Los avisos se envían al correo y a la PWA.</div></article>
+</div>
+<article class="pwa-card pwa-period-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Cierre de periodo</h3>${pwaStatus('Pendiente')}</div><p class="pwa-lead">Cierra el periodo actual para generar los estados de cuenta del siguiente mes.</p><button class="pwa-button pwa-secondary" data-pwa-action="social">Cerrar periodo</button></article>`;
   return pwaShell('admin','settings',content);
 }
 
