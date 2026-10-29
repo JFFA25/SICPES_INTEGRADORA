@@ -9,8 +9,10 @@
   const HAND = "'Patrick Hand', 'Caveat', cursive, system-ui";
   const DISPLAY = "'Caveat', 'Patrick Hand', cursive, system-ui";
 
-  const STUDENT = ['landing', 'studentLogin', 'forgotPassword', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile'];
-  const ADMIN = ['adminLogin', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings'];
+  const SHARED = ['splash', 'loading', 'forgotPassword', 'lockAccount', 'unlockAccount', 'aboutSoftware', 'aboutTeam'];
+  const STUDENT = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
+  const ADMIN = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
+
   const NAV_SCREENS = new Set(['home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings']);
 
   function activeNav(id) {
@@ -32,14 +34,17 @@
   }
 
   const META = {
-    landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
-    forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, register: { code: 'E4', title: 'CREAR CUENTA' },
+    splash: { code: 'C1', title: 'SPLASH SCREEN' }, landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
+    forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, lockAccount: { code: 'C2', title: 'CUENTA BLOQUEADA' },
+    unlockAccount: { code: 'C3', title: 'CÓDIGO DE DESBLOQUEO' }, register: { code: 'E4', title: 'CREAR CUENTA' },
+
     verifyEmail: { code: 'E5', title: 'VERIFICAR CORREO' }, loading: { code: 'E6', title: 'SINCRONIZANDO' },
     home: { code: 'E7', title: 'INICIO' }, reserve: { code: 'E8', title: 'RESERVAR HABITACIÓN' },
     roomDetail: { code: 'E9', title: 'DETALLE DE HABITACIÓN' }, requestStatus: { code: 'E10', title: 'ESTADO DE MI PETICIÓN' },
     payments: { code: 'E11', title: 'GESTIÓN DE PAGOS' }, paymentDetail: { code: 'E12', title: 'DETALLE DE PAGO' },
     rateService: { code: 'E13', title: 'EVALUAR EL SERVICIO' }, rateConfirm: { code: 'E14', title: 'EVALUACIÓN ENVIADA' },
-    profile: { code: 'E15', title: 'CUENTA / PERFIL' }, adminLogin: { code: 'A1', title: 'ACCESO ADMINISTRADOR' },
+    profile: { code: 'E15', title: 'CUENTA / PERFIL' }, aboutSoftware: { code: 'C4', title: 'ACERCA DEL SOFTWARE' },
+    aboutTeam: { code: 'C5', title: 'ACERCA DEL EQUIPO' }, adminLogin: { code: 'A1', title: 'ACCESO ADMINISTRADOR' },
     reservations: { code: 'A2', title: 'RESERVACIONES' }, assignRoom: { code: 'A3', title: 'ASIGNAR HABITACIÓN' },
     pendingPayments: { code: 'A4', title: 'PAGOS PENDIENTES' }, validatePayment: { code: 'A5', title: 'VALIDAR PAGO' },
     debts: { code: 'A6', title: 'ADEUDOS' }, floors: { code: 'A7', title: 'PISOS' }, settings: { code: 'A8', title: 'CONFIGURACIÓN GLOBAL' }
@@ -137,7 +142,7 @@
 
   function resolveScreenFromCode(str) {
     if (!str) return null;
-    const match = String(str).match(/\b([EA][1-9]|E1[0-5]|A[1-8])\b/);
+    const match = String(str).match(/\b([C][1-5]|[EA][1-9]|E1[0-5]|A[1-8])\b/);
     if (match && CODE_TO_ID[match[1]]) return CODE_TO_ID[match[1]];
     return null;
   }
@@ -575,7 +580,7 @@
 
     const r = roughIn(group);
     const parts = platform === 'mobile' ? (spec.mobile || []) : (spec.desktop || []);
-    const currentRole = spec.role === 'Administrador' ? 'admin' : 'student';
+    const currentRole = spec.role === 'Administrador' ? 'admin' : (state.role === 'admin' ? 'admin' : 'student');
 
     parts.forEach(function (part) {
       drawPart(r, group, part, dimensions.width, platform === 'mobile', screenId, currentRole);
@@ -610,7 +615,7 @@
     if (code) code.textContent = meta.code;
     if (title) title.textContent = meta.title;
     if (role) {
-      role.textContent = (state.role === 'admin' ? 'ADMINISTRADOR' : 'ESTUDIANTE') +
+      role.textContent = (state.role === 'admin' ? 'ADMINISTRADOR' : state.role === 'shared' ? 'COMUNES (AMBOS ROLES)' : 'ESTUDIANTE') +
         ' · ' + (state.platform === 'mobile' ? 'MÓVIL' : 'PWA') +
         ' (Lámina ' + (curIdx || 1) + ' de ' + total + ')';
     }
@@ -636,7 +641,7 @@
     lastFocus = null;
   }
 
-  function screensForRole() { return state.role === 'admin' ? ADMIN : STUDENT; }
+  function screensForRole() { return state.role === 'admin' ? ADMIN : state.role === 'shared' ? SHARED : STUDENT; }
 
   function navigate(delta) {
     const screens = screensForRole();
@@ -647,7 +652,7 @@
   }
 
   function showScreen(id, role, platform, fromModal) {
-    if (role === 'student' || role === 'admin') state.role = role;
+    if (role === 'student' || role === 'admin' || role === 'shared') state.role = role;
     if (platform === 'mobile' || platform === 'pwa') state.platform = platform;
     if (META[id]) state.screen = id;
     renderStage();

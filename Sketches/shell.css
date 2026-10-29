@@ -1108,3 +1108,65 @@ body.shell-section-mockups {
   margin-right: 4px;
   line-height: 1.1;
 }
+
+/* ---------- Apartado de Pantallas en Común (Estudiante y Administrador) ---------- */
+.shell-group-title {
+  margin: 10px 0 4px;
+  padding: 5px 8px;
+  font: 700 9px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+.shell-group-title:first-child {
+  margin-top: 0;
+}
+
+.shell-group-shared {
+  margin-top: 14px;
+  color: #4CAF50;
+  border-bottom-color: rgba(76, 175, 80, 0.35);
+  background: rgba(47, 138, 92, 0.08);
+  border-radius: 5px 5px 0 0;
+}
+
+.shell-shared-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  font: 700 8px var(--mono);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  color: #2F8A5C;
+  background: rgba(47, 138, 92, 0.14);
+  border: 1px solid rgba(47, 138, 92, 0.35);
+  vertical-align: middle;
+}
+
+.shell-shared-summary {
+  margin: 0 0 10px;
+  padding: 10px 11px;
+  border-radius: 8px;
+  background: rgba(47, 138, 92, 0.1);
+  border: 1px solid rgba(47, 138, 92, 0.35);
+  color: var(--ink);
+}
+
+.shell-shared-summary strong {
+  display: block;
+  font: 700 10px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4CAF50;
+  margin-bottom: 4px;
+}
+
+.shell-shared-summary p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}

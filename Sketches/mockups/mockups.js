@@ -12,8 +12,9 @@
   const CODES = D.codes;
   const TITLES = {};
   Object.keys(D.screens).forEach(id => { TITLES[id] = D.screens[id].title; });
-  const FLOWS = { student: D.student, admin: D.admin };
-  const AUTH = new Set(['studentLogin', 'forgotPassword', 'register', 'verifyEmail', 'adminLogin']);
+  const FLOWS = { student: D.student, admin: D.admin, shared: D.shared || [] };
+  const AUTH = new Set(['studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'adminLogin']);
+
   const ROOT = D.roots;
 
   const state = {
@@ -226,6 +227,7 @@
     if (id === 'reserve' || id === 'roomDetail') return 'reserve';
     if (id === 'payments' || id === 'paymentDetail') return 'payments';
     if (id === 'profile' || id === 'rateService') return 'profile';
+    if (id === 'aboutSoftware' || id === 'aboutTeam') return state.role === 'admin' ? 'settings' : 'profile';
     if (id === 'reservations' || id === 'assignRoom') return 'reservations';
     if (id === 'pendingPayments' || id === 'validatePayment' || id === 'debts') return 'pendingPayments';
     if (id === 'floors') return 'floors';
@@ -723,7 +725,110 @@
       <article class="mk-card mk-danger-zone"><div class="mk-card-head"><h3 class="mk-card-title">Cierre de periodo</h3>${status('Pendiente')}</div><p class="mk-muted">Cierra el periodo actual para generar los estados de cuenta del siguiente mes.</p><button type="button" class="mk-btn mk-danger-ghost" data-mk-action="social">Cerrar periodo</button></article>`;
   }
 
+  function splashView() {
+    return `
+      <div class="mk-loading-card">
+        <div class="mk-loading-brand">${logoLockup(false)}</div>
+        <span class="mk-eyebrow">${icon('sparkles', 14)} Versión 2.4.0 · Flutter &amp; PWA React/Vite</span>
+        <h1 class="mk-title">SICPES Residencial</h1>
+        <p class="mk-subtitle">Sistema Integral de Control de Pensión de Estudiantes · Conectando estudiantes con hogares seguros.</p>
+        <div class="mk-cta-stack" style="margin-top:16px">
+          <button type="button" class="mk-btn mk-primary mk-block" data-mk-go="landing">Entrar al Portal del Residente ${icon('arrowRight', 16)}</button>
+          <button type="button" class="mk-btn mk-secondary mk-block" data-mk-go="adminLogin">${icon('shield', 16)} Consola de Administración</button>
+        </div>
+        <div class="mk-btn-row" style="margin-top:10px">
+          <button type="button" class="mk-btn mk-secondary" data-mk-go="aboutSoftware">Acerca del software</button>
+          <button type="button" class="mk-btn mk-secondary" data-mk-go="aboutTeam">Acerca del equipo</button>
+        </div>
+      </div>`;
+  }
+
+  function lockAccountView() {
+    return `
+      <div class="mk-auth-form">
+        <span class="mk-eyebrow">${icon('shield', 14)} Seguridad · Pantalla común</span>
+        <h1 class="mk-title">Cuenta bloqueada temporalmente</h1>
+        <p class="mk-subtitle">Se detectaron <strong>3 intentos fallidos</strong> consecutivos de inicio de sesión. Por seguridad, el acceso fue restringido por <strong>15:00 minutos</strong>.</p>
+        <div class="mk-soft-note">${icon('clock', 17)} Puedes esperar a que finalice el bloqueo temporal o desbloquear tu cuenta inmediatamente con un código de 6 dígitos enviado a tu correo.</div>
+        <button type="button" class="mk-btn mk-primary mk-block" data-mk-go="unlockAccount">${icon('key', 16)} Solicitar código de desbloqueo</button>
+        <button type="button" class="mk-btn mk-secondary mk-block" style="margin-top:8px" data-mk-go="forgotPassword">${icon('mail', 16)} Recuperar contraseña por correo</button>
+        <p class="mk-inline-link"><button type="button" data-mk-go="${state.role === 'admin' ? 'adminLogin' : 'studentLogin'}">Volver al inicio de sesión</button></p>
+      </div>`;
+  }
+
+  function unlockAccountView() {
+    const digits = ['8', '4', '1', '9', '0', '2'];
+    return `
+      <div class="mk-auth-form">
+        <span class="mk-eyebrow">${icon('key', 14)} Verificación · Pantalla común</span>
+        <h1 class="mk-title">Código de desbloqueo</h1>
+        <p class="mk-subtitle">Ingresa el código de seguridad de 6 dígitos enviado a tu correo institucional o administrativo para reactivar tu cuenta.</p>
+        <div class="mk-code-row" role="group" aria-label="Código de desbloqueo de 6 dígitos">
+          ${digits.map((v, i) => `<input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito ${i + 1}" value="${v}">`).join('')}
+        </div>
+        <button type="button" class="mk-btn mk-primary mk-block" data-mk-go="loading">${icon('check', 16)} Validar código y desbloquear</button>
+        <p class="mk-inline-link">¿No recibiste el código? <button type="button" data-mk-action="resend-code">Reenviar código</button> · <button type="button" data-mk-go="${state.role === 'admin' ? 'adminLogin' : 'studentLogin'}">Volver al login</button></p>
+      </div>`;
+  }
+
+  function aboutSoftwareView() {
+    const backTarget = state.role === 'admin' ? 'settings' : 'profile';
+    return `
+      ${pageHead('INFORMACIÓN DEL SISTEMA · PANTALLA COMÚN', 'Acerca del software', 'SICPES · Sistema Integral de Control de Pensión de Estudiantes (v2.4.0).', `<button type="button" class="mk-btn mk-primary" data-mk-go="aboutTeam">${icon('users', 16)} Acerca del equipo</button>`)}
+      <div class="mk-kpi-grid">
+        <div class="mk-kpi"><span>Aplicación Web</span><strong>PWA React / Vite</strong><small>TypeScript + TailwindCSS</small></div>
+        <div class="mk-kpi"><span>App Móvil</span><strong>Flutter / Dart</strong><small>Multiplataforma Android / iOS</small></div>
+        <div class="mk-kpi"><span>Backend &amp; API</span><strong>Node.js + FastAPI</strong><small>Arquitectura híbrida REST</small></div>
+        <div class="mk-kpi"><span>Base de Datos</span><strong>TiDB + MongoDB</strong><small>Relacional + NoSQL en la nube</small></div>
+      </div>
+      <div class="mk-main-grid">
+        <article class="mk-card">
+          <div class="mk-card-head"><h3 class="mk-card-title">Propósito y alcance</h3>${status('Disponible')}</div>
+          <p class="mk-muted">SICPES conecta a estudiantes universitarios con hogares seguros y digitaliza la gestión integral de pensiones: catálogo de habitaciones por piso, solicitud de reserva, control de pagos mensuales, seguimiento de adeudos y evaluación del servicio (HU-SIC-05).</p>
+        </article>
+        <article class="mk-card">
+          <h3 class="mk-card-title">Servicios y APIs integradas</h3>
+          <div class="mk-service-grid">
+            <div class="mk-service-item">${icon('mapPin', 16)}<span>Google Maps &amp; Geolocation API</span></div>
+            <div class="mk-service-item">${icon('mail', 16)}<span>Mailtrap &amp; Twilio API (OTP)</span></div>
+            <div class="mk-service-item">${icon('card', 16)}<span>PDFmonkey API (Recibos)</span></div>
+            <div class="mk-service-item">${icon('shield', 16)}<span>Docker &amp; Render Cloud</span></div>
+          </div>
+          <button type="button" class="mk-btn mk-secondary mk-block" style="margin-top:12px" data-mk-go="${backTarget}">← Volver</button>
+        </article>
+      </div>`;
+  }
+
+  function aboutTeamView() {
+    const backTarget = state.role === 'admin' ? 'settings' : 'profile';
+    const members = [
+      ['Jose Francisco Flores Amador', 'Líder de Proyecto / Fullstack / Documentación', '@JFFA25'],
+      ['Edgar Cabrera Velázquez', 'Backend / Lógica del sistema y seguridad', '@Edgar-Cbr'],
+      ['Edwin Hernández Campos', 'Base de datos / Estructura MySQL TiDB y MongoDB', '@Edwinhdzcm'],
+      ['Giovany Raul Pazos Cruz', 'Frontend / Interfaz PWA React/Vite y Móvil Flutter', '@giova0412']
+    ];
+    return `
+      ${pageHead('CRÉDITOS INSTITUCIONALES · PANTALLA COMÚN', 'Acerca del equipo / empresa', 'Equipo desarrollador del Proyecto Integrador SICPES · UTHH.', `<button type="button" class="mk-btn mk-secondary" data-mk-go="aboutSoftware">← Acerca del software</button>`)}
+      <div class="mk-main-grid">
+        ${members.map(([name, role, gh]) => `
+          <article class="mk-card">
+            <div class="mk-card-head">
+              <div class="mk-user-row">${avatar(name)}<div><strong>${esc(name)}</strong><small>${esc(role)}</small></div></div>
+              ${status('Activo')}
+            </div>
+            <p class="mk-muted">GitHub: <strong>${esc(gh)}</strong> · Ingeniería en Desarrollo y Gestión de Software (UTHH).</p>
+          </article>
+        `).join('')}
+      </div>
+      <div style="margin-top:12px"><button type="button" class="mk-btn mk-primary" data-mk-go="${backTarget}">Volver al panel</button></div>`;
+  }
+
   const VIEWS = {
+    splash: splashView,
+    lockAccount: lockAccountView,
+    unlockAccount: unlockAccountView,
+    aboutSoftware: aboutSoftwareView,
+    aboutTeam: aboutTeamView,
     landing: landingView,
     studentLogin: studentLoginView,
     forgotPassword: forgotPasswordView,
@@ -795,7 +900,7 @@
 
   function frameFor(id, content) {
     if (id === 'landing') return landingFrame(content);
-    if (id === 'loading') return loadingFrame(content);
+    if (id === 'loading' || id === 'splash') return loadingFrame(content);
     if (AUTH.has(id)) return authFrame(state.role, content);
     return state.platform === 'mobile' ? mobileShell(state.role, activeNav(id), content) : pwaShell(state.role, activeNav(id), content);
   }
