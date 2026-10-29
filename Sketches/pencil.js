@@ -9,8 +9,10 @@
   const HAND = "'Patrick Hand', 'Caveat', cursive, system-ui";
   const DISPLAY = "'Caveat', 'Patrick Hand', cursive, system-ui";
 
-  const STUDENT = ['landing', 'studentLogin', 'forgotPassword', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile'];
-  const ADMIN = ['adminLogin', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings'];
+  const SHARED = ['splash', 'loading', 'forgotPassword', 'lockAccount', 'unlockAccount', 'aboutSoftware', 'aboutTeam'];
+  const STUDENT = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
+  const ADMIN = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
+
   const NAV_SCREENS = new Set(['home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings']);
 
   function activeNav(id) {
@@ -32,14 +34,17 @@
   }
 
   const META = {
-    landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
-    forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, register: { code: 'E4', title: 'CREAR CUENTA' },
+    splash: { code: 'C1', title: 'SPLASH SCREEN' }, landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
+    forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, lockAccount: { code: 'C2', title: 'CUENTA BLOQUEADA' },
+    unlockAccount: { code: 'C3', title: 'CÓDIGO DE DESBLOQUEO' }, register: { code: 'E4', title: 'CREAR CUENTA' },
+
     verifyEmail: { code: 'E5', title: 'VERIFICAR CORREO' }, loading: { code: 'E6', title: 'SINCRONIZANDO' },
     home: { code: 'E7', title: 'INICIO' }, reserve: { code: 'E8', title: 'RESERVAR HABITACIÓN' },
     roomDetail: { code: 'E9', title: 'DETALLE DE HABITACIÓN' }, requestStatus: { code: 'E10', title: 'ESTADO DE MI PETICIÓN' },
     payments: { code: 'E11', title: 'GESTIÓN DE PAGOS' }, paymentDetail: { code: 'E12', title: 'DETALLE DE PAGO' },
     rateService: { code: 'E13', title: 'EVALUAR EL SERVICIO' }, rateConfirm: { code: 'E14', title: 'EVALUACIÓN ENVIADA' },
-    profile: { code: 'E15', title: 'CUENTA / PERFIL' }, adminLogin: { code: 'A1', title: 'ACCESO ADMINISTRADOR' },
+    profile: { code: 'E15', title: 'CUENTA / PERFIL' }, aboutSoftware: { code: 'C4', title: 'ACERCA DEL SOFTWARE' },
+    aboutTeam: { code: 'C5', title: 'ACERCA DEL EQUIPO' }, adminLogin: { code: 'A1', title: 'ACCESO ADMINISTRADOR' },
     reservations: { code: 'A2', title: 'RESERVACIONES' }, assignRoom: { code: 'A3', title: 'ASIGNAR HABITACIÓN' },
     pendingPayments: { code: 'A4', title: 'PAGOS PENDIENTES' }, validatePayment: { code: 'A5', title: 'VALIDAR PAGO' },
     debts: { code: 'A6', title: 'ADEUDOS' }, floors: { code: 'A7', title: 'PISOS' }, settings: { code: 'A8', title: 'CONFIGURACIÓN GLOBAL' }
@@ -71,9 +76,8 @@
       const api = {};
       ['rectangle', 'line', 'circle', 'ellipse', 'path', 'polygon', 'linearPath', 'curve', 'arc'].forEach(function (name) {
         api[name] = function () {
-          // rough.svg() solo CREA el nodo; hay que insertarlo para que se dibuje
           const el = r[name].apply(r, arguments);
-          if (el && el.nodeType === 1) svg.appendChild(el);
+          if (el) svg.appendChild(el);
           return el;
         };
       });
@@ -93,6 +97,12 @@
       },
       circle: function (x, y, d, opts) {
         const el = node('circle', { cx: x, cy: y, r: d / 2, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        svg.appendChild(el);
+        return el;
+      },
+      polygon: function (points, opts) {
+        const pts = (points || []).map(function (pt) { return pt[0] + ',' + pt[1]; }).join(' ');
+        const el = node('polygon', { points: pts, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
         svg.appendChild(el);
         return el;
       }
@@ -132,7 +142,7 @@
 
   function resolveScreenFromCode(str) {
     if (!str) return null;
-    const match = String(str).match(/\b([EA][1-9]|E1[0-5]|A[1-8])\b/);
+    const match = String(str).match(/\b([C][1-5]|[EA][1-9]|E1[0-5]|A[1-8])\b/);
     if (match && CODE_TO_ID[match[1]]) return CODE_TO_ID[match[1]];
     return null;
   }
@@ -288,14 +298,9 @@
       if (p.style === 'hatched') {
         cR.rectangle(p.x, p.y, p.w, p.h, {
           stroke: PEN, strokeWidth: 2.2, fill: PEN, fillStyle: 'hachure',
-          fillWeight: 1.2, hachureAngle: -42, hachureGap: 4.5, roughness: 0.85
+          fillWeight: 1.5, hachureAngle: -42, hachureGap: 3.2, roughness: 0.85
         });
-        const label = centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: PEN, weight: 700, display: true });
-        // Halo de papel para que el texto se lea sobre el sombreado
-        label.setAttribute('stroke', '#FFFDF8');
-        label.setAttribute('stroke-width', '4');
-        label.setAttribute('stroke-linejoin', 'round');
-        label.setAttribute('paint-order', 'stroke');
+        centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: '#FFFDF8', weight: 700, display: true });
       } else if (p.style === 'link') {
         text(container, p.x, p.y + (p.h || 20) / 2 + 5, p.text || '', 12, { weight: 700, fill: PEN });
         line(cR, p.x, p.y + (p.h || 20) / 2 + 8, p.x + Math.min(p.w, p.text.length * 7), p.y + (p.h || 20) / 2 + 8, 1.2);
@@ -392,10 +397,11 @@
     const targetY = p.target && Number(p.target.y) || ny + 10;
 
     const markerId = 'arrow-' + Math.random().toString(36).slice(2, 8);
-    let defs = svg.querySelector('defs');
+    const rootSvg = svg.ownerSVGElement || svg;
+    let defs = rootSvg.querySelector('defs');
     if (!defs) {
       defs = node('defs');
-      svg.insertBefore(defs, svg.firstChild);
+      rootSvg.insertBefore(defs, rootSvg.firstChild);
     }
     const marker = node('marker', { id: markerId, markerWidth: 8, markerHeight: 6, refX: 7, refY: 3, orient: 'auto' });
     marker.appendChild(node('path', { d: 'M0,0 L0,6 L8,3 z', fill: PEN }));
@@ -569,14 +575,12 @@
       return svg;
     }
 
-    // Sin filtro SVG: feDisplacementMap + escala CSS desalineaba los trazos respecto al texto.
-    // rough.js ya da el aspecto de trazo a mano.
-    const group = node('g', {});
+    const group = node('g', { filter: 'url(#pencil-wobble)' });
     svg.appendChild(group);
 
     const r = roughIn(group);
     const parts = platform === 'mobile' ? (spec.mobile || []) : (spec.desktop || []);
-    const currentRole = spec.role === 'Administrador' ? 'admin' : 'student';
+    const currentRole = spec.role === 'Administrador' ? 'admin' : (state.role === 'admin' ? 'admin' : 'student');
 
     parts.forEach(function (part) {
       drawPart(r, group, part, dimensions.width, platform === 'mobile', screenId, currentRole);
@@ -611,7 +615,7 @@
     if (code) code.textContent = meta.code;
     if (title) title.textContent = meta.title;
     if (role) {
-      role.textContent = (state.role === 'admin' ? 'ADMINISTRADOR' : 'ESTUDIANTE') +
+      role.textContent = (state.role === 'admin' ? 'ADMINISTRADOR' : state.role === 'shared' ? 'COMUNES (AMBOS ROLES)' : 'ESTUDIANTE') +
         ' · ' + (state.platform === 'mobile' ? 'MÓVIL' : 'PWA') +
         ' (Lámina ' + (curIdx || 1) + ' de ' + total + ')';
     }
@@ -637,7 +641,7 @@
     lastFocus = null;
   }
 
-  function screensForRole() { return state.role === 'admin' ? ADMIN : STUDENT; }
+  function screensForRole() { return state.role === 'admin' ? ADMIN : state.role === 'shared' ? SHARED : STUDENT; }
 
   function navigate(delta) {
     const screens = screensForRole();
@@ -648,7 +652,7 @@
   }
 
   function showScreen(id, role, platform, fromModal) {
-    if (role === 'student' || role === 'admin') state.role = role;
+    if (role === 'student' || role === 'admin' || role === 'shared') state.role = role;
     if (platform === 'mobile' || platform === 'pwa') state.platform = platform;
     if (META[id]) state.screen = id;
     renderStage();
@@ -663,8 +667,10 @@
   }
 
   function download(screenId, platform, role) {
+    const plat = platform || state.platform;
+    const curRole = role || state.role;
     const meta = META[screenId] || { code: screenId };
-    const svg = buildSvg(screenId, platform || state.platform, true);
+    const svg = buildSvg(screenId, plat, true);
     const serialized = new XMLSerializer().serializeToString(svg);
     const blob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -672,14 +678,14 @@
     image.onload = function () {
       const scale = 2;
       const canvas = document.createElement('canvas');
-      canvas.width = Math.round(sizeFor(platform).width * scale);
-      canvas.height = Math.round(sizeFor(platform).height * scale);
+      canvas.width = Math.round(sizeFor(plat).width * scale);
+      canvas.height = Math.round(sizeFor(plat).height * scale);
       const context = canvas.getContext('2d');
       context.fillStyle = '#FAF7EE';
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       const link = document.createElement('a');
-      link.download = 'sicpes-sketch-' + (meta.code || screenId) + '-' + (role || state.role) + '-' + (platform || state.platform) + '.png';
+      link.download = 'sicpes-sketch-' + (meta.code || screenId) + '-' + curRole + '-' + plat + '.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
       URL.revokeObjectURL(url);

@@ -6,10 +6,11 @@
 (function () {
   'use strict';
 
-  const SECTIONS = ['sketches', 'wireframes', 'mockups'];
-  const SECTION_LABEL = { sketches: 'SKETCHES', wireframes: 'WIREFRAMES', mockups: 'MOCKUPS' };
+  const SECTIONS = ['sketches', 'wireframes', 'mockups', 'prototype'];
+  const SECTION_LABEL = { sketches: '1 · SKETCHES', wireframes: '2 · WIREFRAMES', mockups: '3 · MOCKUPS (ESTÁTICO)', prototype: '4 · PROTOTIPO (FUNCIONAL)' };
+  const SECTION_BUTTON = { sketches: 'Sketches', wireframes: 'Wireframes', mockups: 'Mockups', prototype: 'Prototipo' };
   const PLATFORM_LABEL = { mobile: 'MÓVIL', pwa: 'PWA' };
-  const ROLE_LABEL = { student: 'ESTUDIANTE', admin: 'ADMINISTRADOR' };
+  const ROLE_LABEL = { student: 'ESTUDIANTE', admin: 'ADMINISTRADOR', shared: 'COMUNES (AMBOS ROLES)' };
   const STORE_KEY = 'sicpes-shell-context';
 
   const state = {
@@ -45,6 +46,7 @@
   function screensForRole(role) {
     const D = data();
     if (!D) return [];
+    if (role === 'shared') return D.shared || [];
     return (role === 'admin' ? D.admin : D.student) || [];
   }
 
@@ -71,10 +73,11 @@
 
   function validScreen(screen, role) {
     const screens = screensForRole(role);
-    return screens.includes(screen) || (role === 'admin' && screen === 'loading');
+    return screens.includes(screen);
   }
 
   function initialScreen(role) {
+    if (role === 'shared') return 'splash';
     return role === 'admin' ? 'adminLogin' : 'landing';
   }
 
@@ -84,7 +87,7 @@
 
   function activeSurface() {
     if (state.section === 'sketches') return byId('pencilView');
-    if (state.section === 'mockups') return byId('mockupsView');
+    if (state.section === 'mockups' || state.section === 'prototype') return byId('mockupsView');
     return state.platform === 'pwa' ? byId('pwaView') : byId('mobileView');
   }
 
@@ -94,14 +97,14 @@
         ? { width: 440, height: 880 }
         : { width: 1200, height: 820 };
     }
-    if (state.section === 'mockups') {
+    if (state.section === 'mockups' || state.section === 'prototype') {
       return state.platform === 'mobile'
         ? { width: 390, height: 844 }
         : { width: 1440, height: 900 };
     }
     return state.platform === 'pwa'
-      ? { width: 1440, height: 900 }
-      : { width: 414, height: 868 };
+      ? { width: 1640, height: 1140 }
+      : { width: 594, height: 1084 };
   }
 
   function refit() {
@@ -119,12 +122,8 @@
       scale = zoomState.manualScale;
     } else {
       if (state.platform === 'pwa') {
-        // En PWA: escala la lámina automáticamente para ocupar todo el ancho disponible del panel central
-        // transform: scale calculado según el ancho del contenedor, con transform-origin: top left
-        // manteniendo la proporción original (1440x900 / 1200x820)
         scale = Math.min(1.35, Math.max(0.35, availW / size.width));
       } else {
-        // En Móvil: proporción vertical de teléfono, centrada y adaptada para verse completa
         const scaleH = availH / size.height;
         const scaleW = availW / size.width;
         scale = Math.min(1.05, Math.max(0.4, Math.min(scaleH, scaleW)));
@@ -160,6 +159,7 @@
     requestAnimationFrame(refit);
     setTimeout(refit, 60);
     setTimeout(refit, 220);
+    if (window.SicpesWireframeRedlines) window.SicpesWireframeRedlines.refresh();
   }
 
   function updateSurfaces() {
@@ -173,10 +173,10 @@
     mobile.hidden = !(state.section === 'wireframes' && state.platform === 'mobile');
     pwa.hidden = !(state.section === 'wireframes' && state.platform === 'pwa');
     pencil.hidden = state.section !== 'sketches';
-    mockups.hidden = state.section !== 'mockups';
+    mockups.hidden = !(state.section === 'mockups' || state.section === 'prototype');
 
     document.body.classList.remove(
-      'shell-section-sketches', 'shell-section-wireframes', 'shell-section-mockups',
+      'shell-section-sketches', 'shell-section-wireframes', 'shell-section-mockups', 'shell-section-prototype',
       'shell-platform-mobile', 'shell-platform-pwa'
     );
     document.body.classList.add('shell-section-' + state.section, 'shell-platform-' + state.platform);
@@ -194,7 +194,11 @@
   function getBreadcrumbs(screen, role) {
     if (role === 'admin') {
       const paths = {
+        splash: [{ id: 'splash', title: 'Splash Screen' }],
         adminLogin: [{ id: 'adminLogin', title: 'Acceso admin' }],
+        forgotPassword: [{ id: 'adminLogin', title: 'Acceso admin' }, { id: 'forgotPassword', title: 'Recuperar contraseña' }],
+        lockAccount: [{ id: 'adminLogin', title: 'Acceso admin' }, { id: 'lockAccount', title: 'Cuenta bloqueada' }],
+        unlockAccount: [{ id: 'adminLogin', title: 'Acceso admin' }, { id: 'lockAccount', title: 'Bloqueo' }, { id: 'unlockAccount', title: 'Código de desbloqueo' }],
         reservations: [{ id: 'reservations', title: 'Reservaciones' }],
         assignRoom: [{ id: 'reservations', title: 'Reservaciones' }, { id: 'assignRoom', title: 'Asignar habitación' }],
         pendingPayments: [{ id: 'pendingPayments', title: 'Pagos pendientes' }],
@@ -202,15 +206,20 @@
         debts: [{ id: 'pendingPayments', title: 'Pagos pendientes' }, { id: 'debts', title: 'Adeudos' }],
         floors: [{ id: 'floors', title: 'Pisos y habitaciones' }],
         settings: [{ id: 'settings', title: 'Configuración' }],
+        aboutSoftware: [{ id: 'settings', title: 'Configuración' }, { id: 'aboutSoftware', title: 'Acerca del software' }],
+        aboutTeam: [{ id: 'settings', title: 'Configuración' }, { id: 'aboutSoftware', title: 'Software' }, { id: 'aboutTeam', title: 'Acerca del equipo' }],
         loading: [{ id: 'adminLogin', title: 'Acceso admin' }, { id: 'loading', title: 'Sincronizando' }]
       };
       return paths[screen] || [{ id: screen, title: screenTitle(screen) }];
     }
 
     const studentPaths = {
+      splash: [{ id: 'splash', title: 'Splash Screen' }],
       landing: [{ id: 'landing', title: 'Landing' }],
       studentLogin: [{ id: 'landing', title: 'Landing' }, { id: 'studentLogin', title: 'Iniciar sesión' }],
       forgotPassword: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'forgotPassword', title: 'Recuperar contraseña' }],
+      lockAccount: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'lockAccount', title: 'Cuenta bloqueada' }],
+      unlockAccount: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'lockAccount', title: 'Bloqueo' }, { id: 'unlockAccount', title: 'Código de desbloqueo' }],
       register: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'register', title: 'Crear cuenta' }],
       verifyEmail: [{ id: 'register', title: 'Crear cuenta' }, { id: 'verifyEmail', title: 'Verificar correo' }],
       loading: [{ id: 'loading', title: 'Sincronizando' }],
@@ -222,7 +231,9 @@
       paymentDetail: [{ id: 'home', title: 'Inicio' }, { id: 'payments', title: 'Pagos' }, { id: 'paymentDetail', title: 'Detalle de pago' }],
       rateService: [{ id: 'home', title: 'Inicio' }, { id: 'profile', title: 'Cuenta' }, { id: 'rateService', title: 'Evaluar el servicio' }],
       rateConfirm: [{ id: 'home', title: 'Inicio' }, { id: 'rateService', title: 'Evaluar' }, { id: 'rateConfirm', title: 'Confirmación' }],
-      profile: [{ id: 'home', title: 'Inicio' }, { id: 'profile', title: 'Cuenta / Perfil' }]
+      profile: [{ id: 'home', title: 'Inicio' }, { id: 'profile', title: 'Cuenta / Perfil' }],
+      aboutSoftware: [{ id: 'profile', title: 'Cuenta' }, { id: 'aboutSoftware', title: 'Acerca del software' }],
+      aboutTeam: [{ id: 'profile', title: 'Cuenta' }, { id: 'aboutSoftware', title: 'Software' }, { id: 'aboutTeam', title: 'Acerca del equipo' }]
     };
     return studentPaths[screen] || [{ id: screen, title: screenTitle(screen) }];
   }
@@ -245,29 +256,41 @@
     }).join('');
   }
 
-  /* ---------- Lista de pantallas con búsqueda ---------- */
+  /* ---------- Lista de pantallas con apartado de pantallas en común ---------- */
   function renderScreenList() {
     const list = byId('shellScreenList');
     if (!list) return;
+    const D = data();
+    const sharedIds = (D && D.shared) || [];
+    const sharedSet = new Set(sharedIds);
     const screens = screensForRole(state.role);
-    const ids = screens.slice();
-    if (state.role === 'admin' && state.screen === 'loading' && !ids.includes('loading')) ids.push('loading');
-
     const query = (state.searchQuery || '').trim().toLowerCase();
     let matches = 0;
 
-    const html = ids.map(id => {
+    function renderBtn(id, isShared) {
       const active = id === state.screen;
-      const title = id === 'loading' && state.role === 'admin' ? 'Carga compartida' : screenTitle(id);
+      const title = screenTitle(id);
       const code = screenCode(id);
-      const matchesSearch = !query || code.toLowerCase().includes(query) || title.toLowerCase().includes(query);
-
+      const matchesSearch = !query || code.toLowerCase().includes(query) || title.toLowerCase().includes(query) || (isShared && 'comun común compartida'.includes(query));
       if (matchesSearch) matches++;
-
-      return '<button type="button" class="screen-link' + (active ? ' active' : '') + (matchesSearch ? '' : ' hidden') +
+      const badge = isShared ? '<em class="shell-shared-badge">COMÚN</em>' : '';
+      return '<button type="button" class="screen-link' + (active ? ' active' : '') + (isShared ? ' is-shared' : '') + (matchesSearch ? '' : ' hidden') +
         '" data-shell-go="' + esc(id) + '"' + (active ? ' aria-current="page"' : '') + '>' +
-        '<span>' + esc(code) + '</span><span>' + esc(title) + '</span></button>';
-    }).join('');
+        '<span>' + esc(code) + '</span><span>' + esc(title) + badge + '</span></button>';
+    }
+
+    let html = '';
+    if (state.role === 'shared') {
+      html += '<div class="shell-shared-summary"><strong>Apartado · Pantallas en común (' + sharedIds.length + ')</strong><p>Interfaces compartidas entre <b>Estudiante (Usuario)</b> y <b>Administrador</b>: Splash, Carga, Recuperación, Bloqueo, Desbloqueo, Acerca del software y Acerca del equipo.</p></div>';
+      html += sharedIds.map(id => renderBtn(id, true)).join('');
+    } else {
+      const exclusiveIds = screens.filter(id => !sharedSet.has(id));
+      const roleTitle = state.role === 'admin' ? 'Exclusivas · Administrador (' + exclusiveIds.length + ')' : 'Exclusivas · Estudiante (' + exclusiveIds.length + ')';
+      html += '<div class="shell-group-title">' + esc(roleTitle) + '</div>';
+      html += exclusiveIds.map(id => renderBtn(id, false)).join('');
+      html += '<div class="shell-group-title shell-group-shared">Apartado · Pantallas en común (' + sharedIds.length + ')</div>';
+      html += sharedIds.map(id => renderBtn(id, true)).join('');
+    }
 
     if (query && matches === 0) {
       list.innerHTML = html + '<div class="shell-no-match">Sin resultados para "' + esc(query) + '"</div>';
@@ -311,8 +334,8 @@
     const next = SECTIONS[(SECTIONS.indexOf(state.section) + 1) % SECTIONS.length];
     const jump = byId('fidelityJump');
     if (jump) {
-      jump.textContent = 'Ver en ' + (next.charAt(0).toUpperCase() + next.slice(1));
-      jump.title = 'Saltar a ' + next + ' conservando pantalla, rol y plataforma';
+      jump.textContent = 'Ver en ' + (SECTION_BUTTON[next] || next);
+      jump.title = 'Saltar a ' + (SECTION_BUTTON[next] || next) + ' conservando pantalla, rol y plataforma';
     }
 
     const zones = byId('shellZones');
@@ -325,8 +348,14 @@
     if (roleCaption) roleCaption.textContent = ROLE_LABEL[state.role];
     const fidelity = byId('shellFidelityCaption');
     if (fidelity) {
-      fidelity.textContent = (state.section === 'sketches' ? 'SKETCH' : state.section === 'mockups' ? 'MOCKUP' : 'WIREFRAME') +
-        ' · ' + PLATFORM_LABEL[state.platform];
+      const fidName = state.section === 'sketches'
+        ? 'ETAPA 1: SKETCH'
+        : state.section === 'wireframes'
+          ? 'ETAPA 2: WIREFRAME'
+          : state.section === 'mockups'
+            ? 'ETAPA 3: MOCKUP ESTÁTICO'
+            : 'ETAPA 4: PROTOTIPO FUNCIONAL';
+      fidelity.textContent = fidName + ' · ' + PLATFORM_LABEL[state.platform];
     }
 
     const sectionLabel = byId('shellSectionLabel');
@@ -347,8 +376,10 @@
     if (label) label.textContent = meta ? meta.label : String(state.screen).toUpperCase();
     if (size) {
       const dims = state.section === 'sketches'
-        ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820' : 'LÁMINA · 440 × 880')
-        : (state.platform === 'pwa' ? '1440 × 900' : '390 × 844');
+        ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820 px' : 'LÁMINA · 440 × 880 px')
+        : state.section === 'wireframes'
+          ? (state.platform === 'pwa' ? 'CAJAS Y MEDIDAS · 1440 × 900 px' : 'CAJAS Y MEDIDAS · 390 × 844 lp')
+          : (state.platform === 'pwa' ? '1440 × 900 px' : '390 × 844 px');
       size.textContent = dims;
     }
     renderBreadcrumbs();
@@ -389,14 +420,46 @@
   function updateCount() {
     const count = byId('shellScreenCount');
     if (!count) return;
-    const total = screensForRole(state.role).length;
-    count.textContent = total + ' pantallas · Rol ' + (state.role === 'student' ? 'Estudiante' : 'Administrador');
+    const D = data();
+    const sharedLen = (D && D.shared && D.shared.length) || 7;
+    if (state.role === 'shared') {
+      count.textContent = sharedLen + ' pantallas en común · Estudiante y Administrador (28 totales)';
+    } else {
+      const total = screensForRole(state.role).length;
+      const excl = total - sharedLen;
+      count.textContent = total + ' pantallas (' + excl + ' exclusivas + ' + sharedLen + ' en común) · Rol ' + (state.role === 'student' ? 'Estudiante' : 'Administrador');
+    }
+  }
+
+  function renderSharedBanner() {
+    const banner = byId('shellSharedBanner');
+    if (!banner) return;
+    const D = data();
+    const sharedIds = (D && D.shared) || [];
+    const isSharedScreen = sharedIds.includes(state.screen);
+    if (state.role !== 'shared' && !isSharedScreen) {
+      banner.hidden = true;
+      return;
+    }
+    banner.hidden = false;
+    const pills = sharedIds.map(id => {
+      const active = id === state.screen;
+      return '<button type="button" class="shell-shared-pill' + (active ? ' active' : '') + '" data-shell-go="' + esc(id) + '">' +
+        '<b>' + esc(screenCode(id)) + '</b> ' + esc(screenTitle(id)) + '</button>';
+    }).join('');
+    banner.innerHTML =
+      '<div class="shell-shared-banner-head">' +
+        '<span class="shell-shared-banner-tag">⇄ PANTALLAS EN COMÚN (' + sharedIds.length + ') · ESTUDIANTE Y ADMINISTRADOR</span>' +
+        '<span class="shell-shared-banner-sub">Misma interfaz para ambos roles:</span>' +
+      '</div>' +
+      '<div class="shell-shared-pills">' + pills + '</div>';
   }
 
   function updateUI() {
     updateSurfaces();
     updateControls();
     updateStageLabel();
+    renderSharedBanner();
     renderScreenList();
     renderDestinations();
     updateStepNav();
@@ -422,21 +485,22 @@
   }
 
   function applyAdapter() {
+    const effectiveRole = state.role === 'admin' ? 'admin' : 'student';
     const detail = {
       section: state.section,
       platform: state.platform,
       screen: state.screen,
-      role: state.role
+      role: effectiveRole
     };
     state.pending = signature(detail);
 
     if (state.section === 'wireframes') {
       const api = state.platform === 'pwa' ? window.SicpesWireframePwa : window.SicpesWireframeMobile;
-      if (api) api.showScreen(state.screen, state.role);
+      if (api) api.showScreen(state.screen, effectiveRole);
     } else if (state.section === 'sketches') {
       if (window.SicpesSketches) window.SicpesSketches.showScreen(state.screen, state.role, state.platform);
     } else if (window.SicpesMockups) {
-      window.SicpesMockups.showScreen(state.screen, state.role, state.platform);
+      window.SicpesMockups.showScreen(state.screen, effectiveRole, state.platform);
     }
   }
 
@@ -472,15 +536,16 @@
       return;
     }
 
-    const changed = detail.screen !== state.screen || detail.role !== state.role || detail.platform !== state.platform;
+    const changed = detail.screen !== state.screen || detail.platform !== state.platform;
     if (!changed) return;
 
-    if (detail.role === 'student' || detail.role === 'admin') state.role = detail.role;
+    if (state.role !== 'shared' && (detail.role === 'student' || detail.role === 'admin')) state.role = detail.role;
     if (detail.platform === 'mobile' || detail.platform === 'pwa') state.platform = detail.platform;
     if (detail.screen) state.screen = detail.screen;
 
     if (!validScreen(state.screen, state.role)) {
-      state.role = screenMeta(state.screen) && screenMeta(state.screen).role === 'admin' ? 'admin' : state.role;
+      const meta = screenMeta(state.screen);
+      state.role = meta && meta.role === 'admin' ? 'admin' : 'student';
     }
 
     if (state.history.length > 20) state.history.shift();
@@ -488,7 +553,7 @@
       section: state.section,
       platform: detail.platform || state.platform,
       screen: detail.screen || state.screen,
-      role: detail.role || state.role
+      role: state.role
     });
     updateUI();
     writeHash();
@@ -501,7 +566,10 @@
     if (!screenMeta(screen)) return;
 
     const meta = screenMeta(screen);
-    const nextRole = meta.role === 'student' || meta.role === 'admin' ? meta.role : state.role;
+    let nextRole = state.role;
+    if (meta.role === 'student' || meta.role === 'admin') {
+      nextRole = meta.role;
+    }
     const same = screen === state.screen && nextRole === state.role;
     if (options.push !== false && !same) {
       state.history.push({
@@ -549,7 +617,7 @@
   }
 
   function setRole(role) {
-    if (role !== 'student' && role !== 'admin') return;
+    if (role !== 'student' && role !== 'admin' && role !== 'shared') return;
     if (role === state.role) return;
     state.role = role;
     state.screen = initialScreen(role);
@@ -662,7 +730,7 @@
 
     let targetEl = null;
     const baseName = 'sicpes-' + safeName(state.section) + '-' + state.platform + '-' + safeName(screenCode(state.screen));
-    if (state.section === 'mockups') {
+    if (state.section === 'mockups' || state.section === 'prototype') {
       targetEl = byId('mkFrame');
     } else if (state.platform === 'pwa') {
       targetEl = document.querySelector('#pwaView .pwa-window');
@@ -713,7 +781,7 @@
     if (parts[1] === 'pwa' || parts[1] === 'mobile') {
       res.platform = parts[1];
     }
-    if (parts[2] === 'student' || parts[2] === 'admin') {
+    if (parts[2] === 'student' || parts[2] === 'admin' || parts[2] === 'shared') {
       res.role = parts[2];
     }
     if (parts[3] && screenMeta(parts[3])) {
@@ -735,7 +803,7 @@
 
     if (SECTIONS.includes(stored.section)) state.section = stored.section;
     if (stored.platform === 'mobile' || stored.platform === 'pwa') state.platform = stored.platform;
-    if (stored.role === 'student' || stored.role === 'admin') state.role = stored.role;
+    if (stored.role === 'student' || stored.role === 'admin' || stored.role === 'shared') state.role = stored.role;
     if (stored.screen && validScreen(stored.screen, state.role)) state.screen = stored.screen;
   }
 
@@ -755,7 +823,6 @@
     }
     if (!validScreen(state.screen, state.role)) state.screen = initialScreen(state.role);
 
-    // Miniaturas del diagrama
     document.addEventListener('click', event => {
       const diagramThumb = event.target.closest('#diagramView [data-go], #pwaMapView [data-pwa-go], #pwaMapView [data-go]');
       if (diagramThumb) {
@@ -867,7 +934,6 @@
       }
     });
 
-    // Controles de zoom de la lámina
     const zoomInBtn = byId('shellZoomIn');
     const zoomOutBtn = byId('shellZoomOut');
     const zoomFitBtn = byId('shellZoomFit');
@@ -901,7 +967,6 @@
       });
     }
 
-    // Colapsar y expandir paneles laterales
     const toggleSidebarBtn = byId('toggleSidebarBtn');
     const expandSidebarBtn = byId('expandSidebarBtn');
     const toggleNavBtn = byId('toggleNavBtn');
@@ -935,7 +1000,6 @@
     if (toggleNavBtn) toggleNavBtn.addEventListener('click', toggleRight);
     if (expandNavBtn) expandNavBtn.addEventListener('click', toggleRight);
 
-    // Búsqueda en vivo de pantallas
     const searchInput = byId('shellSearchInput');
     const searchClear = byId('shellSearchClear');
     if (searchInput) {
@@ -991,7 +1055,6 @@
       if (needsRefit) scheduleRefit();
     });
 
-    // Atajos de teclado globales
     window.addEventListener('keydown', event => {
       const targetTag = (event.target && event.target.tagName) || '';
       if (targetTag === 'INPUT' || targetTag === 'TEXTAREA' || targetTag === 'SELECT') {
@@ -1021,6 +1084,11 @@
         setSection('mockups');
         return;
       }
+      if (event.key === '4') {
+        event.preventDefault();
+        setSection('prototype');
+        return;
+      }
 
       const keyLower = event.key.toLowerCase();
       if (keyLower === 'm') {
@@ -1035,7 +1103,9 @@
       }
       if (keyLower === 'r') {
         event.preventDefault();
-        setRole(state.role === 'student' ? 'admin' : 'student');
+        const order = ['student', 'admin', 'shared'];
+        const nextR = order[(order.indexOf(state.role) + 1) % order.length];
+        setRole(nextR);
         return;
       }
       if (keyLower === 'z') {
@@ -1112,6 +1182,13 @@
       };
     },
     showScreen: navigate,
+    setSection: setSection,
+    setPlatform: setPlatform,
+    setRole: setRole,
+    back: back,
+    step: step,
+    toggleZones: toggleZones,
+    openMap: openMap,
     refit: refit,
     toast: toast
   };
