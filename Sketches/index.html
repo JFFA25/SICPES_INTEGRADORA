@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pwa.css">
   <link rel="stylesheet" href="pencil.css">
-  <link rel="stylesheet" href="wireframes.css">
+  <link rel="stylesheet" href="wireframes.css?v=4">
   <link rel="stylesheet" href="sections.css">
   <link rel="stylesheet" href="mockups/mockups.css">
   <link rel="stylesheet" href="shell.css">
@@ -31,7 +31,8 @@
   <script src="pencil-screens.js?v=3" defer></script>
   <script src="pencil.js?v=3" defer></script>
   <script src="mockups/mockups.js?v=3" defer></script>
-  <script src="shell.js?v=3" defer></script>
+  <script src="wireframe-redlines.js?v=4" defer></script>
+  <script src="shell.js?v=4" defer></script>
 
 
 </head>
@@ -118,6 +119,16 @@
             <button type="button" class="shell-zoom-btn shell-zoom-pill active" id="shellZoomFit" title="Ajustar automáticamente al ancho del visor">Ajustar</button>
             <button type="button" class="shell-zoom-btn shell-zoom-pill" id="shellZoom100" title="Tamaño original 1:1">100%</button>
           </div>
+          <div class="wire-mode-bar" aria-label="Opciones de visualización de Wireframe">
+            <div class="wire-pill-group" role="group" aria-label="Cotas y medidas técnicas">
+              <button type="button" class="wire-pill-btn active" data-wire-measures="on" aria-pressed="true" title="Mostrar cotas exteriores, píldoras #E0003C y leyenda técnica">Con medidas</button>
+              <button type="button" class="wire-pill-btn" data-wire-measures="off" aria-pressed="false" title="Ocultar cotas y ver solo las cajas del wireframe">Sin medidas</button>
+            </div>
+            <div class="wire-pill-group" role="group" aria-label="Estilo de contenido en Wireframe">
+              <button type="button" class="wire-pill-btn active" data-wire-bars="on" aria-pressed="true" title="Representar textos como barras grises estructurales (#8C8C8C / #C9C9C9)">Barras B/N</button>
+              <button type="button" class="wire-pill-btn" data-wire-bars="off" aria-pressed="false" title="Mostrar etiquetas de texto legibles dentro de las cajas">Texto</button>
+            </div>
+          </div>
           <span id="shellSize" class="shell-size-pill">390 × 844</span>
         </div>
       </div>
@@ -125,7 +136,7 @@
       <div id="shellSharedBanner" class="shell-shared-banner" hidden aria-label="Apartado de pantallas en común entre ambos roles"></div>
       <div class="shell-device" id="shellDevice" data-platform="mobile" data-section="wireframes">
         <div class="surface-viewport" id="surfaceViewport">
-          <div id="mobileView" class="render-surface render-mobile" data-natural="414x868">
+          <div id="mobileView" class="render-surface render-mobile" data-natural="594x1084">
             <div class="wire-ruler-top" aria-hidden="true"><span>← 390 px · VIEWPORT MÓVIL (ÁREA ÚTIL 346 px · PADDING 22 px) →</span></div>
             <div class="wire-ruler-side" aria-hidden="true"><span>↕ 844 px · ALTO PANTALLA</span></div>
             <div class="phone-holder">
@@ -135,7 +146,7 @@
             </div>
           </div>
 
-          <div id="pwaView" class="render-surface render-pwa" data-natural="1440x900" hidden>
+          <div id="pwaView" class="render-surface render-pwa" data-natural="1640x1140" hidden>
             <div class="wire-ruler-top wire-ruler-pwa" aria-hidden="true"><span>← 1440 px · VIEWPORT WEB PWA (SIDEBAR 220 px + MAIN 1220 px · ALTO 900 px) →</span></div>
             <div class="pwa-window" role="region" aria-label="Ventana del navegador">
               <div class="pwa-window-bar">

@@ -1,208 +1,296 @@
 /* ============================================================
-   WIREFRAMES · MEDIA FIDELIDAD
-   Escala de grises y neutros. Este archivo se carga después de
-   styles.css y pwa.css para anular los acentos de marca dentro
-   de las pantallas de wireframe, sin tocar las otras secciones.
+   WIREFRAMES · MEDIA FIDELIDAD (Estilo Órbita Kids / UOC Etapa 2)
+   Lámina técnica #EFEFEF, cajas estructurales B/N, barras grises
+   conmutables y acotación redline (#E0003C) en px / lp / rem.
    ============================================================ */
 
 #mobileView,
 #pwaView,
 #diagramView,
 #pwaMapView {
-  --forest: #4B5563;
-  --green: #6B7280;
+  --forest: #333333;
+  --green: #4B5563;
   --light: #9CA3AF;
   --sage: #D1D5DB;
-  --cream: #F9FAFB;
-  --ok: #374151;
-  --no: #6B7280;
-  --focus: #111827;
-  --accent-soft: #F3F4F6;
-  --pwa-green: #6B7280;
-  --line: rgba(17, 24, 39, .16);
-  --line-strong: rgba(17, 24, 39, .32);
-}
-
-/* Pantallas móviles: papel blanco, tinta negra y acentos grises. */
-#mobileView .phone-screen {
-  --wire-bg: #FFFFFF;
-  --wire-ink: #1A1A1A;
-  --wire-line: #D7D9D4;
-  --wire-muted: #5C6259;
-  --surface: #FFFFFF;
-  --surface2: #F6F7F4;
-  --surface3: #F0F2ED;
-  --line: var(--wire-line);
-  --line-strong: #B9BDB5;
-  --ink: var(--wire-ink);
-  --ink-soft: #333A32;
-  --muted: var(--wire-muted);
-  --mid: var(--wire-muted);
-  --paper: #F4F6F1;
-  --white: #FFFFFF;
   --cream: #FFFFFF;
-  --green: #6B7280;
-  --forest: #4B5563;
-  --focus: #111827;
-  --accent-soft: #F1F3EF;
-  --ok: #374151;
-  --no: #6B7280;
+  --ok: #333333;
+  --no: #555555;
+  --focus: #111111;
+  --accent-soft: #EFEFEF;
+  --pwa-green: #4B5563;
+  --line: #BDBDBD;
+  --line-strong: #111111;
 }
 
-/* Ventana PWA: los mismos neutros dentro del marco web. */
+/* ---------- Lámina técnica exterior (#EFEFEF) para Móvil (594 × 1084) y PWA (1640 × 1140) ---------- */
+#mobileView.render-mobile {
+  width: 594px !important;
+  height: 1084px !important;
+  background: #EFEFEF !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+#mobileView .wire-ruler-top,
+#mobileView .wire-ruler-side,
+#pwaView .wire-ruler-top {
+  display: none !important;
+}
+
+#mobileView.render-mobile .phone-holder {
+  position: absolute !important;
+  left: 102px !important;
+  top: 88px !important;
+  width: 390px !important;
+  height: 844px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#mobileView.render-mobile .phone {
+  width: 390px !important;
+  height: 844px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 28px !important;
+  background: #FFFFFF !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+#mobileView.render-mobile .phone::before {
+  display: none !important;
+}
+
+#mobileView.render-mobile .phone-screen {
+  width: 390px !important;
+  height: 844px !important;
+  border-radius: 28px !important;
+  background: #FFFFFF !important;
+}
+
+#pwaView.render-pwa {
+  width: 1640px !important;
+  height: 1140px !important;
+  background: #EFEFEF !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+#pwaView.render-pwa .pwa-window {
+  position: absolute !important;
+  left: 100px !important;
+  top: 96px !important;
+  width: 1440px !important;
+  height: 900px !important;
+  border-radius: 14px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: #FFFFFF !important;
+}
+
+#pwaView.render-pwa .pwa-window-screen {
+  height: 860px !important;
+  background: #FFFFFF !important;
+}
+
+#pwaView .pwa-app-body {
+  grid-template-columns: 220px 1fr !important;
+}
+
+/* Capa SVG de cotas CAD, barras estructurales y redlines (#E0003C) */
+.wire-sheet-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 35;
+  overflow: visible;
+}
+
+/* ---------- Paleta estructural Blanco y Negro (Wireframe puro) ---------- */
+#mobileView .phone-screen,
 #pwaView .pwa-window {
   --wire-bg: #FFFFFF;
-  --wire-ink: #1A1A1A;
-  --wire-line: #D7D9D4;
-  --wire-muted: #5C6259;
+  --wire-ink: #111111;
+  --wire-line: #BDBDBD;
+  --wire-muted: #555555;
   --surface: #FFFFFF;
-  --surface2: #F7F8F5;
-  --surface3: #F0F2ED;
-  --line: var(--wire-line);
-  --line-strong: #B9BDB5;
-  --ink: var(--wire-ink);
-  --ink-soft: #333A32;
-  --muted: var(--wire-muted);
-  --mid: var(--wire-muted);
+  --surface2: #F6F6F6;
+  --surface3: #F0F0F0;
+  --line: #BDBDBD;
+  --line-strong: #111111;
+  --ink: #111111;
+  --ink-soft: #262626;
+  --muted: #555555;
+  --mid: #444444;
+  --paper: #F6F6F6;
+  --white: #FFFFFF;
   --cream: #FFFFFF;
-  --green: #6B7280;
-  --forest: #4B5563;
-  --focus: #111827;
-  --accent-soft: #F1F3EF;
-  --ok: #374151;
-  --no: #6B7280;
-  --pwa-white: var(--wire-bg);
-  --pwa-paper: #F1F3EF;
-  --pwa-line: var(--wire-line);
-  --pwa-mid: var(--wire-muted);
-  --pwa-ink: var(--wire-ink);
-  --pwa-green: #6B7280;
+  --green: #111111;
+  --forest: #111111;
+  --focus: #111111;
+  --accent-soft: #EFEFEF;
+  --ok: #222222;
+  --no: #444444;
+  --pwa-white: #FFFFFF;
+  --pwa-paper: #F6F6F6;
+  --pwa-line: #BDBDBD;
+  --pwa-mid: #444444;
+  --pwa-ink: #111111;
+  --pwa-green: #111111;
 }
 
-/* Estados neutros: la fidelidad media no usa semáforos de color. */
+#mobileView .app-header {
+  background: #F0F0F0;
+  margin: -37px -22px 18px;
+  padding: 37px 22px 12px;
+  border-bottom: 1.2px solid #111111;
+}
+
+#mobileView .bottom-nav {
+  background: #F6F6F6 !important;
+  border-top: 1.2px solid #111111 !important;
+}
+
+#pwaView .pwa-window-bar {
+  background: #EAEAEA !important;
+  border-bottom: 1.2px solid #111111 !important;
+}
+
+#pwaView .pwa-app-top {
+  background: #F0F0F0 !important;
+  border-bottom: 1.2px solid #111111 !important;
+}
+
+#pwaView .pwa-app-side {
+  background: #F6F6F6 !important;
+  border-right: 1.2px solid #111111 !important;
+}
+
+#mobileView .card,
+#mobileView .feature,
+#mobileView .stat,
+#mobileView .price-box,
+#mobileView .data-cell,
+#pwaView .pwa-card,
+#pwaView .pwa-feature,
+#pwaView .pwa-stat,
+#pwaView .pwa-data-cell {
+  background: #FFFFFF !important;
+  border: 1.2px solid #BDBDBD !important;
+  box-shadow: none !important;
+}
+
+#mobileView .stat,
+#mobileView .feature,
+#pwaView .pwa-stat,
+#pwaView .pwa-feature,
+#pwaView .pwa-data-cell {
+  background: #F6F6F6 !important;
+}
+
+/* Botones y elementos activos con borde negro técnico de 1.8px para máximo contraste con el rojo #E0003C */
+#mobileView .button,
+#mobileView .choice,
+#pwaView .pwa-button,
+#pwaView .pwa-choice,
+#pwaView .pwa-filter-tab,
+#pwaView .pwa-side-item {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 1.2px solid #BDBDBD !important;
+  box-shadow: none !important;
+}
+
+#mobileView .button.primary,
+#mobileView .choice.selected,
+#mobileView .rating-cell.selected,
+#pwaView .pwa-button.pwa-primary,
+#pwaView .pwa-choice.selected,
+#pwaView .pwa-filter-tab.active,
+#pwaView .pwa-side-item.active,
+#pwaView .pwa-rating-cell.selected {
+  background: #EDEDED !important;
+  color: #111111 !important;
+  border: 1.8px solid #111111 !important;
+  font-weight: 700 !important;
+}
+
 #pwaView .pwa-status,
 #pwaView .pwa-status.pwa-ok,
 #pwaView .pwa-status.pwa-pend,
 #pwaView .pwa-status.pwa-rev,
-#pwaView .pwa-status.pwa-no {
-  background: #F3F4F6;
-  border-color: #D1D5DB;
-  color: #374151;
-}
-#pwaView .pwa-button.pwa-primary {
-  background: #4B5563;
-  border-color: #4B5563;
-}
-#pwaView .pwa-button.pwa-primary:hover {
-  background: #374151;
-}
-#pwaView .pwa-notice {
-  border-left-color: #9CA3AF;
-  background: #F3F4F6;
-}
-#pwaView .pwa-notice:hover {
-  background: #ECEEEA;
-}
-#pwaView .pwa-choice.selected {
-  background: #F3F4F6;
-  border-color: #6B7280;
-}
-#pwaView .pwa-inline-link button {
-  color: #374151;
-}
-#pwaView .pwa-back-link {
-  color: #374151;
-}
-#pwaView .pwa-switch:checked {
-  background: #6B7280;
-}
-#pwaView .pwa-progress-fill {
-  background: #6B7280;
-}
-#pwaView .pwa-timeline-item.pwa-done .pwa-dot,
-#pwaView .pwa-timeline-item.pwa-current .pwa-dot {
-  background: #6B7280;
-  border-color: #6B7280;
-  box-shadow: none;
-}
-#pwaView .pwa-rating-cell.selected {
-  background: #4B5563;
-  border-color: #4B5563;
-}
-#pwaView .pwa-code-row input:focus,
-#pwaView .pwa-field input:focus,
-#pwaView .pwa-field select:focus,
-#pwaView .pwa-field textarea:focus {
-  border-color: #6B7280;
-  outline-color: #9CA3AF;
-  box-shadow: none;
-}
-#pwaView .pwa-filter-tab.active {
-  background: #374151;
-  border-color: #374151;
+#pwaView .pwa-status.pwa-no,
+#mobileView .status {
+  background: #F3F4F6 !important;
+  border: 1px solid #9CA3AF !important;
+  color: #111111 !important;
 }
 
-/* La identidad gráfica se sustituye por una marca de posición. */
-#mobileView .app-logo-img,
-#pwaView .pwa-app-logo-img {
-  display: none;
+#pwaView .pwa-notice,
+#mobileView .notice {
+  border-left: 2.5px solid #111111 !important;
+  background: #F6F6F6 !important;
+  color: #222222 !important;
 }
+
+#pwaView .pwa-switch:checked,
+#mobileView .switch:checked {
+  background: #6B7280 !important;
+}
+
+#pwaView .pwa-progress-fill,
+#mobileView .progress-fill {
+  background: #4B5563 !important;
+}
+
+#pwaView .pwa-timeline-item.pwa-done .pwa-dot,
+#pwaView .pwa-timeline-item.pwa-current .pwa-dot,
+#mobileView .timeline-item.done .dot,
+#mobileView .timeline-item.current .dot {
+  background: #4B5563 !important;
+  border-color: #111111 !important;
+  box-shadow: none !important;
+}
+
+/* La identidad gráfica se sustituye por una marca de posición [X]. */
+#mobileView .app-logo-img,
+#pwaView .pwa-app-logo-img,
+#mobileView .app-loading-logo,
+#pwaView .pwa-logo-img {
+  display: none !important;
+}
+
 #mobileView .app-logo::before,
 #pwaView .pwa-app-logo::before {
   content: "[X]";
   display: inline-block;
   margin-right: 6px;
   padding: 1px 4px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid #111111;
   border-radius: 2px;
-  color: var(--muted);
+  color: #111111;
   font: 700 9px var(--mono);
   vertical-align: 1px;
 }
-#mobileView .app-loading-logo,
-#pwaView .pwa-logo-img {
-  display: none;
-}
 
-/* Zonas clicables en gris. */
-.zones-on #mobileView .clickable,
-.zones-on #mobileView .phone-screen .clickable {
-  outline-color: rgba(17, 24, 39, .55) !important;
-}
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-button,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-app-link,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-side-item,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-feature,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-notice,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-file-drop,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-thumb,
-.pwa-zones-on #pwaView .pwa-window-screen .pwa-body-zone {
-  outline-color: rgba(17, 24, 39, .55) !important;
-}
-
-/* Diagramas y mapas de wireframe sin acentos de marca. */
-#diagramCanvas svg,
-#pwaMapCanvas svg {
-  filter: grayscale(1);
-}
-#pwaMapView .pwa-role-note,
-#diagramView .role-note {
-  color: var(--mid);
-}
-
-
-/* ---------- Criterios Mosaic UOC (Carlos Salgado, 2015):
-   1) Caja con cruz diagonal (X) en todos los contenedores de imagen/logo/avatar
-   2) Estricta escala de grises sin colores ni imágenes reales ---------- */
+/* ---------- Criterios Mosaic UOC & Órbita Kids:
+   Caja con cruz diagonal (X) en contenedores de imagen/logo/avatar ---------- */
 #mobileView .image-placeholder,
 #pwaView .pwa-image-placeholder,
 #pwaView .pwa-avatar-big {
   background:
-    linear-gradient(to top right, transparent calc(50% - 0.75px), #9CA3AF 50%, transparent calc(50% + 0.75px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #9CA3AF 50%, transparent calc(50% + 0.75px)),
-    #F3F4F6 !important;
-  border: 1.5px solid #9CA3AF !important;
-  color: #374151 !important;
+    linear-gradient(to top right, transparent calc(50% - 0.8px), #8C8C8C 50%, transparent calc(50% + 0.8px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.8px), #8C8C8C 50%, transparent calc(50% + 0.8px)),
+    #F4F4F4 !important;
+  border: 1.4px solid #111111 !important;
+  color: #222222 !important;
   font-weight: 700;
   position: relative;
 }
@@ -214,13 +302,101 @@
   border-radius: 8px;
 }
 
-#mobileView .wire-logo-box span,
-#pwaView .pwa-logo-box span {
-  background: rgba(255, 255, 255, 0.88);
+#mobileView .image-placeholder span,
+#pwaView .pwa-image-placeholder span,
+#pwaView .pwa-avatar-big span {
+  background: rgba(255, 255, 255, 0.92);
   padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid #D1D5DB;
-  font-size: 9px;
+  border-radius: 2px;
+  border: 1px solid #9CA3AF;
+  font: 700 8.5px var(--mono);
+  color: #111111;
+}
+
+/* ---------- Modo Barras Estructurales B/N (Estilo Órbita Kids) ---------- */
+body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen *:not(.nav-icon):not(.image-placeholder),
+body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen *:not(.pwa-side-icon):not(.pwa-image-placeholder) {
+  color: transparent !important;
+}
+
+body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen input::placeholder,
+body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen input::placeholder,
+body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen textarea::placeholder,
+body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen textarea::placeholder {
+  color: transparent !important;
+}
+
+body.shell-section-wireframes.wire-bars-on #mobileView .app-logo::before,
+body.shell-section-wireframes.wire-bars-on #pwaView .pwa-app-logo::before {
+  color: #111111 !important;
+}
+
+body.shell-section-wireframes.wire-bars-on #mobileView .nav-item .nav-icon,
+body.shell-section-wireframes.wire-bars-on #pwaView .pwa-side-icon {
+  color: #111111 !important;
+}
+
+/* ---------- Barra de herramientas de Wireframe (Con medidas / Sin medidas · Barras / Texto) ---------- */
+.wire-mode-bar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+body.shell-section-wireframes .wire-mode-bar {
+  display: inline-flex;
+}
+
+.wire-pill-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 3px;
+}
+
+.wire-pill-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--mid);
+  padding: 3px 8px;
+  font: 700 9px var(--mono);
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: all 140ms ease;
+  white-space: nowrap;
+}
+
+.wire-pill-btn:hover {
+  color: var(--ink);
+  background: var(--surface3);
+}
+
+.wire-pill-btn.active {
+  background: #E0003C;
+  border-color: #E0003C;
+  color: #FFFFFF;
+}
+
+.wire-pill-btn[data-wire-bars].active {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+/* Diagramas y mapas de wireframe sin acentos de marca. */
+#diagramCanvas svg,
+#pwaMapCanvas svg {
+  filter: grayscale(1);
+}
+
+#pwaMapView .pwa-role-note,
+#diagramView .role-note {
+  color: var(--mid);
 }
 
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .clickable,
@@ -234,311 +410,11 @@ body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) texta
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-feature,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-notice,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-file-drop {
-  outline-color: rgba(17, 24, 39, 0.65) !important;
+  outline-color: rgba(224, 0, 60, 0.75) !important;
 }
 
 body.shell-section-wireframes #diagramCanvas .thumb.current .thumb-box,
 body.shell-section-wireframes #pwaMapCanvas .pwa-map-thumb.current {
   stroke: #111827 !important;
   filter: drop-shadow(0 0 6px rgba(17, 24, 39, 0.35)) !important;
-}
-
-
-/* ---------- Cotas y medidas en píxeles (px) para Wireframes (UOC Etapa 2) ---------- */
-#mobileView .image-placeholder span,
-#pwaView .pwa-image-placeholder span,
-#pwaView .pwa-avatar-big span {
-  background: rgba(255, 255, 255, 0.92);
-  padding: 2px 7px;
-  border-radius: 3px;
-  border: 1px solid #9CA3AF;
-  font: 700 9px var(--mono);
-  color: #1F2937;
-  letter-spacing: 0.04em;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-}
-
-.wire-ruler-top {
-  position: absolute;
-  top: 2px;
-  left: 12px;
-  right: 12px;
-  z-index: 25;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.wire-ruler-top span {
-  background: #1F2937;
-  color: #F9FAFB;
-  border: 1px solid #4B5563;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font: 700 8.5px var(--mono);
-  letter-spacing: 0.06em;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.wire-ruler-side {
-  position: absolute;
-  top: 50%;
-  right: -4px;
-  transform: translateY(-50%) rotate(90deg);
-  z-index: 25;
-  pointer-events: none;
-}
-
-.wire-ruler-side span {
-  background: #1F2937;
-  color: #F9FAFB;
-  border: 1px solid #4B5563;
-  border-radius: 4px;
-  padding: 2px 7px;
-  font: 700 8px var(--mono);
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-/* Cotas de componentes en Wireframe Móvil (390 × 844 px) */
-#mobileView .app-header {
-  position: relative;
-  border-bottom: 1px dashed #D1D5DB;
-  padding-bottom: 8px;
-}
-
-#mobileView .app-header::after {
-  content: "390 × 56 px";
-  position: absolute;
-  right: 0;
-  bottom: -13px;
-  font: 700 8px var(--mono);
-  color: #6B7280;
-  background: #F3F4F6;
-  border: 1px solid #D1D5DB;
-  border-radius: 3px;
-  padding: 0 4px;
-  pointer-events: none;
-}
-
-#mobileView .card {
-  position: relative;
-}
-
-#mobileView .card::after {
-  content: "346 × auto px · pad 13px";
-  display: block;
-  margin-top: 8px;
-  padding-top: 4px;
-  border-top: 1px dashed #E5E7EB;
-  text-align: right;
-  font: 700 7.5px var(--mono);
-  color: #6B7280;
-  letter-spacing: 0.04em;
-  pointer-events: none;
-}
-
-#mobileView .field > span::after {
-  content: " · [346 × 42 px]";
-  font-weight: 400;
-  color: #6B7280;
-}
-
-#mobileView .button::after {
-  content: " · 346×44px";
-  font-size: 8.5px;
-  opacity: 0.78;
-  font-weight: 400;
-}
-
-#mobileView .button-row .button::after {
-  content: " · 169×44px";
-  font-size: 8px;
-  opacity: 0.78;
-}
-
-#mobileView .feature {
-  position: relative;
-}
-
-#mobileView .feature::after {
-  content: "169 × 64 px";
-  display: block;
-  margin-top: 5px;
-  font: 700 7.5px var(--mono);
-  color: #6B7280;
-}
-
-#mobileView .stats {
-  position: relative;
-  padding-top: 14px;
-}
-
-#mobileView .stats::before {
-  content: "GRID 4 COL · 346 × 54 px (4 × 82 px)";
-  position: absolute;
-  top: 0;
-  left: 0;
-  font: 700 7.5px var(--mono);
-  color: #6B7280;
-}
-
-#mobileView .code-row {
-  position: relative;
-  padding-bottom: 14px;
-}
-
-#mobileView .code-row::after {
-  content: "6 casillas × (50 × 48 px) · gap 8 px";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  font: 700 7.5px var(--mono);
-  color: #6B7280;
-}
-
-#mobileView .file-drop::after {
-  content: " [346 × 68 px]";
-  font: 700 8px var(--mono);
-  color: #6B7280;
-}
-
-#mobileView .bottom-nav {
-  position: relative;
-}
-
-#mobileView .bottom-nav::before {
-  content: "BARRA INFERIOR · 390 × 61 px (4 × 97.5 px)";
-  position: absolute;
-  top: -14px;
-  right: 8px;
-  background: #F3F4F6;
-  border: 1px solid #D1D5DB;
-  border-radius: 3px;
-  padding: 0 5px;
-  font: 700 7.5px var(--mono);
-  color: #4B5563;
-  pointer-events: none;
-}
-
-/* Cotas de componentes en Wireframe PWA (1440 × 900 px) */
-#pwaView .pwa-app-top {
-  position: relative;
-}
-
-#pwaView .pwa-app-top::after {
-  content: "CABECERA · 1440 × 62 px";
-  position: absolute;
-  right: 16px;
-  bottom: 3px;
-  font: 700 8px var(--mono);
-  color: #6B7280;
-  background: #F3F4F6;
-  border: 1px solid #D1D5DB;
-  border-radius: 3px;
-  padding: 0 5px;
-  pointer-events: none;
-}
-
-#pwaView .pwa-app-side {
-  position: relative;
-}
-
-#pwaView .pwa-app-side::after {
-  content: "SIDEBAR · 220 × 798 px";
-  display: block;
-  margin-top: 16px;
-  padding: 4px 6px;
-  border: 1px dashed #D1D5DB;
-  border-radius: 4px;
-  font: 700 8px var(--mono);
-  color: #6B7280;
-  text-align: center;
-}
-
-#pwaView .pwa-app-main {
-  position: relative;
-}
-
-#pwaView .pwa-app-main::before {
-  content: "CONTENEDOR PRINCIPAL (MAIN) · 1220 × 798 px · PADDING 20 px";
-  display: inline-block;
-  margin-bottom: 8px;
-  padding: 2px 7px;
-  background: #F3F4F6;
-  border: 1px solid #D1D5DB;
-  border-radius: 3px;
-  font: 700 8px var(--mono);
-  color: #4B5563;
-}
-
-#pwaView .pwa-auth-art,
-#pwaView .pwa-auth-card {
-  position: relative;
-}
-
-#pwaView .pwa-auth-art::after {
-  content: "COLUMNA IZQUIERDA · 720 × 860 px (pad 36×34 px)";
-  position: absolute;
-  bottom: 12px;
-  left: 34px;
-  font: 700 8.5px var(--mono);
-  color: #6B7280;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  border-radius: 3px;
-  padding: 2px 6px;
-}
-
-#pwaView .pwa-auth-card::after {
-  content: "TARJETA FORMULARIO · 430 × auto px (pad 36×34 px)";
-  display: block;
-  margin-top: 12px;
-  text-align: right;
-  font: 700 8.5px var(--mono);
-  color: #6B7280;
-}
-
-#pwaView .pwa-stat-grid {
-  position: relative;
-  padding-top: 16px;
-}
-
-#pwaView .pwa-stat-grid::before {
-  content: "GRID KPI · 4 COLUMNAS × (280 × 76 px) · GAP 12 px";
-  position: absolute;
-  top: 0;
-  left: 0;
-  font: 700 8px var(--mono);
-  color: #6B7280;
-}
-
-#pwaView .pwa-card {
-  position: relative;
-}
-
-#pwaView .pwa-card::after {
-  content: "BLOQUE CARD · pad 18 px · r 8 px";
-  display: block;
-  margin-top: 8px;
-  padding-top: 4px;
-  border-top: 1px dashed #E5E7EB;
-  text-align: right;
-  font: 700 8px var(--mono);
-  color: #6B7280;
-  pointer-events: none;
-}
-
-#pwaView .pwa-field > span::after {
-  content: " · [h: 38 px]";
-  font-weight: 400;
-  color: #6B7280;
-}
-
-#pwaView .pwa-button::after {
-  content: " · h:38px";
-  font-size: 8.5px;
-  opacity: 0.75;
-  font-weight: 400;
 }

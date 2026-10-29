@@ -103,8 +103,8 @@
         : { width: 1440, height: 900 };
     }
     return state.platform === 'pwa'
-      ? { width: 1440, height: 900 }
-      : { width: 414, height: 868 };
+      ? { width: 1640, height: 1140 }
+      : { width: 594, height: 1084 };
   }
 
   function refit() {
@@ -159,6 +159,7 @@
     requestAnimationFrame(refit);
     setTimeout(refit, 60);
     setTimeout(refit, 220);
+    if (window.SicpesWireframeRedlines) window.SicpesWireframeRedlines.refresh();
   }
 
   function updateSurfaces() {
@@ -376,7 +377,9 @@
     if (size) {
       const dims = state.section === 'sketches'
         ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820 px' : 'LÁMINA · 440 × 880 px')
-        : (state.platform === 'pwa' ? '1440 × 900 px' : '390 × 844 px');
+        : state.section === 'wireframes'
+          ? (state.platform === 'pwa' ? 'CAJAS Y MEDIDAS · 1440 × 900 px' : 'CAJAS Y MEDIDAS · 390 × 844 lp')
+          : (state.platform === 'pwa' ? '1440 × 900 px' : '390 × 844 px');
       size.textContent = dims;
     }
     renderBreadcrumbs();
