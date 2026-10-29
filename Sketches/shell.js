@@ -6,8 +6,9 @@
 (function () {
   'use strict';
 
-  const SECTIONS = ['sketches', 'wireframes', 'mockups'];
-  const SECTION_LABEL = { sketches: 'SKETCHES', wireframes: 'WIREFRAMES', mockups: 'MOCKUPS' };
+  const SECTIONS = ['sketches', 'wireframes', 'mockups', 'prototype'];
+  const SECTION_LABEL = { sketches: '1 · SKETCHES', wireframes: '2 · WIREFRAMES', mockups: '3 · MOCKUPS (ESTÁTICO)', prototype: '4 · PROTOTIPO (FUNCIONAL)' };
+  const SECTION_BUTTON = { sketches: 'Sketches', wireframes: 'Wireframes', mockups: 'Mockups', prototype: 'Prototipo' };
   const PLATFORM_LABEL = { mobile: 'MÓVIL', pwa: 'PWA' };
   const ROLE_LABEL = { student: 'ESTUDIANTE', admin: 'ADMINISTRADOR', shared: 'COMUNES (AMBOS ROLES)' };
   const STORE_KEY = 'sicpes-shell-context';
@@ -86,7 +87,7 @@
 
   function activeSurface() {
     if (state.section === 'sketches') return byId('pencilView');
-    if (state.section === 'mockups') return byId('mockupsView');
+    if (state.section === 'mockups' || state.section === 'prototype') return byId('mockupsView');
     return state.platform === 'pwa' ? byId('pwaView') : byId('mobileView');
   }
 
@@ -96,7 +97,7 @@
         ? { width: 440, height: 880 }
         : { width: 1200, height: 820 };
     }
-    if (state.section === 'mockups') {
+    if (state.section === 'mockups' || state.section === 'prototype') {
       return state.platform === 'mobile'
         ? { width: 390, height: 844 }
         : { width: 1440, height: 900 };
@@ -171,10 +172,10 @@
     mobile.hidden = !(state.section === 'wireframes' && state.platform === 'mobile');
     pwa.hidden = !(state.section === 'wireframes' && state.platform === 'pwa');
     pencil.hidden = state.section !== 'sketches';
-    mockups.hidden = state.section !== 'mockups';
+    mockups.hidden = !(state.section === 'mockups' || state.section === 'prototype');
 
     document.body.classList.remove(
-      'shell-section-sketches', 'shell-section-wireframes', 'shell-section-mockups',
+      'shell-section-sketches', 'shell-section-wireframes', 'shell-section-mockups', 'shell-section-prototype',
       'shell-platform-mobile', 'shell-platform-pwa'
     );
     document.body.classList.add('shell-section-' + state.section, 'shell-platform-' + state.platform);
@@ -332,8 +333,8 @@
     const next = SECTIONS[(SECTIONS.indexOf(state.section) + 1) % SECTIONS.length];
     const jump = byId('fidelityJump');
     if (jump) {
-      jump.textContent = 'Ver en ' + (next.charAt(0).toUpperCase() + next.slice(1));
-      jump.title = 'Saltar a ' + next + ' conservando pantalla, rol y plataforma';
+      jump.textContent = 'Ver en ' + (SECTION_BUTTON[next] || next);
+      jump.title = 'Saltar a ' + (SECTION_BUTTON[next] || next) + ' conservando pantalla, rol y plataforma';
     }
 
     const zones = byId('shellZones');
@@ -346,8 +347,14 @@
     if (roleCaption) roleCaption.textContent = ROLE_LABEL[state.role];
     const fidelity = byId('shellFidelityCaption');
     if (fidelity) {
-      fidelity.textContent = (state.section === 'sketches' ? 'SKETCH' : state.section === 'mockups' ? 'MOCKUP' : 'WIREFRAME') +
-        ' · ' + PLATFORM_LABEL[state.platform];
+      const fidName = state.section === 'sketches'
+        ? 'ETAPA 1: SKETCH'
+        : state.section === 'wireframes'
+          ? 'ETAPA 2: WIREFRAME'
+          : state.section === 'mockups'
+            ? 'ETAPA 3: MOCKUP ESTÁTICO'
+            : 'ETAPA 4: PROTOTIPO FUNCIONAL';
+      fidelity.textContent = fidName + ' · ' + PLATFORM_LABEL[state.platform];
     }
 
     const sectionLabel = byId('shellSectionLabel');
@@ -368,8 +375,8 @@
     if (label) label.textContent = meta ? meta.label : String(state.screen).toUpperCase();
     if (size) {
       const dims = state.section === 'sketches'
-        ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820' : 'LÁMINA · 440 × 880')
-        : (state.platform === 'pwa' ? '1440 × 900' : '390 × 844');
+        ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820 px' : 'LÁMINA · 440 × 880 px')
+        : (state.platform === 'pwa' ? '1440 × 900 px' : '390 × 844 px');
       size.textContent = dims;
     }
     renderBreadcrumbs();
@@ -421,10 +428,35 @@
     }
   }
 
+  function renderSharedBanner() {
+    const banner = byId('shellSharedBanner');
+    if (!banner) return;
+    const D = data();
+    const sharedIds = (D && D.shared) || [];
+    const isSharedScreen = sharedIds.includes(state.screen);
+    if (state.role !== 'shared' && !isSharedScreen) {
+      banner.hidden = true;
+      return;
+    }
+    banner.hidden = false;
+    const pills = sharedIds.map(id => {
+      const active = id === state.screen;
+      return '<button type="button" class="shell-shared-pill' + (active ? ' active' : '') + '" data-shell-go="' + esc(id) + '">' +
+        '<b>' + esc(screenCode(id)) + '</b> ' + esc(screenTitle(id)) + '</button>';
+    }).join('');
+    banner.innerHTML =
+      '<div class="shell-shared-banner-head">' +
+        '<span class="shell-shared-banner-tag">⇄ PANTALLAS EN COMÚN (' + sharedIds.length + ') · ESTUDIANTE Y ADMINISTRADOR</span>' +
+        '<span class="shell-shared-banner-sub">Misma interfaz para ambos roles:</span>' +
+      '</div>' +
+      '<div class="shell-shared-pills">' + pills + '</div>';
+  }
+
   function updateUI() {
     updateSurfaces();
     updateControls();
     updateStageLabel();
+    renderSharedBanner();
     renderScreenList();
     renderDestinations();
     updateStepNav();
@@ -695,7 +727,7 @@
 
     let targetEl = null;
     const baseName = 'sicpes-' + safeName(state.section) + '-' + state.platform + '-' + safeName(screenCode(state.screen));
-    if (state.section === 'mockups') {
+    if (state.section === 'mockups' || state.section === 'prototype') {
       targetEl = byId('mkFrame');
     } else if (state.platform === 'pwa') {
       targetEl = document.querySelector('#pwaView .pwa-window');
@@ -1047,6 +1079,11 @@
       if (event.key === '3') {
         event.preventDefault();
         setSection('mockups');
+        return;
+      }
+      if (event.key === '4') {
+        event.preventDefault();
+        setSection('prototype');
         return;
       }
 

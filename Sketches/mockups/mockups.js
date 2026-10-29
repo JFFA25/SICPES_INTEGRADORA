@@ -926,8 +926,8 @@
     renderScreenList();
     renderDestinations();
     fitMockup();
-    if (state.screen === 'loading') startLoading();
-    if(window.SicpesShell&&window.SicpesShell.getState().section==='mockups'){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:'mockups',platform:state.platform,screen:state.screen,role:state.role}}));}
+    if (state.screen === 'loading' && (!window.SicpesShell || window.SicpesShell.getState().section === 'prototype')) startLoading();
+    if(window.SicpesShell&&(window.SicpesShell.getState().section==='mockups'||window.SicpesShell.getState().section==='prototype')){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:window.SicpesShell.getState().section,platform:state.platform,screen:state.screen,role:state.role}}));}
   }
 
   function startLoading() {
@@ -974,6 +974,10 @@
   document.addEventListener('click', e => {
     const target = e.target.closest('[data-mk-role],[data-mk-platform],[data-mk-go],[data-mk-action],[data-mk-filter],[data-mk-type],[data-mk-rate],[data-mk-remove-floor]');
     if (!target) return;
+    if (window.SicpesShell && window.SicpesShell.getState().section === 'mockups' && canvas && canvas.contains(target)) {
+      window.SicpesShell.toast('Etapa 3 UOC · Mockup estático (solo visual). Cambia a «4 Prototipo» para interactuar con el flujo.');
+      return;
+    }
 
     if (target.dataset.mkRole) { setRole(target.dataset.mkRole); return; }
     if (target.dataset.mkPlatform) { setPlatform(target.dataset.mkPlatform); return; }

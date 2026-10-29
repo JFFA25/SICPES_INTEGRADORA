@@ -10,14 +10,25 @@
 
 ## 1. Descripción y Objetivo de la Práctica
 
-El presente entregable documenta la **estructura de navegación** y el diseño de **28 pantallas únicas** (superando el mínimo de 20 sketches solicitados), elaboradas en tres niveles de fidelidad sincronizados (**Sketches a lápiz**, **Wireframes de media fidelidad** y **Mockups de alta fidelidad**) y en las dos plataformas tecnológicas seleccionadas para el Proyecto Integrador:
+El presente entregable documenta la **estructura de navegación** y el diseño de **28 pantallas únicas** (superando el mínimo de 20 sketches solicitados), estructuradas conforme a las **4 fases evolutivas de diseño de proyectos digitales propuestas por Carlos Salgado (Mosaic UOC, 2015)** (**1. Sketches a lápiz**, **2. Wireframes estructurales**, **3. Mockups visuales estáticos** y **4. Prototipo interactivo funcional**) y en las dos plataformas tecnológicas seleccionadas para el Proyecto Integrador:
 
 1. **Aplicación Móvil Multiplataforma (Flutter / Dart):** Lienzos verticales con barra de navegación inferior (`BottomNavigationBar`).
 2. **Aplicación Web Progresiva (PWA React / Vite):** Lienzos de escritorio con marco de navegador, rutas URL y barra lateral (`Sidebar`).
 
+### Marco Metodológico (Mosaic UOC — Salgado, 2015)
+
+Siguiendo la metodología de *«Proceso de desarrollo de un proyecto digital: Sketchs, mockups, wireframes y prototipos»* ([Mosaic UOC, 2015](https://mosaic.uoc.edu/2015/09/15/proceso-de-desarrollo-de-un-proyecto-digital/)), nuestro entorno en `Sketches/` separa e implementa explícitamente las **4 etapas de evolución de la interfaz** junto con la **Arquitectura de la Información**:
+
+| Etapa UOC | Atajo | Propósito y Reglas Metodológicas (Mosaic UOC) | Implementación en SICPES (`Sketches/`) |
+| :--- | :---: | :--- | :--- |
+| **1. Sketch**<br>*(Boceto a lápiz)* | `1` | Primer acercamiento en papel y lápiz a mano alzada; explora la ubicación de bloques principales e **incluye comentarios/anotaciones en los laterales** con flechas explicativas. | **56 láminas a mano alzada** (`28 pantallas × 2 plataformas`) generadas con `Rough.js` sobre papel punteado (`#FAF7EE`), tipografía manuscrita (`Caveat`), imágenes/avatares con trazo `X`, botones achurados y **notas laterales con flechas punteadas**. |
+| **2. Wireframe**<br>*(Esquema estructural)* | `2` | Define qué hace la pantalla y su jerarquía (`Cabecera`, `Cuerpo`, `Pie`). **Reglas estrictas UOC:** **(a)** sin colores (solo tonos de grises), **(b)** sin imágenes reales ni iconografía compleja (se usa **una caja cruzada por una `X`**), **(c)** una sola fuente genérica con jerarquía de tamaños, y **(d)** conexión con el mapa de Arquitectura de la Información. | Vistas estructurales en **escala de grises estricta**, contenedores de imagen/logo/avatar con **cruz diagonal (`X`)** (`[ LOGO ]`, `[ IMAGEN ]`, `[ FOTO ]`), rejilla de cajas y **Diagramas de Navegación SVG ortogonales** (`#diagramView` y `#pwaMapView`). |
+| **3. Mockup**<br>*(Maqueta visual estática)* | `3` | Composición gráfica de alta fidelidad construida sobre la plantilla del wireframe. Integra paleta cromática institucional, tipografía, iconos e ilustraciones. **Criterio UOC:** *«Los Mockup no funcionan; se componen de pantallas estáticas que sólo parecen la interfaz real»*. | Láminas visuales **estáticas** con la identidad gráfica oficial de SICPES (`#153B28`, `#2F8A5C`, `#FDFBF7`), ilustraciones vectoriales e iconografía completa para inspección de diseño sin disparar transiciones accidentales. |
+| **4. Prototipo**<br>*(Modelo interactivo)* | `4` | Simulación funcional e interactiva que permite validar recorridos reales, reglas de negocio, estados de bloqueo/desbloqueo y formularios antes de la codificación definitiva. | **Simulación interactiva completa** sobre el diseño de alta fidelidad: inicio de sesión, barra de carga animada, bloqueo y desbloqueo OTP, filtros dinámicos, alta/baja de pisos, calificación `1–5` y navegación entre roles. |
+
 ### Cómo abrir el prototipo interactivo
 1. Abre [`Sketches/index.html`](index.html) directamente en cualquier navegador moderno (Chrome, Edge o Firefox), o sírvelo con una extensión como *Live Server*.
-2. En la barra superior elige la fidelidad: **`1 Sketches`** (bocetos a lápiz), **`2 Wireframes`** o **`3 Mockups`**.
+2. En la barra superior elige la etapa metodológica: **`1 Sketches`**, **`2 Wireframes`**, **`3 Mockups`** (estático) o **`4 Prototipo`** (interactivo).
 3. En la subbarra elige el **Rol**:
    - **`Estudiante`** (20 pantallas: 13 exclusivas + 7 comunes)
    - **`Administrador`** (15 pantallas: 8 exclusivas + 7 comunes)
