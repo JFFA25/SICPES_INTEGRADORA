@@ -129,7 +129,7 @@ SICPES se apoya en servicios de terceros para capacidades que no conviene constr
 | :--- | :--- | :--- |
 | **Business Model Canvas** | Los nueve bloques del modelo de negocio. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html) |
 | **Diagrama de Roles de Usuario** | Roles, responsabilidades y matriz de permisos. | [README](RolesDeUsuario/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html) |
-| **Sketches y navegación** | Prototipo móvil y PWA con el diagrama de navegación entre pantallas. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
+| **Sketches, Wireframes, Mockups y Prototipo** | 28 pantallas (Móvil Flutter y PWA React/Vite), apartado de 7 pantallas en común, cotas en px y diagrama de navegación interactivo. | [README](Sketches/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
 | **Diagrama de Arquitectura** | Capas, tecnologías, bases de datos, servicios externos y despliegue, de forma interactiva. | [README](DiagramaDeArquitectura/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html) |
 
 ### Diagrama de Arquitectura
