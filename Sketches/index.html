@@ -1,10 +1,10 @@
-<!doctype html>
+  <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#153B28">
-  <title>SICPES — Sketches, Wireframes y Mockups</title>
+  <title>SICPES — Sketches, Wireframes, Mockups y Prototipo</title>
   <link rel="icon" type="image/png" href="../images/SICPES_Producto.png">
   <link rel="apple-touch-icon" href="../images/SICPES_Producto.png">
   <script>try{var _st=localStorage.getItem("sicpes-sketches-theme")||((window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark");document.documentElement.dataset.theme=_st;}catch(e){document.documentElement.dataset.theme="dark";}</script>
@@ -14,19 +14,27 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pwa.css">
   <link rel="stylesheet" href="pencil.css">
-  <link rel="stylesheet" href="wireframes.css">
+  <link rel="stylesheet" href="wireframes.css?v=4">
   <link rel="stylesheet" href="sections.css">
   <link rel="stylesheet" href="mockups/mockups.css">
   <link rel="stylesheet" href="shell.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-  <script src="app.js" defer></script>
-  <script src="pwa.js" defer></script>
-  <script src="data.js" defer></script>
+
+
+
   <script src="rough.min.js" defer></script>
-  <script src="pencil-screens.js" defer></script>
-  <script src="pencil.js" defer></script>
-  <script src="mockups/mockups.js" defer></script>
-  <script src="shell.js" defer></script>
+
+  <script src="app.js?v=3" defer></script>
+  <script src="pwa.js?v=3" defer></script>
+  <script src="data.js?v=3" defer></script>
+  <script src="rough.min.js" defer></script>
+  <script src="pencil-screens.js?v=3" defer></script>
+  <script src="pencil.js?v=3" defer></script>
+  <script src="mockups/mockups.js?v=3" defer></script>
+  <script src="wireframe-redlines.js?v=4" defer></script>
+  <script src="shell.js?v=4" defer></script>
+
+
 </head>
 <body class="shell-section-wireframes shell-platform-mobile">
   <header class="topbar shell-topbar">
@@ -39,7 +47,8 @@
     <nav class="fidelity-switch shell-fidelity-switch" role="tablist" aria-label="Nivel de fidelidad">
       <button type="button" class="fidelity-tab" data-shell-section="sketches" role="tab" aria-selected="false"><span class="tab-shortcut">1</span> Sketches</button>
       <button type="button" class="fidelity-tab active" data-shell-section="wireframes" role="tab" aria-selected="true"><span class="tab-shortcut">2</span> Wireframes</button>
-      <button type="button" class="fidelity-tab" data-shell-section="mockups" role="tab" aria-selected="false"><span class="tab-shortcut">3</span> Mockups</button>
+      <button type="button" class="fidelity-tab" data-shell-section="mockups" role="tab" aria-selected="false" title="Etapa 3 UOC: Maqueta visual estática de alta fidelidad"><span class="tab-shortcut">3</span> Mockups</button>
+      <button type="button" class="fidelity-tab" data-shell-section="prototype" role="tab" aria-selected="false" title="Etapa 4 UOC: Modelo interactivo funcional con flujos reales"><span class="tab-shortcut">4</span> Prototipo</button>
     </nav>
 
     <div class="topbar-end shell-topbar-end">
@@ -56,6 +65,7 @@
         <div class="shell-switch" role="tablist" aria-label="Seleccionar rol">
           <button type="button" class="shell-switch-btn active" data-shell-role="student" role="tab" aria-selected="true">Estudiante</button>
           <button type="button" class="shell-switch-btn" data-shell-role="admin" role="tab" aria-selected="false">Administrador</button>
+          <button type="button" class="shell-switch-btn shell-switch-shared" data-shell-role="shared" role="tab" aria-selected="false" title="Ver las 7 pantallas que tienen en común Estudiante y Administrador">⇄ Pantallas en común (7)</button>
         </div>
       </div>
 
@@ -109,13 +119,26 @@
             <button type="button" class="shell-zoom-btn shell-zoom-pill active" id="shellZoomFit" title="Ajustar automáticamente al ancho del visor">Ajustar</button>
             <button type="button" class="shell-zoom-btn shell-zoom-pill" id="shellZoom100" title="Tamaño original 1:1">100%</button>
           </div>
+          <div class="wire-mode-bar" aria-label="Opciones de visualización de Wireframe">
+            <div class="wire-pill-group" role="group" aria-label="Cotas y medidas técnicas">
+              <button type="button" class="wire-pill-btn active" data-wire-measures="on" aria-pressed="true" title="Mostrar cotas exteriores, píldoras #E0003C y leyenda técnica">Con medidas</button>
+              <button type="button" class="wire-pill-btn" data-wire-measures="off" aria-pressed="false" title="Ocultar cotas y ver solo las cajas del wireframe">Sin medidas</button>
+            </div>
+            <div class="wire-pill-group" role="group" aria-label="Estilo de contenido en Wireframe">
+              <button type="button" class="wire-pill-btn active" data-wire-bars="on" aria-pressed="true" title="Representar textos como barras grises estructurales (#8C8C8C / #C9C9C9)">Barras B/N</button>
+              <button type="button" class="wire-pill-btn" data-wire-bars="off" aria-pressed="false" title="Mostrar etiquetas de texto legibles dentro de las cajas">Texto</button>
+            </div>
+          </div>
           <span id="shellSize" class="shell-size-pill">390 × 844</span>
         </div>
       </div>
 
+      <div id="shellSharedBanner" class="shell-shared-banner" hidden aria-label="Apartado de pantallas en común entre ambos roles"></div>
       <div class="shell-device" id="shellDevice" data-platform="mobile" data-section="wireframes">
         <div class="surface-viewport" id="surfaceViewport">
-          <div id="mobileView" class="render-surface render-mobile" data-natural="414x868">
+          <div id="mobileView" class="render-surface render-mobile" data-natural="594x1084">
+            <div class="wire-ruler-top" aria-hidden="true"><span>← 390 px · VIEWPORT MÓVIL (ÁREA ÚTIL 346 px · PADDING 22 px) →</span></div>
+            <div class="wire-ruler-side" aria-hidden="true"><span>↕ 844 px · ALTO PANTALLA</span></div>
             <div class="phone-holder">
               <div class="phone">
                 <div class="phone-screen" id="phoneScreen" aria-live="polite"></div>
@@ -123,7 +146,8 @@
             </div>
           </div>
 
-          <div id="pwaView" class="render-surface render-pwa" data-natural="1440x900" hidden>
+          <div id="pwaView" class="render-surface render-pwa" data-natural="1640x1140" hidden>
+            <div class="wire-ruler-top wire-ruler-pwa" aria-hidden="true"><span>← 1440 px · VIEWPORT WEB PWA (SIDEBAR 220 px + MAIN 1220 px · ALTO 900 px) →</span></div>
             <div class="pwa-window" role="region" aria-label="Ventana del navegador">
               <div class="pwa-window-bar">
                 <span class="pwa-dots"><i></i><i></i><i></i></span>
@@ -242,7 +266,8 @@
       <div class="shortcuts-grid">
         <div class="shortcut-item"><kbd>1</kbd><span>Ver en <b>Sketches</b> (Bocetos a lápiz)</span></div>
         <div class="shortcut-item"><kbd>2</kbd><span>Ver en <b>Wireframes</b> (Media fidelidad)</span></div>
-        <div class="shortcut-item"><kbd>3</kbd><span>Ver en <b>Mockups</b> (Alta fidelidad)</span></div>
+        <div class="shortcut-item"><kbd>3</kbd><span>Ver en <b>Mockups</b> (Etapa 3: Maqueta visual estática)</span></div>
+        <div class="shortcut-item"><kbd>4</kbd><span>Ver en <b>Prototipo</b> (Etapa 4: Modelo interactivo funcional)</span></div>
         <div class="shortcut-item"><kbd>M</kbd><span>Cambiar a plataforma <b>Móvil</b></span></div>
         <div class="shortcut-item"><kbd>P</kbd><span>Cambiar a plataforma <b>PWA</b> (Escritorio)</span></div>
         <div class="shortcut-item"><kbd>R</kbd><span>Alternar rol <b>Estudiante / Admin</b></span></div>

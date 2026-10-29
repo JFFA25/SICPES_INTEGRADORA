@@ -29,9 +29,12 @@ const PWA_RATING_LABELS = { 1: 'Muy insatisfecho', 2: 'Insatisfecho', 3: 'Neutra
 
 /* Catálogo de pantallas, códigos, roles y rutas visibles en la barra de direcciones. */
 const PWA_SCREENS = {
+  splash: { role: 'shared', title: 'Splash Screen', label: 'SPLASH SCREEN', route: '/splash' },
   landing: { role: 'student', title: 'Landing', label: 'LANDING', route: '/' },
   studentLogin: { role: 'student', title: 'Iniciar sesión', label: 'INICIAR SESIÓN', route: '/login' },
-  forgotPassword: { role: 'student', title: 'Recuperar contraseña', label: 'RECUPERAR CONTRASEÑA', route: '/recuperar' },
+  forgotPassword: { role: 'shared', title: 'Recuperar contraseña', label: 'RECUPERAR CONTRASEÑA', route: '/recuperar' },
+  lockAccount: { role: 'shared', title: 'Cuenta bloqueada', label: 'CUENTA BLOQUEADA', route: '/bloqueo' },
+  unlockAccount: { role: 'shared', title: 'Código de desbloqueo', label: 'DESBLOQUEAR CUENTA', route: '/desbloquear' },
   register: { role: 'student', title: 'Crear cuenta', label: 'CREAR CUENTA', route: '/registro' },
   verifyEmail: { role: 'student', title: 'Verificar correo', label: 'VERIFICAR CORREO', route: '/verificar-correo' },
   loading: { role: 'shared', title: 'Sincronizando', label: 'SINCRONIZANDO', route: '/cargando' },
@@ -44,6 +47,8 @@ const PWA_SCREENS = {
   rateService: { role: 'student', title: 'Evaluar el servicio', label: 'EVALUAR EL SERVICIO', route: '/evaluar' },
   rateConfirm: { role: 'student', title: 'Evaluación enviada', label: 'EVALUACIÓN ENVIADA', route: '/evaluar/gracias' },
   profile: { role: 'student', title: 'Cuenta / Perfil', label: 'CUENTA / PERFIL', route: '/cuenta' },
+  aboutSoftware: { role: 'shared', title: 'Acerca del software', label: 'ACERCA DEL SOFTWARE', route: '/acerca-software' },
+  aboutTeam: { role: 'shared', title: 'Acerca del equipo', label: 'ACERCA DEL EQUIPO', route: '/acerca-equipo' },
   adminLogin: { role: 'admin', title: 'Acceso administrador', label: 'LOGIN ADMIN', route: '/admin' },
   reservations: { role: 'admin', title: 'Reservaciones', label: 'RESERVACIONES', route: '/admin/reservaciones' },
   assignRoom: { role: 'admin', title: 'Asignar habitación', label: 'ASIGNAR HABITACIÓN', route: '/admin/asignar' },
@@ -53,15 +58,20 @@ const PWA_SCREENS = {
   floors: { role: 'admin', title: 'Pisos', label: 'PISOS', route: '/admin/pisos' },
   settings: { role: 'admin', title: 'Configuración global', label: 'CONFIGURACIÓN', route: '/admin/configuracion' }
 };
-const PWA_CODES = { landing:'E1', studentLogin:'E2', forgotPassword:'E3', register:'E4', verifyEmail:'E5', loading:'E6', home:'E7', reserve:'E8', roomDetail:'E9', requestStatus:'E10', payments:'E11', paymentDetail:'E12', rateService:'E13', rateConfirm:'E14', profile:'E15', adminLogin:'A1', reservations:'A2', assignRoom:'A3', pendingPayments:'A4', validatePayment:'A5', debts:'A6', floors:'A7', settings:'A8' };
-const PWA_STUDENT = ['landing','studentLogin','forgotPassword','register','verifyEmail','loading','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile'];
-const PWA_ADMIN = ['adminLogin','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings'];
-const PWA_ROOTS = new Set(['home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
+const PWA_SHARED = ['splash','loading','forgotPassword','lockAccount','unlockAccount','aboutSoftware','aboutTeam'];
+const PWA_CODES = { splash:'C1', landing:'E1', studentLogin:'E2', forgotPassword:'E3', lockAccount:'C2', unlockAccount:'C3', register:'E4', verifyEmail:'E5', loading:'E6', home:'E7', reserve:'E8', roomDetail:'E9', requestStatus:'E10', payments:'E11', paymentDetail:'E12', rateService:'E13', rateConfirm:'E14', profile:'E15', aboutSoftware:'C4', aboutTeam:'C5', adminLogin:'A1', reservations:'A2', assignRoom:'A3', pendingPayments:'A4', validatePayment:'A5', debts:'A6', floors:'A7', settings:'A8' };
+const PWA_STUDENT = ['splash','landing','studentLogin','forgotPassword','lockAccount','unlockAccount','register','verifyEmail','loading','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile','aboutSoftware','aboutTeam'];
+const PWA_ADMIN = ['splash','adminLogin','forgotPassword','lockAccount','unlockAccount','loading','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings','aboutSoftware','aboutTeam'];
+const PWA_ROOTS = new Set(['splash','landing','home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Acciones disponibles por pantalla: [destino, texto visible]. */
 const PWA_ACTIONS = {
-  landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada']],
-  studentLogin:[['loading','Entrar al panel'],['forgotPassword','¿Olvidaste tu contraseña?'],['register','Crear una cuenta nueva']],
-  forgotPassword:[['studentLogin','Enviar enlace de recuperación']],
+  splash:[['landing','Iniciar como Estudiante'],['adminLogin','Iniciar como Administrador'],['aboutSoftware','Acerca del software']],
+  landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada'],['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo']],
+  studentLogin:[['loading','Entrar al panel'],['forgotPassword','¿Olvidaste tu contraseña?'],['lockAccount','3 intentos fallidos → Bloqueo'],['register','Crear una cuenta nueva']],
+  forgotPassword:[['studentLogin','Enviar enlace (Estudiante)'],['adminLogin','Enviar enlace (Administrador)'],['unlockAccount','Tengo código de verificación']],
+  lockAccount:[['unlockAccount','Solicitar código de desbloqueo'],['forgotPassword','Recuperar contraseña por correo']],
+  unlockAccount:[['loading','Validar código y entrar'],['studentLogin','Volver a Login Estudiante'],['adminLogin','Volver a Login Admin']],
+
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
   verifyEmail:[['loading','Verificar código'],['register','Reenviar código']],
   loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
@@ -73,15 +83,18 @@ const PWA_ACTIONS = {
   paymentDetail:[['payments','Volver a pagos']],
   rateService:[['rateConfirm','Enviar evaluación'],['home','Barra lateral: Inicio'],['profile','Barra lateral: Cuenta']],
   rateConfirm:[['home','Volver a Inicio']],
-  profile:[['studentLogin','Cerrar sesión'],['rateService','Evaluar el servicio'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['payments','Barra lateral: Pagos']],
-  adminLogin:[['loading','Entrar al panel administrativo']],
+  profile:[['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo / empresa'],['rateService','Evaluar el servicio'],['studentLogin','Cerrar sesión'],['home','Barra lateral: Inicio'],['reserve','Barra lateral: Reservar'],['payments','Barra lateral: Pagos']],
+  aboutSoftware:[['aboutTeam','Ver equipo desarrollador'],['profile','Volver a Cuenta (Estudiante)'],['settings','Volver a Configuración (Admin)'],['splash','Pantalla inicial (Splash)']],
+  aboutTeam:[['aboutSoftware','Acerca del software'],['profile','Volver a Cuenta (Estudiante)'],['settings','Volver a Configuración (Admin)']],
+  adminLogin:[['loading','Entrar al panel administrativo'],['forgotPassword','¿Olvidaste tu contraseña?'],['lockAccount','3 intentos fallidos → Bloqueo']],
+
   reservations:[['assignRoom','Seleccionar solicitud'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos'],['settings','Panel superior: Configuración']],
   assignRoom:[['reservations','Asignar / Rechazar']],
   pendingPayments:[['validatePayment','Seleccionar pago'],['debts','Ver adeudos'],['reservations','Panel superior: Reservaciones'],['floors','Panel superior: Pisos'],['settings','Panel superior: Configuración']],
   validatePayment:[['pendingPayments','Aprobar / Rechazar']],
   debts:[['pendingPayments','Volver a pagos pendientes']],
   floors:[['reservations','Panel superior: Reservaciones'],['pendingPayments','Panel superior: Pagos'],['settings','Panel superior: Configuración']],
-  settings:[['reservations','Panel superior: Reservaciones'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos']]
+  settings:[['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo / empresa'],['adminLogin','Cerrar sesión'],['reservations','Panel superior: Reservaciones'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos']]
 };
 
 const pwaState = { screen: 'landing', role: 'student', history: [], type: 'Individual', filter: 'Todas', paymentFilter: 'Todos', debtFilter: 'Todos', rating: 0, zones: false, loadingTimer: null, toastTimer: null, mapScrollY: 0 };
@@ -118,7 +131,7 @@ function pwaSidebar(role, active) {
   const items = role === 'student'
     ? [['home','⌂','Inicio'],['reserve','＋','Reservar'],['payments','$','Pagos'],['profile','◎','Cuenta']]
     : [['reservations','▤','Reservaciones'],['pendingPayments','$','Pagos'],['floors','▥','Pisos'],['settings','⚙','Configuración']];
-  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}<div class="pwa-side-help"><span class="pwa-side-label">AYUDA</span><button class="pwa-side-item" data-pwa-go="${role === 'student' ? 'profile' : 'settings'}"><span class="pwa-side-icon">◈</span>Soporte SICPES</button></div></aside>`;
+  return `<aside class="pwa-app-side"><span class="pwa-side-label">${role === 'student' ? 'RESIDENTE' : 'ADMINISTRACIÓN'}</span>${items.map(([id,icon,label]) => `<button class="pwa-side-item ${active===id?'active':''}" data-pwa-go="${id}"><span class="pwa-side-icon">${icon}</span>${label}</button>`).join('')}</aside>`;
 }
 function pwaShell(role, active, content) {
   return `${pwaTopnav(role)}<div class="pwa-app-body">${pwaSidebar(role,active)}<div class="pwa-app-main">${content}</div></div>`;
@@ -135,17 +148,20 @@ function pwaStatus(status) {
 }
 
 /* --- Pantallas · Rol estudiante --- */
+function pwaSplash() {
+  return `<div class="pwa-loading"><img class="pwa-logo-img" src="../images/SICPES_Producto.png" alt="SICPES"><div class="pwa-image-placeholder pwa-logo-box"><span>[ LOGO · 120×64 px ]</span></div><span class="pwa-eyebrow">SICPES · VERSIÓN 2.4.0 · PWA REACT / VITE &amp; FLUTTER</span><h2 class="pwa-card-title">Sistema Integral de Control de Pensión de Estudiantes</h2><p class="pwa-lead" style="max-width:560px;text-align:center">Conectando estudiantes con hogares seguros y digitalizando la gestión de pensiones residenciales.</p><div class="pwa-cta-row" style="justify-content:center;margin-top:12px"><button class="pwa-button pwa-primary" data-pwa-go="landing">Portal del Residente →</button><button class="pwa-button pwa-secondary" data-pwa-go="adminLogin">Panel Administrativo</button><button class="pwa-button pwa-secondary" data-pwa-go="aboutSoftware">Acerca del software</button><button class="pwa-button pwa-secondary" data-pwa-go="aboutTeam">Acerca del equipo</button></div></div>`;
+}
 function pwaLanding() {
-  return `${pwaTopnav('student')}<div class="pwa-landing"><div class="pwa-landing-copy"><span class="pwa-eyebrow">VIVIENDA UNIVERSITARIA · 2025</span><h1 class="pwa-display">Encuentra tu espacio ideal para vivir y estudiar</h1><p class="pwa-lead">Una residencia segura, cómoda y cerca de tu campus. Gestiona reservaciones y pagos desde un solo panel web.</p><div class="pwa-cta-row"><button class="pwa-button pwa-primary" data-pwa-go="roomDetail">Explorar habitaciones →</button><button class="pwa-button pwa-secondary" data-pwa-go="studentLogin">Iniciar sesión</button></div><div class="pwa-feature-row"><article class="pwa-feature"><strong>Residencias verificadas</strong><small>ESPACIOS SEGUROS</small></article><article class="pwa-feature"><strong>Gestión centralizada</strong><small>TODO EN UN LUGAR</small></article><article class="pwa-feature"><strong>Pagos en línea</strong><small>SIN TRÁMITES</small></article></div></div><div class="pwa-landing-art"><div class="pwa-image-placeholder">[ IMAGEN PRINCIPAL ]</div><div class="pwa-art-note">Vista previa del panel de residente</div></div></div>`;
+  return `${pwaTopnav('student')}<div class="pwa-landing"><div class="pwa-landing-copy"><span class="pwa-eyebrow">VIVIENDA UNIVERSITARIA · 2025</span><h1 class="pwa-display">Encuentra tu espacio ideal para vivir y estudiar</h1><p class="pwa-lead">Una residencia segura, cómoda y cerca de tu campus. Gestiona reservaciones y pagos desde un solo panel web.</p><div class="pwa-cta-row"><button class="pwa-button pwa-primary" data-pwa-go="roomDetail">Explorar habitaciones →</button><button class="pwa-button pwa-secondary" data-pwa-go="studentLogin">Iniciar sesión</button></div><div class="pwa-feature-row"><article class="pwa-feature" data-pwa-go="aboutSoftware"><strong>Acerca de SICPES</strong><small>FICHA TÉCNICA</small></article><article class="pwa-feature" data-pwa-go="aboutTeam"><strong>Equipo / Empresa</strong><small>CRÉDITOS UTHH</small></article><article class="pwa-feature" data-pwa-go="reserve"><strong>Pagos en línea</strong><small>SIN TRÁMITES</small></article></div></div><div class="pwa-landing-art"><div class="pwa-image-placeholder"><span>[ IMAGEN PRINCIPAL · 560 × 220 px ]</span></div><div class="pwa-art-note">Vista previa del panel de residente</div></div></div>`;
 }
 function pwaStudentLogin() {
-  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">PORTAL DEL RESIDENTE</span><h2 class="pwa-auth-title">Gestiona tu residencia desde el navegador</h2><p class="pwa-lead">Consulta tu habitación, tus pagos y avisos en un panel pensado para escritorio.</p><div class="pwa-image-placeholder pwa-tall">[ IMAGEN ]</div></div><div class="pwa-auth-card"><span class="pwa-eyebrow">INICIAR SESIÓN</span><h2 class="pwa-card-title">Qué gusto verte de nuevo.</h2>${pwaField('CORREO ELECTRÓNICO','nombre@correo.com','email')}${pwaField('CONTRASEÑA','••••••••','password')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="student-login">Entrar</button><div class="pwa-divider">O CONTINÚA CON</div><div class="pwa-social"><button data-pwa-action="social">Google</button><button data-pwa-action="social">Facebook</button><button data-pwa-action="social">LinkedIn</button></div><p class="pwa-inline-link"><button data-pwa-go="forgotPassword">¿Olvidaste tu contraseña?</button></p><p class="pwa-inline-link">¿No tienes cuenta? <button data-pwa-go="register">Regístrate</button></p></div>`);
+  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">PORTAL DEL RESIDENTE</span><h2 class="pwa-auth-title">Gestiona tu residencia desde el navegador</h2><p class="pwa-lead">Consulta tu habitación, tus pagos y avisos en un panel pensado para escritorio.</p><div class="pwa-image-placeholder pwa-tall"><span>[ IMAGEN · 640 × 280 px ]</span></div></div><div class="pwa-auth-card"><span class="pwa-eyebrow">INICIAR SESIÓN</span><h2 class="pwa-card-title">Qué gusto verte de nuevo.</h2>${pwaField('CORREO ELECTRÓNICO','nombre@correo.com','email')}${pwaField('CONTRASEÑA','••••••••','password')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="student-login">Entrar</button><button class="pwa-button pwa-secondary pwa-block" style="margin-top:8px" data-pwa-go="lockAccount">Simular bloqueo (3 intentos fallidos)</button><div class="pwa-divider">O CONTINÚA CON</div><div class="pwa-social"><button data-pwa-action="social">Google</button><button data-pwa-action="social">Facebook</button><button data-pwa-action="social">LinkedIn</button></div><p class="pwa-inline-link"><button data-pwa-go="forgotPassword">¿Olvidaste tu contraseña?</button></p><p class="pwa-inline-link">¿No tienes cuenta? <button data-pwa-go="register">Regístrate</button></p></div>`);
 }
 function pwaRegister() {
   return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">NUEVO RESIDENTE</span><h2 class="pwa-auth-title">Crea tu cuenta en minutos</h2><p class="pwa-lead">Registra tus datos una sola vez y administra tu estancia desde la web.</p><ul class="pwa-checklist"><li>Reserva tu habitación</li><li>Sube comprobantes de pago</li><li>Recibe avisos del residencial</li></ul></div><div class="pwa-auth-card"><span class="pwa-eyebrow">CREAR CUENTA</span><h2 class="pwa-card-title">Datos del residente</h2><div class="pwa-form-grid">${pwaField('NOMBRE COMPLETO','Nombre y apellidos')}${pwaField('CORREO ELECTRÓNICO','nombre@correo.com','email')}${pwaField('CONTRASEÑA','Mínimo 8 caracteres','password')}${pwaField('CONFIRMAR CONTRASEÑA','Repite tu contraseña','password')}</div><label class="pwa-checkline"><input type="checkbox"> Acepto los términos y condiciones y el aviso de privacidad.</label><button class="pwa-button pwa-primary pwa-block" data-pwa-action="register">Registrarse</button><p class="pwa-inline-link">¿Ya tienes cuenta? <button data-pwa-go="studentLogin">Iniciar sesión</button></p></div>`);
 }
 function pwaLoading() {
-  return `<div class="pwa-loading"><img class="pwa-logo-img" src="../images/SICPES_Producto.png" alt="SICPES"><h2 class="pwa-card-title">Preparando tu espacio</h2><p class="pwa-lead">Sincronizando registros residenciales…</p><div class="pwa-progress"><div class="pwa-progress-fill" id="pwaProgressFill"></div></div><div class="pwa-progress-caption"><span id="pwaProgressText">Conectando con SICPES</span><span id="pwaProgressPercent">0%</span></div></div>`;
+  return `<div class="pwa-loading"><img class="pwa-logo-img" src="../images/SICPES_Producto.png" alt="SICPES"><div class="pwa-image-placeholder pwa-logo-box"><span>[ LOGO · 120×64 px ]</span></div><h2 class="pwa-card-title">Preparando tu espacio</h2><p class="pwa-lead">Sincronizando registros residenciales…</p><div class="pwa-progress"><div class="pwa-progress-fill" id="pwaProgressFill"></div></div><div class="pwa-progress-caption"><span id="pwaProgressText">Conectando con SICPES</span><span id="pwaProgressPercent">0%</span></div></div>`;
 }
 function pwaHome() {
   const s = PWA_MOCK.student;
@@ -163,13 +179,13 @@ function pwaPayments() {
 }
 function pwaProfile() {
   const s = PWA_MOCK.student;
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">MI CUENTA</span><h2 class="pwa-page-title">Cuenta / Perfil</h2><p class="pwa-lead">Datos de tu cuenta de residente.</p></div></div><div class="pwa-profile-grid"><aside class="pwa-card pwa-profile-card"><div class="pwa-avatar-big">[ FOTO ]</div><strong>${pwaEsc(s.name)}</strong><span class="pwa-muted">Estudiante</span><button class="pwa-button pwa-secondary pwa-block" data-pwa-action="logout">Cerrar sesión</button></aside><div class="pwa-card"><h3 class="pwa-card-title">Información personal</h3><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Nombre completo</small><strong>${pwaEsc(s.name)}</strong></div><div class="pwa-data-cell"><small>Correo</small><strong>${pwaEsc(s.email)}</strong></div><div class="pwa-data-cell"><small>Habitación</small><strong>${s.room}</strong></div><div class="pwa-data-cell"><small>Piso</small><strong>${s.floor}</strong></div></div><div class="pwa-cta-row"><button class="pwa-button pwa-secondary" data-pwa-go="rateService">Evaluar el servicio</button></div></div></div>`;
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">MI CUENTA</span><h2 class="pwa-page-title">Cuenta / Perfil</h2><p class="pwa-lead">Datos de tu cuenta de residente.</p></div></div><div class="pwa-profile-grid"><aside class="pwa-card pwa-profile-card"><div class="pwa-avatar-big"><span>[ 96×96 px ]</span></div><strong>${pwaEsc(s.name)}</strong><span class="pwa-muted">Estudiante</span><button class="pwa-button pwa-secondary pwa-block" data-pwa-action="logout">Cerrar sesión</button></aside><div class="pwa-card"><h3 class="pwa-card-title">Información personal</h3><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Nombre completo</small><strong>${pwaEsc(s.name)}</strong></div><div class="pwa-data-cell"><small>Correo</small><strong>${pwaEsc(s.email)}</strong></div><div class="pwa-data-cell"><small>Habitación</small><strong>${s.room}</strong></div><div class="pwa-data-cell"><small>Piso</small><strong>${s.floor}</strong></div></div><div class="pwa-cta-row"><button class="pwa-button pwa-secondary" data-pwa-go="rateService">Evaluar el servicio</button><button class="pwa-button pwa-secondary" data-pwa-go="aboutSoftware">Acerca del software</button><button class="pwa-button pwa-secondary" data-pwa-go="aboutTeam">Acerca del equipo</button></div></div></div>`;
   return pwaShell('student','profile',content);
 }
 
 /* --- Pantallas · Rol administrador --- */
 function pwaAdminLogin() {
-  return pwaAuthShell(`<div class="pwa-auth-art pwa-admin-art"><span class="pwa-eyebrow">SICPES · ACCESO RESTRINGIDO</span><h2 class="pwa-auth-title">Panel administrativo</h2><p class="pwa-lead">Gestiona reservaciones, cobros e inventario desde un escritorio.</p><div class="pwa-image-placeholder pwa-tall">[ IMAGEN ]</div></div><div class="pwa-auth-card"><span class="pwa-eyebrow">INICIAR SESIÓN</span><h2 class="pwa-card-title">Acceso administrador</h2>${pwaField('CORREO ADMINISTRADOR','admin@sicpes.mx','email')}${pwaField('CONTRASEÑA','••••••••','password')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="admin-login">Entrar</button><p class="pwa-form-note">Acceso exclusivo para personal autorizado.</p></div>`);
+  return pwaAuthShell(`<div class="pwa-auth-art pwa-admin-art"><span class="pwa-eyebrow">SICPES · ACCESO RESTRINGIDO</span><h2 class="pwa-auth-title">Panel administrativo</h2><p class="pwa-lead">Gestiona reservaciones, cobros e inventario desde un escritorio.</p><div class="pwa-image-placeholder pwa-tall"><span>[ IMAGEN · 640 × 280 px ]</span></div></div><div class="pwa-auth-card"><span class="pwa-eyebrow">INICIAR SESIÓN</span><h2 class="pwa-card-title">Acceso administrador</h2>${pwaField('CORREO ADMINISTRADOR','admin@sicpes.mx','email')}${pwaField('CONTRASEÑA','••••••••','password')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="admin-login">Entrar</button><button class="pwa-button pwa-secondary pwa-block" style="margin-top:8px" data-pwa-go="lockAccount">Simular bloqueo (3 intentos fallidos)</button><p class="pwa-inline-link"><button data-pwa-go="forgotPassword">¿Olvidaste tu contraseña?</button></p><p class="pwa-form-note">Acceso exclusivo para personal autorizado.</p></div>`);
 }
 function pwaFilterTabs(values, active, key) {
   return `<div class="pwa-tabs">${values.map(v => `<button class="pwa-filter-tab ${v===active?'active':''}" data-pwa-filter="${pwaEsc(v)}" data-pwa-filter-key="${key}">${pwaEsc(v)}</button>`).join('')}</div>`;
@@ -193,13 +209,7 @@ function pwaFloors() {
   return pwaShell('admin','floors',content);
 }
 function pwaSettings() {
-  const toggles = [['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false],['Reporte semanal',true]];
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios, notificaciones y datos administrativos.</p></div></div>
-<div class="pwa-form-layout">
-<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Precios mensuales</h3><span class="pwa-status pwa-ok">ACTIVO</span></div><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">✓ Guardar cambios</button></article>
-<article class="pwa-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Notificaciones del sistema</h3></div>${toggles.map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}<div class="pwa-notice">🔔 Los avisos se envían al correo y a la PWA.</div></article>
-</div>
-<article class="pwa-card pwa-period-card"><div class="pwa-card-head"><h3 class="pwa-card-title">Cierre de periodo</h3>${pwaStatus('Pendiente')}</div><p class="pwa-lead">Cierra el periodo actual para generar los estados de cuenta del siguiente mes.</p><button class="pwa-button pwa-secondary" data-pwa-action="social">Cerrar periodo</button></article>`;
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">PREFERENCIAS DEL SISTEMA</span><h2 class="pwa-page-title">Configuración global</h2><p class="pwa-lead">Precios y datos administrativos.</p></div><div class="pwa-cta-row"><button class="pwa-button pwa-secondary" data-pwa-go="aboutSoftware">Acerca del software</button><button class="pwa-button pwa-secondary" data-pwa-go="aboutTeam">Acerca del equipo</button></div></div><div class="pwa-form-layout"><article class="pwa-card"><h3 class="pwa-card-title">Precios mensuales</h3><div class="pwa-form-grid">${pwaField('HABITACIÓN INDIVIDUAL (MXN)','$2,500','number',PWA_MOCK.prices.Individual)}${pwaField('HABITACIÓN COMPARTIDA (MXN)','$1,800','number',PWA_MOCK.prices.Compartida)}${pwaField('CORREO DEL ADMINISTRADOR','admin@sicpes.mx','email','admin@sicpes.mx')}</div><button class="pwa-button pwa-primary" data-pwa-action="save-settings">Guardar cambios</button></article><article class="pwa-card"><h3 class="pwa-card-title">Notificaciones del sistema</h3>${[['Nuevas reservaciones',true],['Pagos pendientes',true],['Avisos a residentes',false]].map(([label,on]) => `<label class="pwa-switch-row">${label}<input class="pwa-switch" type="checkbox" ${on?'checked':''}></label>`).join('')}</article></div>`;
   return pwaShell('admin','settings',content);
 }
 
@@ -208,11 +218,35 @@ function pwaVerifyEmail() {
   return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">CONFIRMA TU CUENTA</span><h2 class="pwa-auth-title">Verifica tu correo</h2><p class="pwa-lead">Enviamos un código de 6 dígitos a ${pwaEsc(PWA_MOCK.student.email)}. Ingrésalo para activar tu cuenta.</p></div><div class="pwa-auth-card"><span class="pwa-eyebrow">CÓDIGO DE VERIFICACIÓN</span><h2 class="pwa-card-title">Ingresa el código</h2><div class="pwa-code-row" role="group" aria-label="Código de verificación de 6 dígitos">${Array.from({length:6}).map((_,i)=>`<input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito ${i+1}" value="${i===0?'2':i===1?'0':i===2?'4':''}">`).join('')}</div><button class="pwa-button pwa-primary pwa-block" data-pwa-action="verify-email">Verificar código</button><p class="pwa-inline-link">¿No recibiste el código? <button data-pwa-action="resend-code">Reenviar código</button></p></div>`);
 }
 function pwaForgotPassword() {
-  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">RECUPERAR ACCESO</span><h2 class="pwa-auth-title">Recupera tu contraseña</h2><p class="pwa-lead">Te enviaremos un enlace para restablecer tu contraseña de forma segura.</p></div><div class="pwa-auth-card"><span class="pwa-eyebrow">RECUPERAR</span><h2 class="pwa-card-title">Recuperar contraseña</h2>${pwaField('CORREO ELECTRÓNICO','nombre@correo.com','email')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="forgot-send">Enviar enlace</button><p class="pwa-inline-link">¿Recordaste tu contraseña? <button data-pwa-go="studentLogin">Iniciar sesión</button></p></div>`);
+  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">RECUPERAR ACCESO · PANTALLA COMÚN</span><h2 class="pwa-auth-title">Recupera tu contraseña</h2><p class="pwa-lead">Te enviaremos un enlace o código a tu correo registrado (residente o administrador) para restablecer el acceso.</p></div><div class="pwa-auth-card"><span class="pwa-eyebrow">RECUPERAR</span><h2 class="pwa-card-title">Recuperar contraseña</h2>${pwaField('CORREO ELECTRÓNICO','usuario@sicpes.mx','email')}<button class="pwa-button pwa-primary pwa-block" data-pwa-action="forgot-send">Enviar enlace de recuperación</button><button class="pwa-button pwa-secondary pwa-block" style="margin-top:8px" data-pwa-go="unlockAccount">Ya tengo un código de desbloqueo</button><p class="pwa-inline-link">¿Recordaste tu contraseña? <button data-pwa-go="${pwaState.role==='admin'?'adminLogin':'studentLogin'}">Iniciar sesión</button></p></div>`);
+}
+function pwaLockAccount() {
+  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">SEGURIDAD · PANTALLA COMÚN</span><h2 class="pwa-auth-title">Protección contra accesos no autorizados</h2><p class="pwa-lead">SICPES bloquea temporalmente la sesión tras 3 intentos fallidos consecutivos en cualquiera de los roles.</p><div class="pwa-image-placeholder"><span>[ ALERTA · 640 × 200 px ]</span></div></div><div class="pwa-auth-card"><span class="pwa-eyebrow">CUENTA BLOQUEADA</span><h2 class="pwa-card-title">Acceso restringido por 15:00 min</h2><p class="pwa-muted">Se registraron 3 intentos fallidos de inicio de sesión. Solicita un código de verificación de 6 dígitos para desbloquear tu cuenta inmediatamente.</p><button class="pwa-button pwa-primary pwa-block" data-pwa-go="unlockAccount">Solicitar código de desbloqueo →</button><button class="pwa-button pwa-secondary pwa-block" style="margin-top:8px" data-pwa-go="forgotPassword">Recuperar contraseña por correo</button></div>`);
+}
+function pwaUnlockAccount() {
+  return pwaAuthShell(`<div class="pwa-auth-art"><span class="pwa-eyebrow">VERIFICACIÓN · PANTALLA COMÚN</span><h2 class="pwa-auth-title">Desbloquea tu cuenta con código</h2><p class="pwa-lead">Ingresa los 6 dígitos enviados a tu correo electrónico para reactivar tu sesión.</p></div><div class="pwa-auth-card"><span class="pwa-eyebrow">CÓDIGO DE DESBLOQUEO</span><h2 class="pwa-card-title">Ingresa el código de 6 dígitos</h2><div class="pwa-code-row" role="group" aria-label="Código de desbloqueo de 6 dígitos">${Array.from({length:6}).map((_,i)=>`<input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito ${i+1}" value="${['8','4','1','9','0','2'][i]||''}">`).join('')}</div><button class="pwa-button pwa-primary pwa-block" data-pwa-action="unlock-code">Validar y desbloquear cuenta</button><p class="pwa-inline-link">¿No llegó el código? <button data-pwa-action="resend-code">Reenviar código</button> · <button data-pwa-go="${pwaState.role==='admin'?'adminLogin':'studentLogin'}">Volver al login</button></p></div>`);
+}
+function pwaAboutSoftware() {
+  const role = pwaState.role === 'admin' ? 'admin' : 'student';
+  const active = role === 'admin' ? 'settings' : 'profile';
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">INFORMACIÓN DEL SISTEMA · PANTALLA COMÚN</span><h2 class="pwa-page-title">Acerca del software · SICPES</h2><p class="pwa-lead">Sistema Integral de Control de Pensión de Estudiantes · Versión 2.4.0 (2026).</p></div><div class="pwa-cta-row"><button class="pwa-button pwa-primary" data-pwa-go="aboutTeam">Ver equipo desarrollador →</button><button class="pwa-button pwa-secondary" data-pwa-go="${active}">Volver</button></div></div><div class="pwa-stat-grid"><div class="pwa-stat"><small>Aplicación Web</small><strong>PWA React / Vite</strong></div><div class="pwa-stat"><small>Aplicación Móvil</small><strong>Flutter / Dart</strong></div><div class="pwa-stat"><small>Backend</small><strong>Node.js + FastAPI</strong></div><div class="pwa-stat"><small>Base de Datos</small><strong>MySQL TiDB + Mongo</strong></div></div><div class="pwa-dash-grid"><article class="pwa-card"><h3 class="pwa-card-title">Propósito del sistema</h3><p class="pwa-muted">Conectando estudiantes con hogares seguros, digitalizando la gestión de pensiones residenciales, control de pagos, asignación de habitaciones y seguimiento de solicitudes.</p></article><article class="pwa-card"><h3 class="pwa-card-title">APIs y servicios integrados</h3><ul class="pwa-checklist"><li>Google Maps Embed &amp; Geolocation API</li><li>Mailtrap API &amp; Twilio API (notificaciones y códigos)</li><li>PDFmonkey API (recibos y reportes)</li></ul></article></div>`;
+  return pwaShell(role, active, content);
+}
+function pwaAboutTeam() {
+  const role = pwaState.role === 'admin' ? 'admin' : 'student';
+  const active = role === 'admin' ? 'settings' : 'profile';
+  const rows = [
+    ['Jose Francisco Flores Amador', 'Líder de Proyecto / Fullstack / Documentación', '@JFFA25'],
+    ['Edgar Cabrera Velázquez', 'Backend / Lógica del sistema y APIs', '@Edgar-Cbr'],
+    ['Edwin Hernández Campos', 'Base de datos / Estructura relacional y NoSQL', '@Edwinhdzcm'],
+    ['Giovany Raul Pazos Cruz', 'Frontend / Interfaz PWA React y Móvil Flutter', '@giova0412']
+  ];
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">CRÉDITOS INSTITUCIONALES · PANTALLA COMÚN</span><h2 class="pwa-page-title">Acerca del equipo / empresa</h2><p class="pwa-lead">Equipo desarrollador del Proyecto Integrador SICPES · Universidad Tecnológica de la Huasteca Hidalguense (UTHH).</p></div><div class="pwa-cta-row"><button class="pwa-button pwa-secondary" data-pwa-go="aboutSoftware">← Acerca del software</button><button class="pwa-button pwa-primary" data-pwa-go="${active}">Volver</button></div></div><article class="pwa-card">${pwaTable(['Integrante', 'Rol y responsabilidad en el proyecto', 'GitHub'], rows)}</article>`;
+  return pwaShell(role, active, content);
 }
 function pwaRoomDetail() {
   const room = PWA_MOCK.rooms[0];
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">HABITACIÓN DISPONIBLE</span><h2 class="pwa-page-title">Habitación ${pwaEsc(room.id)}</h2><p class="pwa-lead">${pwaEsc(room.type)} · ${pwaEsc(room.floor)}</p></div><button class="pwa-button pwa-primary" data-pwa-action="room-request">Solicitar esta habitación</button></div><div class="pwa-form-layout"><article class="pwa-card"><div class="pwa-image-placeholder pwa-tall">[ FOTO DE LA HABITACIÓN ]</div></article><aside class="pwa-card pwa-summary"><span class="pwa-eyebrow">DETALLE</span><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Tipo</small><strong>${pwaEsc(room.type)}</strong></div><div class="pwa-data-cell"><small>Piso</small><strong>${pwaEsc(room.floor)}</strong></div><div class="pwa-data-cell"><small>Precio mensual</small><strong>${pwaMoney(room.amount)}</strong></div><div class="pwa-data-cell"><small>Disponibilidad</small><strong>${room.available?'Disponible':'Ocupada'}</strong></div></div><h3 class="pwa-card-title" style="margin-top:14px">Servicios incluidos</h3><ul class="pwa-checklist">${room.services.map(s=>`<li>${pwaEsc(s)}</li>`).join('')}</ul></aside></div>`;
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">HABITACIÓN DISPONIBLE</span><h2 class="pwa-page-title">Habitación ${pwaEsc(room.id)}</h2><p class="pwa-lead">${pwaEsc(room.type)} · ${pwaEsc(room.floor)}</p></div><button class="pwa-button pwa-primary" data-pwa-action="room-request">Solicitar esta habitación</button></div><div class="pwa-form-layout"><article class="pwa-card"><div class="pwa-image-placeholder pwa-tall"><span>[ FOTO HABITACIÓN · 680 × 280 px ]</span></div></article><aside class="pwa-card pwa-summary"><span class="pwa-eyebrow">DETALLE</span><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Tipo</small><strong>${pwaEsc(room.type)}</strong></div><div class="pwa-data-cell"><small>Piso</small><strong>${pwaEsc(room.floor)}</strong></div><div class="pwa-data-cell"><small>Precio mensual</small><strong>${pwaMoney(room.amount)}</strong></div><div class="pwa-data-cell"><small>Disponibilidad</small><strong>${room.available?'Disponible':'Ocupada'}</strong></div></div><h3 class="pwa-card-title" style="margin-top:14px">Servicios incluidos</h3><ul class="pwa-checklist">${room.services.map(s=>`<li>${pwaEsc(s)}</li>`).join('')}</ul></aside></div>`;
   return pwaShell('student','reserve',content);
 }
 function pwaRequestStatus() {
@@ -229,7 +263,7 @@ function pwaRateService() {
   return pwaShell('student','profile',content);
 }
 function pwaRateConfirm() {
-  const content = `<div class="pwa-loading"><div class="pwa-image-placeholder pwa-logo-box">GRACIAS</div><h2 class="pwa-card-title">¡Gracias por tu opinión!</h2><p class="pwa-lead">Tu evaluación se registró correctamente. Gracias por compartir tu opinión.</p><button class="pwa-button pwa-primary" data-pwa-go="home">Volver a Inicio</button></div>`;
+  const content = `<div class="pwa-loading"><div class="pwa-image-placeholder pwa-logo-box"><span>[ 120×64 px ]</span></div><h2 class="pwa-card-title">¡Gracias por tu opinión!</h2><p class="pwa-lead">Tu evaluación se registró correctamente. Gracias por compartir tu opinión.</p><button class="pwa-button pwa-primary" data-pwa-go="home">Volver a Inicio</button></div>`;
   return pwaShell('student','home',content);
 }
 function pwaAssignRoom() {
@@ -239,7 +273,7 @@ function pwaAssignRoom() {
 }
 function pwaValidatePayment() {
   const p = PWA_MOCK.payments[2];
-  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">CONTROL DE COBROS</span><h2 class="pwa-page-title">Validar pago</h2><p class="pwa-lead">Revisa el comprobante antes de aprobar.</p></div><button class="pwa-button pwa-secondary" data-pwa-go="pendingPayments">Volver a pagos</button></div><div class="pwa-form-layout"><article class="pwa-card"><div class="pwa-card-head"><div><h3 class="pwa-card-title">${pwaEsc(p.name)}</h3><span class="pwa-muted">Habitación ${pwaEsc(p.room)}</span></div>${pwaStatus(p.status)}</div><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Monto</small><strong>${pwaMoney(p.amount)}</strong></div><div class="pwa-data-cell"><small>Registro</small><strong>${pwaEsc(p.date)}</strong></div></div><div class="pwa-image-placeholder pwa-tall" style="margin-top:14px">[ COMPROBANTE ]</div></article><aside class="pwa-card pwa-summary"><span class="pwa-eyebrow">RESOLUCIÓN</span><label class="pwa-field"><span>MOTIVO DE RECHAZO (OPCIONAL)</span><textarea rows="3" placeholder="Ej. El monto no coincide…"></textarea></label><div class="pwa-cta-row"><button class="pwa-button pwa-primary" data-pwa-action="approve-payment">Aprobar</button><button class="pwa-button pwa-secondary" data-pwa-action="reject-payment">Rechazar</button></div></aside></div>`;
+  const content = `<div class="pwa-page-head"><div><span class="pwa-eyebrow">CONTROL DE COBROS</span><h2 class="pwa-page-title">Validar pago</h2><p class="pwa-lead">Revisa el comprobante antes de aprobar.</p></div><button class="pwa-button pwa-secondary" data-pwa-go="pendingPayments">Volver a pagos</button></div><div class="pwa-form-layout"><article class="pwa-card"><div class="pwa-card-head"><div><h3 class="pwa-card-title">${pwaEsc(p.name)}</h3><span class="pwa-muted">Habitación ${pwaEsc(p.room)}</span></div>${pwaStatus(p.status)}</div><div class="pwa-data-grid"><div class="pwa-data-cell"><small>Monto</small><strong>${pwaMoney(p.amount)}</strong></div><div class="pwa-data-cell"><small>Registro</small><strong>${pwaEsc(p.date)}</strong></div></div><div class="pwa-image-placeholder pwa-tall" style="margin-top:14px"><span>[ COMPROBANTE · 680 × 280 px ]</span></div></article><aside class="pwa-card pwa-summary"><span class="pwa-eyebrow">RESOLUCIÓN</span><label class="pwa-field"><span>MOTIVO DE RECHAZO (OPCIONAL)</span><textarea rows="3" placeholder="Ej. El monto no coincide…"></textarea></label><div class="pwa-cta-row"><button class="pwa-button pwa-primary" data-pwa-action="approve-payment">Aprobar</button><button class="pwa-button pwa-secondary" data-pwa-action="reject-payment">Rechazar</button></div></aside></div>`;
   return pwaShell('admin','pendingPayments',content);
 }
 function pwaDebts() {
@@ -249,7 +283,7 @@ function pwaDebts() {
   return pwaShell('admin','pendingPayments',content);
 }
 
-const PWA_RENDERERS = { landing:pwaLanding, studentLogin:pwaStudentLogin, forgotPassword:pwaForgotPassword, register:pwaRegister, verifyEmail:pwaVerifyEmail, loading:pwaLoading, home:pwaHome, reserve:pwaReserve, roomDetail:pwaRoomDetail, requestStatus:pwaRequestStatus, payments:pwaPayments, paymentDetail:pwaPaymentDetail, rateService:pwaRateService, rateConfirm:pwaRateConfirm, profile:pwaProfile, adminLogin:pwaAdminLogin, reservations:pwaReservations, assignRoom:pwaAssignRoom, pendingPayments:pwaPendingPayments, validatePayment:pwaValidatePayment, debts:pwaDebts, floors:pwaFloors, settings:pwaSettings };
+const PWA_RENDERERS = { splash:pwaSplash, landing:pwaLanding, studentLogin:pwaStudentLogin, forgotPassword:pwaForgotPassword, lockAccount:pwaLockAccount, unlockAccount:pwaUnlockAccount, register:pwaRegister, verifyEmail:pwaVerifyEmail, loading:pwaLoading, home:pwaHome, reserve:pwaReserve, roomDetail:pwaRoomDetail, requestStatus:pwaRequestStatus, payments:pwaPayments, paymentDetail:pwaPaymentDetail, rateService:pwaRateService, rateConfirm:pwaRateConfirm, profile:pwaProfile, aboutSoftware:pwaAboutSoftware, aboutTeam:pwaAboutTeam, adminLogin:pwaAdminLogin, reservations:pwaReservations, assignRoom:pwaAssignRoom, pendingPayments:pwaPendingPayments, validatePayment:pwaValidatePayment, debts:pwaDebts, floors:pwaFloors, settings:pwaSettings };
 
 function pwaRender() {
   if (pwaState.screen !== 'loading') clearInterval(pwaState.loadingTimer);
@@ -288,7 +322,7 @@ function pwaRunLoading() {
     if (!fill) { clearInterval(pwaState.loadingTimer); return; }
     fill.style.width = `${progress}%`;
     document.querySelector('#pwaProgressPercent').textContent = `${progress}%`;
-    if (progress === 100) { clearInterval(pwaState.loadingTimer); setTimeout(() => pwaGo(pwaState.role === 'admin' ? 'reservations' : 'home', { replace: true }), 450); }
+    if (progress === 100) { clearInterval(pwaState.loadingTimer); if (window.SicpesShell && window.SicpesShell.getState().role === 'shared') return; setTimeout(() => pwaGo(pwaState.role === 'admin' ? 'reservations' : 'home', { replace: true }), 450); }
   }, 100);
 }
 
@@ -298,23 +332,47 @@ const PWA_NS = 'http://www.w3.org/2000/svg';
    y conexiones declaradas con su tipo de ruteo ortogonal. */
 const PWA_DG={TW:120,TH:96,GX:110,GY:72,LX:150,TOPY:56,LANEGAP:110,CORRIDORPITCH:36,PAD:40,LABEL_FS:10};
 const PWA_MAP={
+  shared:{
+    title:'PANTALLAS EN COMÚN · ESTUDIANTE Y ADMINISTRADOR · WEB',
+    note:'7 pantallas compartidas por ambos roles en la PWA: C1 Splash Screen, E6 Pantalla de carga, E3 Recuperar contraseña, C2 Cuenta bloqueada, C3 Código de desbloqueo, C4 Acerca del software y C5 Acerca del equipo.',
+    marker:'pwaArrowShared',
+    lanes:[
+      {label:'INICIO Y ACERCA DE',rows:[['splash','loading','aboutSoftware','aboutTeam']]},
+      {label:'SEGURIDAD CUENTA',rows:[['forgotPassword','lockAccount','unlockAccount']]}
+    ],
+    links:[
+      {from:'splash',to:'loading',kind:'h',label:'Autenticar'},
+      {from:'loading',to:'aboutSoftware',kind:'h',label:'Info sistema'},
+      {from:'aboutSoftware',to:'aboutTeam',kind:'h',label:'Ver equipo'},
+      {from:'aboutTeam',to:'aboutSoftware',kind:'hr',label:'Software'},
+      {from:'forgotPassword',to:'lockAccount',kind:'h',label:'Intentos'},
+      {from:'lockAccount',to:'unlockAccount',kind:'h',label:'Código 6 díg.'},
+      {from:'lockAccount',to:'forgotPassword',kind:'hr',label:'Recuperar'},
+      {from:'unlockAccount',to:'loading',kind:'cross',label:'Desbloquear'}
+    ]
+  },
   student:{
     title:'ROL ESTUDIANTE · WEB',marker:'pwaArrowStudent',
     lanes:[
       {label:'ACCESO',rows:[
-        ['landing','studentLogin',null,'loading'],
-        ['forgotPassword','register','verifyEmail',null]
+        ['splash','landing','studentLogin','loading'],
+        ['forgotPassword','lockAccount','unlockAccount','register','verifyEmail']
       ]},
       {label:'RESERVACIÓN',rows:[
         ['home','reserve',null,'requestStatus'],
         [null,null,'roomDetail',null]
       ]},
       {label:'PAGOS Y CUENTA',rows:[
-        ['payments','paymentDetail','profile','rateService','rateConfirm']
+        ['payments','paymentDetail','profile','rateService','rateConfirm'],
+        [null,null,'aboutSoftware','aboutTeam',null]
       ]}
     ],
     links:[
+      {from:'splash',to:'landing',kind:'h',label:'Iniciar web'},
       {from:'landing',to:'studentLogin',kind:'h',label:'Iniciar sesión'},
+      {from:'studentLogin',to:'lockAccount',kind:'ct',label:'3 intentos'},
+      {from:'lockAccount',to:'unlockAccount',kind:'h',label:'Código'},
+      {from:'unlockAccount',to:'loading',kind:'ct',label:'Desbloquear'},
       {from:'studentLogin',to:'loading',kind:'h',label:'Entrar'},
       {from:'studentLogin',to:'register',kind:'v',label:'Regístrate',off:18},
       {from:'register',to:'verifyEmail',kind:'h',label:'Registrarse'},
@@ -329,6 +387,8 @@ const PWA_MAP={
       {from:'payments',to:'paymentDetail',kind:'h',label:'Ver detalle'},
       {from:'paymentDetail',to:'payments',kind:'hr',label:'Volver'},
       {from:'profile',to:'rateService',kind:'h',label:'Evaluar'},
+      {from:'profile',to:'aboutSoftware',kind:'v',label:'Acerca de'},
+      {from:'aboutSoftware',to:'aboutTeam',kind:'h',label:'Equipo'},
       {from:'rateService',to:'rateConfirm',kind:'h',label:'Enviar'},
       {from:'requestStatus',to:'home',kind:'corridor',corridor:0,label:'Ir a Inicio'},
       {from:'rateConfirm',to:'home',kind:'corridor',corridor:0,label:'Ir a Inicio'},
@@ -336,14 +396,19 @@ const PWA_MAP={
     ]
   },
   admin:{
-    title:'ROL ADMINISTRADOR · WEB',note:'La carga (E6) es compartida con el estudiante',marker:'pwaArrowAdmin',
+    title:'ROL ADMINISTRADOR · WEB',note:'Comparte C1, E6, E3, C2, C3, C4 y C5 con el rol Estudiante',marker:'pwaArrowAdmin',
     lanes:[
-      {label:'ACCESO',rows:[['adminLogin','loading','reservations','assignRoom']]},
+      {label:'ACCESO',rows:[['splash','adminLogin','loading','reservations','assignRoom'],[null,'forgotPassword','lockAccount','unlockAccount',null]]},
       {label:'PAGOS',rows:[['pendingPayments','validatePayment','debts']]},
-      {label:'INVENTARIO',rows:[['floors','settings']]}
+      {label:'INVENTARIO',rows:[['floors','settings','aboutSoftware','aboutTeam']]}
     ],
     links:[
+      {from:'splash',to:'adminLogin',kind:'h',label:'Acceso admin'},
       {from:'adminLogin',to:'loading',kind:'h',label:'Entrar'},
+      {from:'adminLogin',to:'forgotPassword',kind:'v',label:'¿Olvidaste?'},
+      {from:'adminLogin',to:'lockAccount',kind:'ct',label:'3 intentos'},
+      {from:'lockAccount',to:'unlockAccount',kind:'h',label:'Código'},
+      {from:'unlockAccount',to:'loading',kind:'ct',label:'Desbloquear'},
       {from:'loading',to:'reservations',kind:'h',label:'Cargar'},
       {from:'reservations',to:'assignRoom',kind:'h',label:'Seleccionar'},
       {from:'assignRoom',to:'reservations',kind:'hr',label:'Confirmar'},
@@ -354,6 +419,8 @@ const PWA_MAP={
       {from:'debts',to:'pendingPayments',kind:'hr',label:'Volver'},
       {from:'reservations',to:'floors',kind:'side',label:'Pisos'},
       {from:'floors',to:'settings',kind:'h',label:'Configurar'},
+      {from:'settings',to:'aboutSoftware',kind:'h',label:'Acerca de'},
+      {from:'aboutSoftware',to:'aboutTeam',kind:'h',label:'Equipo'},
       {from:'settings',to:'adminLogin',kind:'corridor',corridor:0,label:'Cerrar sesión'}
     ]
   }
@@ -453,7 +520,7 @@ function pwaLayout(flow){
   labels.forEach(l=>{const w=pwaLabelW(l.text);const x0=l.anchor==='middle'?l.x-w/2:l.anchor==='start'?l.x-6:l.x-w+6;bx.push(x0,x0+w);by.push(l.y-13,l.y+3);});
   const width=Math.ceil(Math.max(...bx,PWA_DG.LX+PWA_DG.TW))+PWA_DG.PAD;
   const height=Math.ceil(Math.max(...by,contentBottom))+PWA_DG.PAD;
-  Object.values(cards).forEach(c=>{c.lines=pwaWrap(PWA_SCREENS[c.id].title);c.badge=c.id==='loading'?'COMPARTIDA':'';});
+  Object.values(cards).forEach(c=>{c.lines=pwaWrap(PWA_SCREENS[c.id].title);c.badge=PWA_SHARED.includes(c.id)?'COMÚN':'';});
   return {cards,lanes,paths,labels,viewBox:`0 0 ${width} ${height}`,width,height};
 }
 function pwaThumb(c){
@@ -480,7 +547,7 @@ function pwaMapCard(flow){
   return `<section class="pwa-map-card"><h3 class="pwa-map-role">${pwaEsc(flow.title)}</h3>${note}<svg class="pwa-map-svg" xmlns="${PWA_NS}" viewBox="${g.viewBox}" role="img" aria-label="${pwaEsc(`Mapa de navegación · ${flow.title}`)}"><defs><marker id="${flow.marker}" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#555"/></marker></defs>${lanes}${thumbs}${pwaPaths(g)}</svg></section>`;
 }
 function pwaBuildMap() {
-  document.querySelector('#pwaMapCanvas').innerHTML=pwaMapCard(PWA_MAP.student)+pwaMapCard(PWA_MAP.admin);
+  document.querySelector('#pwaMapCanvas').innerHTML=pwaMapCard(PWA_MAP.shared)+pwaMapCard(PWA_MAP.student)+pwaMapCard(PWA_MAP.admin);
 }
 function pwaSetView(view) {
   const isPwa = view === 'pwa';
@@ -543,7 +610,8 @@ document.addEventListener('click', e => {
   if (target.dataset.pwaAction === 'reserve') { pwaToast('¡Reservación confirmada!'); setTimeout(() => pwaGo('requestStatus'), 700); return; }
   if (target.dataset.pwaAction === 'verify-email') { pwaToast('Código verificado.'); setTimeout(() => pwaGo('home'), 600); return; }
   if (target.dataset.pwaAction === 'resend-code') { pwaToast('Código reenviado a tu correo.'); return; }
-  if (target.dataset.pwaAction === 'forgot-send') { pwaToast('Enlace de recuperación enviado.'); return; }
+  if (target.dataset.pwaAction === 'forgot-send') { pwaToast('Enlace de recuperación enviado.'); pwaGo(pwaState.role === 'admin' ? 'adminLogin' : 'studentLogin'); return; }
+  if (target.dataset.pwaAction === 'unlock-code') { pwaToast('Código verificado. Cuenta desbloqueada.'); pwaGo('loading'); return; }
   if (target.dataset.pwaAction === 'room-request') { pwaToast('Solicitud enviada.'); setTimeout(() => pwaGo('requestStatus'), 600); return; }
   if (target.dataset.pwaAction === 'send-rating') { pwaGo('rateConfirm'); return; }
   if (target.dataset.pwaAction === 'assign-room') { pwaToast('Habitación asignada.'); return; }

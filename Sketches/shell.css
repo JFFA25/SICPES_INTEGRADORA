@@ -1109,3 +1109,183 @@ body.shell-section-mockups {
   margin-right: 4px;
   line-height: 1.1;
 }
+
+/* ---------- Apartado de Pantallas en Común (Estudiante y Administrador) ---------- */
+.shell-group-title {
+  margin: 10px 0 4px;
+  padding: 5px 8px;
+  font: 700 9px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+.shell-group-title:first-child {
+  margin-top: 0;
+}
+
+.shell-group-shared {
+  margin-top: 14px;
+  color: #4CAF50;
+  border-bottom-color: rgba(76, 175, 80, 0.35);
+  background: rgba(47, 138, 92, 0.08);
+  border-radius: 5px 5px 0 0;
+}
+
+.shell-shared-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  font: 700 8px var(--mono);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  color: #2F8A5C;
+  background: rgba(47, 138, 92, 0.14);
+  border: 1px solid rgba(47, 138, 92, 0.35);
+  vertical-align: middle;
+}
+
+.shell-shared-summary {
+  margin: 0 0 10px;
+  padding: 10px 11px;
+  border-radius: 8px;
+  background: rgba(47, 138, 92, 0.1);
+  border: 1px solid rgba(47, 138, 92, 0.35);
+  color: var(--ink);
+}
+
+.shell-shared-summary strong {
+  display: block;
+  font: 700 10px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4CAF50;
+  margin-bottom: 4px;
+}
+
+.shell-shared-summary p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+
+/* ---------- Distinción Mosaic UOC (Etapa 3 Mockup Estático vs Etapa 4 Prototipo Funcional) ---------- */
+body.shell-section-prototype {
+  overflow-y: auto;
+}
+
+body.shell-section-mockups #mkCanvas input,
+body.shell-section-mockups #mkCanvas select,
+body.shell-section-mockups #mkCanvas textarea {
+  pointer-events: none;
+}
+
+body.shell-section-mockups #mkCanvas button,
+body.shell-section-mockups #mkCanvas [data-mk-go],
+body.shell-section-mockups #mkCanvas [data-mk-action] {
+  cursor: default !important;
+}
+
+
+/* ---------- Botón de Rol: Pantallas en común + Barra rápida de las 7 pantallas ---------- */
+.shell-switch-btn.shell-switch-shared {
+  border-color: rgba(76, 175, 80, 0.38);
+  background: rgba(47, 138, 92, 0.12);
+  color: var(--ink);
+}
+
+.shell-switch-btn.shell-switch-shared:hover {
+  background: rgba(47, 138, 92, 0.22);
+  border-color: rgba(76, 175, 80, 0.6);
+}
+
+.shell-switch-btn.shell-switch-shared.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(47, 138, 92, 0.35);
+}
+
+.shell-shared-banner {
+  flex: none;
+  width: 100%;
+  max-width: 1440px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, rgba(47, 138, 92, 0.14));
+  border: 1px solid rgba(76, 175, 80, 0.4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.shell-shared-banner[hidden] {
+  display: none !important;
+}
+
+.shell-shared-banner-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.shell-shared-banner-tag {
+  font: 700 9px var(--mono);
+  letter-spacing: 0.06em;
+  color: #4CAF50;
+  text-transform: uppercase;
+}
+
+html[data-theme="light"] .shell-shared-banner-tag {
+  color: #1E7A45;
+}
+
+.shell-shared-banner-sub {
+  font: 10px var(--sans);
+  color: var(--muted);
+}
+
+.shell-shared-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.shell-shared-pill {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--mid);
+  border-radius: 999px;
+  padding: 4px 9px;
+  font: 9px var(--mono);
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.shell-shared-pill b {
+  color: var(--ink);
+  margin-right: 3px;
+}
+
+.shell-shared-pill:hover {
+  border-color: var(--green);
+  color: var(--ink);
+}
+
+.shell-shared-pill.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #FFFFFF;
+}
+
+.shell-shared-pill.active b {
+  color: #FFFFFF;
+}
