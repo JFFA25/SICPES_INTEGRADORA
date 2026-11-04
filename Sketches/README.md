@@ -249,3 +249,138 @@ Sketches/
 │   └── mockups.css     # Sistema de diseño visual de alta fidelidad
 └── README.md           # Documentación técnica completa de la Práctica 07
 ```
+
+
+---
+
+## 8. Proceso de Elaboración y Validación con el Agente de Inteligencia Artificial Archify
+
+Conforme a las actividades de la práctica, se integró el agente de inteligencia artificial **Archify** para asistir al equipo en el análisis de requerimientos, la definición de la arquitectura de información, la generación del diagrama de navegación ortogonal interactivo y la validación de los escenarios de interacción del sistema SICPES.
+
+### 8.1 Herramientas y Entorno Tecnológico Utilizados
+
+| Herramienta / Agente | Función en la Práctica | Justificación Técnica |
+| :--- | :--- | :--- |
+| **Archify (Agente de IA)** | Arquitectura de navegación, estructuración de roles, generación del grafo direccional y validación de reglas de negocio. | Permite estructurar flujos complejos, detectar dependencias cíclicas y modelar escenarios de interacción entre módulos públicos y privados. |
+| **Rough.js (Canvas & SVG)** | Generación algorítmica de trazos a lápiz de baja fidelidad para los 56 sketches. | Proporciona una apariencia artesanal a mano alzada auténtica (boceto a lápiz), respetando el criterio de no aplicar estilos visuales definitivos en la etapa inicial. |
+| **SVG Dinámico y Canvas** | Renderizado de los diagramas ortogonales de navegación (`#diagramView` y `#pwaMapView`). | Permite un diagrama vectorial interactivo sin dependencias pesadas, donde cada nodo es clicable y redirige instantáneamente a la pantalla correspondiente. |
+| **Motor de Redlines CAD (`wireframe-redlines.js`)** | Acotación técnica exterior (`|<--->|`) y píldoras de especificación (`#E0003C`) en píxeles (`px`), puntos lógicos (`lp`) y unidades relativas (`rem`). | Garantiza la transición formal entre la fase conceptual y la codificación en **Flutter** y **React + Vite**, mostrando medidas exactas de contenedores, radios y tipografías. |
+| **Vanilla JavaScript + HTML5 + CSS3** | Núcleo del prototipo interactivo (`index.html`, `shell.js`, `app.js`, `pwa.js`). | Ejecución nativa instantánea en cualquier navegador web moderno, sin necesidad de compilación previa ni servidores externos. |
+
+### 8.2 Prompts Clave Utilizados con Archify
+
+Para la construcción de la práctica se formularon prompts estructurados que guiaron al agente Archify en cada una de las fases:
+
+```text
+[PROMPT 1 · ANÁLISIS DE REQUERIMIENTOS Y DEFINICIÓN DE ROLES]
+"Actúa como un arquitecto de software y diseñador UX senior. Analiza los requerimientos funcionales, historias de usuario y reglas de negocio del proyecto SICPES (Sistema Integral de Control de Pensión de Estudiantes). 
+Identifica los dos roles de usuario principales: 'Estudiante' (residente) y 'Administrador' (arrendador). 
+Define la matriz de permisos, módulos autorizados y restricciones de acceso para cada rol, y especifica la lista completa de pantallas requeridas para dos plataformas: Aplicación Móvil en Flutter (390×844 lp) y Aplicación Web Progresiva en React/Vite (1440×900 px). 
+Asegúrate de incluir las 9 pantallas obligatorias del Padlet y al menos 11 pantallas adicionales para cubrir todas las operaciones críticas."
+
+[PROMPT 2 · ESTRUCTURA DE NAVEGACIÓN Y PANTALLAS EN COMÚN]
+"A partir de la lista de pantallas de SICPES, identifica aquellas interfaces que tienen exactamente la misma estructura funcional y visual para ambos roles (pantallas en común). 
+Estructura un apartado especial que agrupe: Splash Screen, Loading Screen con barra de progreso, Recuperación de contraseña, Bloqueo de cuenta por 3 intentos fallidos (temporizador de 15 min), Desbloqueo mediante código OTP de 6 dígitos, Acerca del software y Acerca del equipo. 
+Establece las reglas de navegación que permitan transitar entre pantallas comunes y módulos exclusivos según el rol activo."
+
+[PROMPT 3 · DIAGRAMA INTERACTIVO Y BOCETOS A LÁPIZ]
+"Construye un diagrama general de navegación interactivo en formato SVG para SICPES, organizando los nodos en tres bloques visuales claramente diferenciados: Pantallas en Común, Rol Estudiante y Rol Administrador. 
+Cada nodo debe ser interactivo y permitir al usuario abrir la pantalla correspondiente en el prototipo. 
+Para cada pantalla, define la especificación estructural de su boceto a lápiz (apariencia de dibujo a lápiz sin estilos definitivos, con zonas achuradas, cajas en 'X' para imágenes y notas adhesivas con flechas indicadoras de interacción)."
+
+[PROMPT 4 · ACOTACIÓN TÉCNICA Y PROTOCOLO DE VALIDACIÓN]
+"Incorpora un motor de cotas técnicas (redlines) estilo plano de ingeniería sobre los wireframes en escala de grises. 
+Representa las cotas exteriores con flechas CAD en lp para Flutter y px/rem para React/Vite, y badges en rojo #E0003C con dimensiones de cajas (W×H rN), tipografía (Aa fs/lh B), iconos (□N) y diámetros (⌀N). 
+Diseña una matriz de pruebas que valide los recorridos críticos: inicio de sesión, bloqueo por intentos, desbloqueo OTP, reserva de habitación, pago con comprobante y cierre de sesión."
+```
+
+### 8.3 Decisiones de Diseño Adoptadas
+
+1. **Separación de Responsabilidades y Aislamiento de Roles:** Se determinó que el Estudiante y el Administrador no comparten credenciales ni dashboards. El Estudiante accede a una experiencia centrada en su estancia residencial (`E1–E15`), mientras que el Administrador accede a herramientas de control contable e inventario (`A1–A8`).
+2. **Apartado Unificado de Pantallas en Común:** Para evitar la redundancia de diseñar duplicados de pantallas con la misma estructura (como *Splash*, *Loading*, *Recuperación*, *Bloqueo*, *Desbloqueo*, *Acerca de*), se creó el apartado especial **`Comunes (Ambos)`** con el botón dedicado `⇄ Pantallas en común (7)` y el banner contextual `#shellSharedBanner`.
+3. **Adopción del Marco Evolutivo Mosaic UOC (Carlos Salgado, 2015):** Se separó la interfaz en 4 etapas claramente conmutables mediante la barra superior y atajos (`1`, `2`, `3`, `4`), permitiendo validar la experiencia desde el trazo a lápiz hasta el prototipo funcional.
+4. **Acotación CAD y Redlines (#E0003C):** En la etapa de wireframes se integró una lámina técnica `#EFEFEF` con cotas exteriores y píldoras `#E0003C`, facilitando a los desarrolladores de Flutter y React/Vite las dimensiones exactas antes de programar.
+
+### 8.4 Observaciones Identificadas y Correcciones Realizadas
+
+- **Observación 1 (Ambigüedad en el punto de entrada):** Inicialmente, el acceso de Estudiante dirigía directamente al login sin pasar por un portal público.  
+  *Corrección:* Se diseñó la pantalla `E1 · Landing` como punto de bienvenida con habitaciones destacadas y llamadas a la acción, manteniendo `C1 · Splash` como la pantalla de arranque neutral del sistema.
+- **Observación 2 (Gestión del bloqueo de cuenta):** La regla de negocio requería bloquear la cuenta tras 3 intentos fallidos, pero no se contemplaba un mecanismo de desbloqueo asistido sin salir de la app.  
+  *Corrección:* Se introdujo la secuencia `C2 · Lock Account` (con cuenta regresiva de 15:00 min) conectada a `C3 · Unlock Account Code` (código de 6 dígitos enviado por SMS/correo) que, al validarse, reanuda la sesión a través de `E6 · Sincronizando`.
+- **Observación 3 (Feedback tras la evaluación residencial):** La encuesta de satisfacción (`HU-SIC-05`) en `E13` terminaba sin una confirmación visual explícita.  
+  *Corrección:* Se incorporó la pantalla `E14 · Evaluación enviada` con mensaje de agradecimiento y retorno automático o manual al panel de residente (`E7 · Inicio`).
+- **Observación 4 (Navegación jerárquica):** Al explorar pantallas profundas (ej. `E9 · Detalle de habitación` o `A5 · Validar pago`), el usuario perdía la noción de la ruta de retorno.  
+  *Corrección:* Se implementó una barra de **migas de pan (`Breadcrumbs`)** en el encabezado del escenario (`#shellBreadcrumbs`) que muestra la jerarquía activa y permite saltar a cualquier nivel superior con un solo clic.
+
+---
+
+## 9. Verificación y Validación de Recorridos de Navegación
+
+Se ejecutaron pruebas sistemáticas de los recorridos de navegación interactiva en ambas plataformas (**Móvil Flutter** y **Web PWA React/Vite**), validando los siguientes escenarios de interacción:
+
+| # | Escenario de Interacción | Secuencia de Pantallas Recorrida | Condición / Regla de Negocio Validada | Resultado de la Validación |
+| :---: | :--- | :--- | :--- | :---: |
+| **01** | **Arranque del sistema** | `C1 (Splash)` → `E1 (Landing)` / `A1 (Login Admin)` | Punto de entrada unificado para ambas plataformas; carga de recursos e identidad. | **Aprobado** · Transición fluida |
+| **02** | **Acceso exitoso de Estudiante** | `E1` → `E2 (Login)` → `E6 (Loading)` → `E7 (Home)` | Verificación de credenciales válidas y sincronización del residente. Barra de progreso animada al 100%. | **Aprobado** · Redirección automática a Home |
+| **03** | **Acceso exitoso de Administrador** | `C1` → `A1 (Login Admin)` → `E6 (Loading)` → `A2 (Reservaciones)` | Acceso con credenciales administrativas; sincronización y entrada al tablero de control general. | **Aprobado** · Redirección al panel admin |
+| **04** | **Bloqueo por 3 intentos fallidos** | `E2` / `A1` → *(3 intentos erróneos)* → `C2 (Bloqueada)` | Regla de seguridad transversal: al tercer intento la cuenta se bloquea por 15:00 min. | **Aprobado** · Bloqueo preventivo activo |
+| **05** | **Desbloqueo mediante código OTP** | `C2` → `C3 (Código OTP)` → `E6` → `E7` / `A2` | Validación de código numérico de 6 dígitos; levantamiento del bloqueo y reanudación de sesión. | **Aprobado** · Cuenta reactivada |
+| **06** | **Recuperación de contraseña** | `E2` / `A1` / `C2` → `E3 (Recuperar)` → `E2` / `A1` | Formulario unificado de envío de enlace de restablecimiento por correo institucional. | **Aprobado** · Enlace emitido y retorno a login |
+| **07** | **Registro y verificación de cuenta** | `E2` → `E4 (Registro)` → `E5 (Verificar correo)` → `E6` → `E7` | Alta de nuevo residente con validación de correo mediante OTP de 6 dígitos. | **Aprobado** · Cuenta creada y activada |
+| **08** | **Reserva y seguimiento de habitación** | `E7` → `E8 (Reservar)` → `E9 (Detalle)` → `E10 (Estado)` → `E7` | Configuración de habitación, consulta de ficha técnica, solicitud y seguimiento en línea de tiempo. | **Aprobado** · Estado en revisión registrado |
+| **09** | **Gestión de pagos y comprobantes** | `E7` → `E11 (Pagos)` → `E12 (Detalle de pago)` → `E11` | Consulta de saldo mensual, carga de archivo PDF/comprobante bancario y revisión de historial. | **Aprobado** · Voucher cargado correctamente |
+| **10** | **Evaluación de servicio (HU-SIC-05)** | `E7` / `E15` → `E13 (Evaluar)` → `E14 (Confirmación)` → `E7` | Selección obligatoria de estrellas 1–5, redacción de observaciones y confirmación de envío. | **Aprobado** · Calificación registrada |
+| **11** | **Asignación administrativa de cuarto** | `A2` → `A3 (Asignar)` → `A2` | Selección de solicitud pendiente, asignación de habitación disponible o rechazo con motivo. | **Aprobado** · Inventario actualizado |
+| **12** | **Validación contable y adeudos** | `A2` → `A4 (Pagos pendientes)` → `A5 (Validar voucher)` / `A6 (Adeudos)` | Revisión de comprobantes de residentes, aprobación/rechazo contable y envío de recordatorios. | **Aprobado** · Flujo financiero consistente |
+| **13** | **Gestión física de pisos** | `A2` → `A7 (Pisos y habitaciones)` → `A2` | Alta de nuevos niveles habitacionales, inventario de cuartos y baja de pisos. | **Aprobado** · Altas y bajas validadas |
+| **14** | **Configuración global de pensión** | `A2` → `A8 (Configuración)` → `C4 (Software)` / `C5 (Equipo)` | Ajuste de tarifas mensuales (Individual/Compartida) y acceso a créditos del sistema. | **Aprobado** · Parámetros guardados |
+| **15** | **Cierre de sesión seguro (Logout)** | `E15` (Perfil) / `A8` (Configuración) → `E2` / `A1` | Destrucción de token de sesión, limpieza del historial de navegación y retorno a pantalla de acceso. | **Aprobado** · Sesión cerrada sin fugas |
+
+---
+
+## 10. Instrucciones para Consulta, Exploración y Despliegue
+
+### 10.1 Consulta en Línea (GitHub Pages)
+
+El prototipo interactivo se encuentra publicado y accesible públicamente sin requerir instalación de software:
+
+- 🌐 **Entorno Completo (Sketches, Wireframes, Mockups y Prototipo):**  
+  [https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
+- 🌐 **Portal Central del Proyecto Integrador SICPES:**  
+  [https://jffa25.github.io/SICPES_INTEGRADORA/index.html](https://jffa25.github.io/SICPES_INTEGRADORA/index.html)
+
+### 10.2 Ejecución en Entorno Local
+
+1. Clona el repositorio oficial de GitHub:
+   ```bash
+   git clone https://github.com/JFFA25/SICPES_INTEGRADORA.git
+   cd SICPES_INTEGRADORA
+   ```
+2. Abre directamente el archivo `Sketches/index.html` en cualquier navegador moderno:
+   - **En Windows:** Doble clic sobre `Sketches/index.html` o ejecuta en PowerShell:
+     ```powershell
+     Start-Process "Sketches/index.html"
+     ```
+   - **Con extensión Live Server (VS Code):** Clic derecho sobre `Sketches/index.html` → *«Open with Live Server»*.
+
+### 10.3 Tabla de Atajos de Teclado del Prototipo
+
+El entorno cuenta con atajos de teclado globales para agilizar la navegación y evaluación:
+
+| Atajo | Acción que Ejecuta |
+| :---: | :--- |
+| <kbd>1</kbd> | Cambiar a la etapa **1 · Sketches** (Bocetos a mano alzada con Rough.js y notas laterales). |
+| <kbd>2</kbd> | Cambiar a la etapa **2 · Wireframes** (Estructura en escala de grises con lámina CAD y redlines #E0003C). |
+| <kbd>3</kbd> | Cambiar a la etapa **3 · Mockups** (Maquetas visuales estáticas con diseño de alta fidelidad). |
+| <kbd>4</kbd> | Cambiar a la etapa **4 · Prototipo** (Simulación interactiva funcional completa). |
+| <kbd>M</kbd> | Cambiar a la plataforma **Móvil** (Simulación Flutter 390×844 lp). |
+| <kbd>P</kbd> | Cambiar a la plataforma **PWA** (Simulación Web React/Vite 1440×900 px con ventana de navegador). |
+| <kbd>R</kbd> | Alternar entre roles: **Estudiante** ↔ **Administrador** ↔ **Comunes**. |
+| <kbd>Z</kbd> | Activar o desactivar el resaltado de **Zonas clicables** de la interfaz. |
+| <kbd>D</kbd> | Abrir o cerrar el **Diagrama interactivo de navegación SVG**. |
+| <kbd>→</kbd> / <kbd>←</kbd> | Navegar a la pantalla **siguiente** o **anterior** de la lista del rol. |
+| <kbd>Backspace</kbd> | Volver a la pantalla **anterior en el historial** de navegación. |
+| <kbd>+</kbd> / <kbd>−</kbd> | Aumentar o reducir el **zoom** del visor de la lámina. |
+| <kbd>0</kbd> | **Ajustar automáticamente** el tamaño del lienzo al espacio disponible en pantalla. |
+| <kbd>Esc</kbd> | Cerrar diagramas modales, diálogos y ayudas emergentes. |
+| <kbd>?</kbd> | Desplegar el modal de ayuda de atajos de teclado. |

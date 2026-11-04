@@ -8,7 +8,6 @@
     pwaScreens: PWA_SCREENS,
     codes: SCREEN_CODES,
     student: STUDENT_SCREENS,
-    student: STUDENT_SCREENS,
     admin: ADMIN_SCREENS,
     shared: SHARED_SCREENS,
     actions: SCREEN_ACTIONS,
