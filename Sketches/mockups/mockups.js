@@ -111,89 +111,100 @@
   function logoLockup(compact) {
     return `<span class="mk-logo-lockup${compact ? ' mk-logo-compact' : ''}"><img class="mk-logo-img" src="../images/SICPES_Producto.png" alt="SICPES"><span class="mk-logo-word">SICPES<small>Residencial</small></span></span>`;
   }
+  const AVATAR_MAP = {
+    // Residentes y solicitantes
+    'elena pérez': '../images/mockups/student_elena.jpg',
+    'elena perez': '../images/mockups/student_elena.jpg',
+    'elena pérez morales': '../images/mockups/student_elena.jpg',
+    'elena perez morales': '../images/mockups/student_elena.jpg',
+    'carlos r.': '../images/mockups/student_carlos.jpg',
+    'carlos ramos': '../images/mockups/student_carlos.jpg',
+    'sofía l.': '../images/mockups/student_sofia.jpg',
+    'sofia l.': '../images/mockups/student_sofia.jpg',
+    'sofía lara': '../images/mockups/student_sofia.jpg',
+    'diego m.': '../images/mockups/student_diego.jpg',
+    'diego morales': '../images/mockups/student_diego.jpg',
+    // Personal administrativo
+    'roberto m.': '../images/mockups/admin_roberto.jpg',
+    'roberto morales': '../images/mockups/admin_roberto.jpg',
+    'admin': '../images/mockups/admin_roberto.jpg',
+    'administrador': '../images/mockups/admin_roberto.jpg',
+    // Equipo desarrollador SICPES (UTHH)
+    'jose francisco flores amador': '../images/mockups/team_jffa25.png',
+    'josé francisco flores amador': '../images/mockups/team_jffa25.png',
+    'edgar cabrera velázquez': '../images/mockups/team_edgar-cbr.png',
+    'edgar cabrera velazquez': '../images/mockups/team_edgar-cbr.png',
+    'edwin hernández campos': '../images/mockups/team_edwinhdzcm.png',
+    'edwin hernandez campos': '../images/mockups/team_edwinhdzcm.png',
+    'giovany raul pazos cruz': '../images/mockups/team_giova0412.png'
+  };
+
   function avatar(name, extra) {
-    const initials = String(name || 'SICPES').split(' ').filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
+    const raw = String(name || '').trim();
+    const key = raw.toLowerCase();
+    const imgSrc = AVATAR_MAP[key]
+      || (key.includes('elena') ? '../images/mockups/student_elena.jpg'
+      : (key.includes('admin') || key.includes('roberto')) ? '../images/mockups/admin_roberto.jpg'
+      : (key.includes('carlos')) ? '../images/mockups/student_carlos.jpg'
+      : (key.includes('sofía') || key.includes('sofia')) ? '../images/mockups/student_sofia.jpg'
+      : (key.includes('diego')) ? '../images/mockups/student_diego.jpg'
+      : (key.includes('francisco') || key.includes('flores') || key.includes('jffa')) ? '../images/mockups/team_jffa25.png'
+      : (key.includes('edgar') || key.includes('cabrera')) ? '../images/mockups/team_edgar-cbr.png'
+      : (key.includes('edwin') || key.includes('hernández') || key.includes('hernandez')) ? '../images/mockups/team_edwinhdzcm.png'
+      : (key.includes('giovany') || key.includes('pazos')) ? '../images/mockups/team_giova0412.png'
+      : null);
+
+    if (imgSrc) {
+      return `<span class="mk-avatar${extra ? ' ' + extra : ''}"><img class="mk-avatar-img" src="${imgSrc}" alt="${esc(raw || 'Usuario')}" loading="lazy"></span>`;
+    }
+    const initials = raw.split(' ').filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase() || 'S';
     return `<span class="mk-avatar${extra ? ' ' + extra : ''}">${initials}</span>`;
   }
 
+  const PHOTO_MAP = {
+    building: {
+      src: '../images/mockups/building.jpg',
+      alt: 'Edificio Residencial SICPES'
+    },
+    room: {
+      src: '../images/mockups/room_hero.jpg',
+      alt: 'Habitación estudiantil universitaria'
+    },
+    room2: {
+      src: '../images/mockups/room_individual.jpg',
+      alt: 'Habitación 204 individual con escritorio y cama'
+    },
+    room3: {
+      src: '../images/mockups/room_shared.jpg',
+      alt: 'Habitación 302 compartida'
+    },
+    receipt: {
+      src: '../images/mockups/receipt.svg',
+      alt: 'Comprobante digital de transferencia bancaria SPEI BBVA'
+    }
+  };
+
   function photo(kind) {
-    const id = 'mkpg' + (++photoSeq);
-    const label = kind === 'building' ? 'Residencia SICPES' : kind === 'receipt' ? 'Comprobante de pago' : kind === 'success' ? 'Evaluación enviada' : 'Habitación de la residencia';
-    let body = '';
-    if (kind === 'building') {
-      body = `
-        <rect width="640" height="420" fill="#E5F1E8"/>
-        <circle cx="520" cy="82" r="46" fill="#F6D98B" opacity=".85"/>
-        <rect x="70" y="96" width="210" height="300" rx="10" fill="#D9E7DC"/>
-        <rect x="210" y="60" width="260" height="336" rx="12" fill="#FDFBF7"/>
-        <rect x="406" y="140" width="160" height="256" rx="10" fill="#CFE4D5"/>
-        <rect x="240" y="96" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="306" y="96" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="372" y="96" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="240" y="164" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="306" y="164" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="372" y="164" width="44" height="46" rx="5" fill="#81C784"/>
-        <rect x="304" y="304" width="76" height="92" rx="6" fill="#2F8A5C"/>
-        <rect x="118" y="146" width="44" height="36" rx="4" fill="#FDFBF7" opacity=".8"/>
-        <rect x="184" y="146" width="44" height="36" rx="4" fill="#FDFBF7" opacity=".8"/>
-        <rect x="118" y="208" width="44" height="36" rx="4" fill="#FDFBF7" opacity=".8"/>
-        <rect x="184" y="208" width="44" height="36" rx="4" fill="#FDFBF7" opacity=".8"/>
-        <path d="M40 396c16-40 28-56 44-72 22 24 32 48 36 72Z" fill="#4CAF50"/>
-        <path d="M548 396c14-44 26-64 48-84 20 28 28 52 32 84Z" fill="#2F8A5C"/>
-        <path d="M492 396c10-32 20-46 34-62 16 20 24 42 28 62Z" fill="#81C784"/>
-        <rect x="0" y="392" width="640" height="28" fill="#C7CCB9"/>
-      `;
-    } else if (kind === 'receipt') {
-      body = `
-        <rect width="640" height="420" fill="#EDF5EF"/>
-        <rect x="190" y="34" width="260" height="352" rx="14" fill="#FDFBF7" stroke="#C7CCB9" stroke-width="2"/>
-        <rect x="218" y="64" width="90" height="12" rx="6" fill="#2F8A5C"/>
-        <rect x="218" y="88" width="150" height="8" rx="4" fill="#C7CCB9"/>
-        <rect x="218" y="128" width="204" height="48" rx="8" fill="#F0F6F0"/>
-        <rect x="234" y="144" width="60" height="8" rx="4" fill="#81C784"/>
-        <rect x="234" y="158" width="104" height="8" rx="4" fill="#C7CCB9"/>
-        <path d="M218 200h204M218 228h204M218 256h150" stroke="#D7E3D8" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="320" cy="316" r="30" fill="#DCFCE7"/>
-        <path d="m306 316 10 10 20-22" fill="none" stroke="#2F8A5C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-      `;
-    } else if (kind === 'success') {
-      body = `
-        <rect width="640" height="420" fill="#F3FAF4"/>
-        <circle cx="320" cy="196" r="118" fill="#DCFCE7"/>
-        <circle cx="320" cy="196" r="84" fill="#81C784" opacity=".45"/>
-        <circle cx="320" cy="196" r="56" fill="#2F8A5C"/>
-        <path d="m292 196 20 20 40-46" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M112 126c16-30 30-44 50-58 16 22 24 44 27 58Z" fill="#81C784"/>
-        <path d="M492 330c18-36 32-52 54-66 18 24 26 48 29 66Z" fill="#4CAF50"/>
-        <circle cx="128" cy="316" r="12" fill="#C7CCB9"/>
-        <circle cx="510" cy="96" r="9" fill="#F6D98B"/>
-      `;
-    } else {
-      const variant = kind === 'room2' ? 2 : kind === 'room3' ? 3 : 1;
-      const wall = variant === 2 ? '#EAF4EC' : variant === 3 ? '#F8F1E8' : '#F3EFE6';
-      const blanket = variant === 2 ? '#4CAF50' : variant === 3 ? '#81C784' : '#2F8A5C';
-      const pillow = variant === 3 ? '#FFF5E8' : '#FFFFFF';
-      body = `
-        <rect width="640" height="420" fill="${wall}"/>
-        <rect x="0" y="300" width="640" height="120" fill="#E6DFD2"/>
-        <rect x="44" y="48" width="212" height="166" rx="10" fill="#BFDDE8"/>
-        <rect x="44" y="48" width="212" height="166" rx="10" fill="none" stroke="#FDFBF7" stroke-width="10"/>
-        <path d="M56 196h188M150 56v146" stroke="#FDFBF7" stroke-width="5" opacity=".85"/>
-        <path d="M58 62c30 22 38 54 26 88M244 62c-30 22-38 54-26 88" fill="none" stroke="#FDFBF7" stroke-width="9" stroke-linecap="round" opacity=".75"/>
-        <rect x="300" y="238" width="290" height="84" rx="18" fill="${blanket}"/>
-        <rect x="316" y="204" width="112" height="58" rx="12" fill="${pillow}"/>
-        <rect x="442" y="216" width="118" height="46" rx="10" fill="#E9F3EA"/>
-        <rect x="300" y="316" width="290" height="14" rx="7" fill="#1F5D3E" opacity=".35"/>
-        <rect x="268" y="260" width="30" height="82" rx="8" fill="#8B6B4A"/>
-        <circle cx="282" cy="248" r="17" fill="#C7CCB9"/>
-        <rect x="66" y="312" width="128" height="10" rx="5" fill="#C7CCB9"/>
-        <rect x="86" y="336" width="96" height="10" rx="5" fill="#D8D2C6"/>
-        <path d="M576 300c-12-28-12-56 4-82 18 18 28 40 30 66 0 8-2 14-4 16Z" fill="#4CAF50"/>
-        <path d="M590 300v-64" stroke="#2F8A5C" stroke-width="5" stroke-linecap="round"/>
-        <rect x="562" y="300" width="48" height="24" rx="6" fill="#8B6B4A"/>
+    const item = PHOTO_MAP[kind];
+    if (item) {
+      return `<img class="mk-photo" src="${item.src}" alt="${esc(item.alt)}" loading="lazy">`;
+    }
+    if (kind === 'success') {
+      return `
+        <svg class="mk-photo" viewBox="0 0 640 420" role="img" aria-label="Evaluación enviada con éxito">
+          <rect width="640" height="420" fill="#F3FAF4"/>
+          <circle cx="320" cy="196" r="118" fill="#DCFCE7"/>
+          <circle cx="320" cy="196" r="84" fill="#81C784" opacity=".45"/>
+          <circle cx="320" cy="196" r="56" fill="#2F8A5C"/>
+          <path d="m292 196 20 20 40-46" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M112 126c16-30 30-44 50-58 16 22 24 44 27 58Z" fill="#81C784"/>
+          <path d="M492 330c18-36 32-52 54-66 18 24 26 48 29 66Z" fill="#4CAF50"/>
+          <circle cx="128" cy="316" r="12" fill="#C7CCB9"/>
+          <circle cx="510" cy="96" r="9" fill="#F6D98B"/>
+        </svg>
       `;
     }
-    return `<svg class="mk-photo" viewBox="0 0 640 420" role="img" aria-label="${esc(label)}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".18"/><stop offset="1" stop-color="#2F8A5C" stop-opacity=".14"/></linearGradient></defs>${body}<rect width="640" height="420" fill="url(#${id})"/></svg>`;
+    return `<img class="mk-photo" src="../images/mockups/room_hero.jpg" alt="Habitación SICPES" loading="lazy">`;
   }
 
   function field(label, placeholder, type, value) {
@@ -508,7 +519,7 @@
     return `${pageHead('HABITACIÓN DISPONIBLE', `Habitación ${esc(room.id)}`, `${esc(room.type)} · ${esc(room.floor)}`, `<button type="button" class="mk-btn mk-ghost mk-sm" data-mk-go="reserve">${icon('chevronLeft', 16)} Volver</button>`)}
       <div class="mk-gallery">
         <div class="mk-gallery-main">${photo('room')}</div>
-        <div class="mk-gallery-thumbs"><button type="button" class="active">${photo('room')}</button><button type="button">${photo('room2')}</button><button type="button">${photo('room3')}</button></div>
+        <div class="mk-gallery-thumbs"><button type="button" class="active" data-mk-gallery-photo="room">${photo('room')}</button><button type="button" data-mk-gallery-photo="room2">${photo('room2')}</button><button type="button" data-mk-gallery-photo="room3">${photo('room3')}</button></div>
       </div>
       <div class="mk-detail-grid">
         <div>
@@ -971,7 +982,22 @@
   }
 
   /* ---------- Eventos ---------- */
-  document.addEventListener('click', e => {
+    document.addEventListener('click', e => {
+    const galleryBtn = e.target.closest('[data-mk-gallery-photo]');
+    if (galleryBtn) {
+      const photoKey = galleryBtn.dataset.mkGalleryPhoto;
+      const gallery = galleryBtn.closest('.mk-gallery');
+      if (gallery) {
+        gallery.querySelectorAll('[data-mk-gallery-photo]').forEach(b => b.classList.remove('active'));
+        galleryBtn.classList.add('active');
+        const mainImg = gallery.querySelector('.mk-gallery-main img');
+        if (mainImg && PHOTO_MAP[photoKey]) {
+          mainImg.src = PHOTO_MAP[photoKey].src;
+          mainImg.alt = PHOTO_MAP[photoKey].alt;
+        }
+      }
+      return;
+    }
     const target = e.target.closest('[data-mk-role],[data-mk-platform],[data-mk-go],[data-mk-action],[data-mk-filter],[data-mk-type],[data-mk-rate],[data-mk-remove-floor]');
     if (!target) return;
     if (window.SicpesShell && window.SicpesShell.getState().section === 'mockups' && canvas && canvas.contains(target)) {

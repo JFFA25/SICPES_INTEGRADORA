@@ -449,6 +449,17 @@
   color: #26603F;
   font: 700 11px var(--sans);
   letter-spacing: .02em;
+  overflow: hidden;
+  position: relative;
+}
+
+.mk-avatar img,
+.mk-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
 .mk-avatar-sm {
@@ -462,6 +473,18 @@
   height: 68px;
   font-size: 20px;
   box-shadow: 0 0 0 4px #FFFFFF;
+}
+
+.mk-list-avatar .mk-avatar {
+  width: 100%;
+  height: 100%;
+}
+
+.mk-proof .mk-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  background: #E8EFF4;
 }
 
 /* ---------- Estados ---------- */

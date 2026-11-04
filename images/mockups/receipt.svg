@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="780" viewBox="0 0 600 780">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#004481"/>
+      <stop offset="100%" stop-color="#00284e"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-5%" width="120%" height="115%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="600" height="780" fill="#E8EFF4"/>
+  <g transform="translate(60, 40)" filter="url(#shadow)">
+    <!-- Card Body -->
+    <rect width="480" height="700" rx="18" fill="#FFFFFF"/>
+    <!-- Header -->
+    <path d="M0 18 Q0 0 18 0 L462 0 Q480 0 480 18 L480 110 L0 110 Z" fill="url(#bgGrad)"/>
+    <text x="240" y="46" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1.5">BBVA</text>
+    <text x="240" y="76" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#8ec8ff" text-anchor="middle">TRANSFERENCIA EXITOSA · SPEI</text>
+    <circle cx="240" cy="110" r="24" fill="#24C36B" stroke="#FFFFFF" stroke-width="4"/>
+    <path d="M232 110 L238 116 L249 104" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Amount Section -->
+    <text x="240" y="170" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#7A8B99" text-anchor="middle" letter-spacing="1">IMPORTE TRANSFERIDO</text>
+    <text x="240" y="212" font-family="Arial, sans-serif" font-size="34" font-weight="bold" fill="#112233" text-anchor="middle">$2,500.00 MXN</text>
+    <rect x="160" y="226" width="160" height="22" rx="11" fill="#EAF8EF"/>
+    <text x="240" y="241" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#1E7A45" text-anchor="middle">PAGO REALIZADO</text>
+
+    <!-- Details Box -->
+    <rect x="34" y="268" width="412" height="310" rx="12" fill="#F6F9FB" stroke="#E2EBF0" stroke-width="1"/>
+    
+    <text x="54" y="298" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Beneficiario</text>
+    <text x="426" y="298" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#112233" text-anchor="end">SICPES Residencial S.A. de C.V.</text>
+    <line x1="54" y1="314" x2="426" y2="314" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="338" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Banco Destino</text>
+    <text x="426" y="338" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#112233" text-anchor="end">BBVA México · Cuenta ****9821</text>
+    <line x1="54" y1="354" x2="426" y2="354" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="378" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Ordenante</text>
+    <text x="426" y="378" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#112233" text-anchor="end">Elena Pérez Morales</text>
+    <line x1="54" y1="394" x2="426" y2="394" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="418" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Concepto</text>
+    <text x="426" y="418" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2F8A5C" text-anchor="end">Renta Noviembre · Hab. 204</text>
+    <line x1="54" y1="434" x2="426" y2="434" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="458" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Fecha y Hora</text>
+    <text x="426" y="458" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#112233" text-anchor="end">01 Noviembre 2025 · 18:42:15 h</text>
+    <line x1="54" y1="474" x2="426" y2="474" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="498" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Folio de Operación</text>
+    <text x="426" y="498" font-family="Courier New, monospace" font-size="11" font-weight="bold" fill="#112233" text-anchor="end">SPEI-20251101-9482103</text>
+    <line x1="54" y1="514" x2="426" y2="514" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="54" y="538" font-family="Arial, sans-serif" font-size="11" fill="#7A8B99">Clave de Rastreo</text>
+    <text x="426" y="538" font-family="Courier New, monospace" font-size="10" font-weight="bold" fill="#556677" text-anchor="end">2025110140014B3819283749281</text>
+    <line x1="54" y1="554" x2="426" y2="554" stroke="#EBF1F5" stroke-width="1"/>
+
+    <text x="240" y="570" font-family="Arial, sans-serif" font-size="9" fill="#8A9BA8" text-anchor="middle">Comprobante Digital Oficial emitido vía SPEI Banxico</text>
+
+    <!-- Footer Barcode & Seal -->
+    <rect x="34" y="596" width="412" height="76" rx="8" fill="#F9FBFC" stroke="#E2EBF0" stroke-dasharray="4 3"/>
+    <text x="240" y="622" font-family="Courier New, monospace" font-size="9" fill="#667788" text-anchor="middle">SELLO DIGITAL BANCO DE MÉXICO</text>
+    <text x="240" y="638" font-family="Courier New, monospace" font-size="8" fill="#99AABB" text-anchor="middle">a8f9c4e2-7b10-4d89-9e32-849102c4819d || AUT: 893120</text>
+    <rect x="190" y="648" width="100" height="14" fill="#DDE5EB" rx="2"/>
+    <text x="240" y="658" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#556677" text-anchor="middle">COMPROBANTE VÁLIDO</text>
+  </g>
+</svg>
