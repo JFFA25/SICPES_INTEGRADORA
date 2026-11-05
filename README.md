@@ -37,11 +37,13 @@
 4. [Tecnologías](#tecnologías)
 5. [Web services y APIs externas](#web-services-y-apis-externas)
 6. [Diagramas del Proyecto / Modelos](#diagramas-del-proyecto--modelos)
-7. [Ver en línea (GitHub Pages)](#ver-en-línea-github-pages)
-8. [Identidad Visual](#identidad-visual)
-9. [Gestión del Proyecto](#gestión-del-proyecto)
-10. [Nuestro Equipo](#nuestro-equipo)
-11. [Docente](#docente)
+7. [Panel de navegación](#panel-de-navegación)
+8. [Ver en línea (GitHub Pages)](#ver-en-línea-github-pages)
+9. [Identidad Visual](#identidad-visual)
+10. [Gestión del Proyecto](#gestión-del-proyecto)
+11. [Nuestro Equipo](#nuestro-equipo)
+12. [Docente](#docente)
+
 
 ## Resumen Ejecutivo
 
@@ -123,22 +125,13 @@ SICPES se apoya en servicios de terceros para capacidades que no conviene constr
 | **PDFmonkey API** | Genera contratos de arrendamiento, recibos y reportes en PDF. | Backend |
 | **OSRM API** | Calcula la ruta a pie y la distancia exacta hasta la pensión. | API complementaria |
 
-## Diagramas del Proyecto / Modelos
-
-| Entregable | Descripción | Documentación |
-| :--- | :--- | :--- |
-| **Business Model Canvas** | Los nueve bloques del modelo de negocio. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html) |
-| **Diagrama de Roles de Usuario** | Roles, responsabilidades y matriz de permisos. | [README](RolesDeUsuario/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html) |
-| **Sketches, Wireframes, Mockups y Prototipo** | 28 pantallas (Móvil Flutter y PWA React/Vite), apartado de 7 pantallas en común, cotas en px y diagrama de navegación interactivo. | [README](Sketches/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
-| **Diagrama de Arquitectura** | Capas, tecnologías, bases de datos, servicios externos y despliegue, de forma interactiva. | [README](DiagramaDeArquitectura/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html) |
-
 ### Diagrama de Arquitectura
 
 SICPES sigue una **arquitectura cliente-servidor en capas**: clientes (Web React, y a futuro app Flutter y PWA) que consumen por HTTPS (REST / JSON) un Backend en Node.js y una API en FastAPI; ambos guardan los datos en MySQL (TiDB Serverless) y MongoDB, e integran seis servicios externos. Todo se despliega con Docker en Render.
 
 <p align="center">
   <a href="https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html">
-    <img src="/DiagramaDeArquitectura/arquitectura-sicpes.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
+    <img src="./DiagramaDeArquitectura/arquitectura-sicpes.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
   </a>
 </p>
 

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html">
-    <img src="/DiagramaDeArquitectura/arquitectura-sicpes.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
+    <img src="./arquitectura-sicpes.png" alt="Diagrama de arquitectura de SICPES" width="900"/>
   </a>
 </p>
 
