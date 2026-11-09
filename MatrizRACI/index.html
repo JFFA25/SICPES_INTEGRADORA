@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SICPES · Matriz RACI del Proyecto Integrador</title>
+  <meta name="description" content="Matriz RACI completa del proyecto SICPES estructurada y validada con el agente de IA Archify. Gobernanza, responsabilidades y balance de cargas por rol.">
+  <link rel="icon" href="../images/SICPES_Producto.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Barra de Navegación Superior -->
+  <header class="top-nav">
+    <div class="container nav-wrap">
+      <a href="../index.html" class="brand-link" title="Volver al portal principal de SICPES">
+        <img src="../images/SICPES_Producto.png" alt="Logo de SICPES" class="brand-logo">
+        <div class="brand-text">
+          <h1>SICPES <span>/ Matriz RACI</span></h1>
+          <span>Archify AI Architecture Framework · UTHH</span>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="btn btn-ghost" title="Cambiar tema de color">🌙 Modo Oscuro</button>
+        <button id="printBtn" class="btn" title="Imprimir o guardar como PDF">🖨️ Imprimir / PDF</button>
+        <a href="../index.html" class="btn btn-primary">← Volver al Inicio</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <span class="hero-tag">Gobernanza y Gestión de Ingeniería de Software · UTHH</span>
+      <h2>Matriz RACI de Responsabilidades del Proyecto <em>SICPES</em></h2>
+      <p>
+        Estructura formal de asignación de roles y responsabilidades para el ciclo de vida del <strong>Sistema Integral de Control de Pensión de Estudiantes (SICPES)</strong>. 
+        Generada, refinada y validada mediante el agente de inteligencia artificial <strong>Archify</strong>, garantizando que cada entregable técnico posea una rendición de cuentas inequívoca, trazabilidad total y una distribución equilibrada de cargas de trabajo.
+      </p>
+
+      <div class="golden-rule-banner">
+        <span class="icon">⚖️</span>
+        <div>
+          <strong>Regla de Oro RACI Verificada:</strong> Cada una de las 30 actividades posee <strong>exactamente un (1) Accountable (A)</strong>, eliminando vacíos de poder, duplicidad de autorizaciones y dilución de responsabilidad en el equipo de desarrollo.
+        </div>
+      </div>
+    </section>
+
+    <!-- Métricas del Proyecto -->
+    <section id="metricsGrid" class="metrics-grid" aria-label="Métricas de la matriz"></section>
+
+    <!-- Leyenda RACI Interactiva -->
+    <section class="legend-section" aria-label="Leyenda RACI">
+      <div id="legendGrid" class="legend-grid"></div>
+    </section>
+
+    <!-- Barra de Herramientas y Filtros -->
+    <section class="toolbar" aria-label="Filtros y búsqueda">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar actividad, entregable, código (ej. ACT-16, Docker, JWT)..." autocomplete="off">
+        </div>
+        <div class="role-filter-row" id="rolePills"></div>
+      </div>
+      <div class="phase-tabs" id="phaseTabs"></div>
+    </section>
+
+    <!-- Contenedor de la Tabla RACI -->
+    <section class="matrix-container" aria-label="Tabla de matriz RACI">
+      <div class="table-responsive">
+        <table class="raci-table" id="raciTable">
+          <thead>
+            <tr id="tableHeaderRow"></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sección de Balance y Carga de Trabajo -->
+    <section class="balance-section" aria-label="Balance de cargas de trabajo">
+      <div class="section-header">
+        <h3>📊 Análisis de Balance de Cargas de Trabajo</h3>
+        <p>Distribución de tareas por rol para verificar que no existan sobrecargas operativas ni integrantes sin responsabilidades asignadas.</p>
+      </div>
+      <div id="balanceGrid" class="balance-grid"></div>
+    </section>
+
+    <!-- Sección Metodología Archify AI -->
+    <section class="archify-section" aria-label="Metodología y Prompts Archify">
+      <div class="archify-badge">🤖 Agente de Inteligencia Artificial Archify</div>
+      <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 10px;">Metodología de Generación y Validación Arquitectónica</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 90ch;">
+        La matriz RACI de SICPES fue concebida y optimizada mediante el agente especializado <strong>Archify</strong>, aplicando modelos de ingeniería de software para proyectos académicos e industriales bajo la metodología de roles especializados (Frontend, Backend, Base de Datos, Líder de Proyecto, Product Owner y Aseguramiento de Calidad).
+      </p>
+
+      <div class="archify-prompt-box">
+<span style="color: var(--primary); font-weight: 700;">[ARCHIFY · SYSTEM INSTRUCTION & RACI REASONING ENGINE]</span>
+"Actúa como el Agente Archify, arquitecto de software y director de PMO para el proyecto SICPES de la UTHH.
+Analiza la estructura del equipo (José Francisco Flores Amador - Líder/Fullstack, Edgar Cabrera Velázquez - Backend/Seguridad, Edwin Hernández Campos - Base de Datos, Giovany Raul Pazos Cruz - Frontend/UX), los stakeholders clave (Arrendador/Product Owner, M.T.I Marco Antonio Ramírez Hernández - Asesor UTHH y Estudiantes).
+Genera una matriz RACI exhaustiva de 30 actividades cubriendo el ciclo de vida completo: Planificación, Requerimientos, Arquitectura/UX, Desarrollo, QA/Seguridad y Despliegue/Operación.
+REGLA INQUEBRANTABLE: Exactamente un 'A' (Accountable) por actividad. Balancea los 'R' (Responsible) para evitar cuellos de botella y documenta la justificación operativa para cada celda."
+      </div>
+
+      <div class="archify-rules-grid">
+        <div class="rule-item">
+          <h5><span>🛡️</span> Regla de Singularidad de Aprobación</h5>
+          <p>Ninguna actividad puede carecer de Accountable (evita tareas huérfanas) ni tener más de uno (evita parálisis por conflicto de mando).</p>
+        </div>
+        <div class="rule-item">
+          <h5><span>⚡</span> Principio de Ejecución Especializada</h5>
+          <p>Las tareas técnicas de código y persistencia asignan como 'R' al desarrollador de dicha disciplina (BE para APIs, FE para PWA/Flutter, BD para TiDB).</p>
+        </div>
+        <div class="rule-item">
+          <h5><span>🤝</span> Bidireccionalidad en Consultas (C)</h5>
+          <p>El Product Owner (Arrendador) y el Docente Evaluador actúan como consultores clave antes de la aprobación final de historias y rúbricas.</p>
+        </div>
+        <div class="rule-item">
+          <h5><span>📢</span> Comunicación Proactiva (I)</h5>
+          <p>Los estudiantes residentes y actores secundarios reciben comunicación unidireccional de hitos, políticas de servicio y nuevas versiones.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Detalle de Celda -->
+  <div id="cellModalBackdrop" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button id="modalCloseBtn" class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
+      <div id="cellModalContent"></div>
+    </div>
+  </div>
+
+  <!-- Pie de Página -->
+  <footer>
+    <div class="container">
+      <p>
+        <strong>SICPES</strong> · Sistema Integral de Control de Pensión de Estudiantes &mdash; Universidad Tecnológica de la Huasteca Hidalguense (UTHH)
+      </p>
+      <p style="margin-top: 6px; font-size: 0.8rem;">
+        Repositorio de Código y Documentación en <a href="https://github.com/JFFA25/SICPES_INTEGRADORA" target="_blank" rel="noopener">GitHub</a> · Desarrollado por el equipo de Integradora con soporte de <strong>Archify AI</strong>.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

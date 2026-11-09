@@ -125,6 +125,16 @@ SICPES se apoya en servicios de terceros para capacidades que no conviene constr
 | **PDFmonkey API** | Genera contratos de arrendamiento, recibos y reportes en PDF. | Backend |
 | **OSRM API** | Calcula la ruta a pie y la distancia exacta hasta la pensión. | API complementaria |
 
+## Diagramas del Proyecto / Modelos
+
+| Entregable | Descripción | Documentación |
+| :--- | :--- | :--- |
+| **Business Model Canvas** | Los nueve bloques del modelo de negocio. | [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/ModeloCanvas/index.html) |
+| **Diagrama de Roles de Usuario** | Roles, responsabilidades y matriz de permisos. | [README](RolesDeUsuario/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html) |
+| **Sketches, Wireframes, Mockups y Prototipo** | 28 pantallas (Móvil Flutter y PWA React/Vite), apartado de 7 pantallas en común, cotas en px y diagrama de navegación interactivo. | [README](Sketches/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
+| **Diagrama de Arquitectura** | Capas, tecnologías, bases de datos, servicios externos y despliegue, de forma interactiva. | [README](DiagramaDeArquitectura/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html) |
+| **Matriz RACI del Proyecto** | Asignación formal de roles y responsabilidades (R, A, C, I), balance de cargas por integrante y verificación de la regla de oro, desarrollada con el agente Archify. | [README](MatrizRACI/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/MatrizRACI/index.html) |
+
 ### Diagrama de Arquitectura
 
 SICPES sigue una **arquitectura cliente-servidor en capas**: clientes (Web React, y a futuro app Flutter y PWA) que consumen por HTTPS (REST / JSON) un Backend en Node.js y una API en FastAPI; ambos guardan los datos en MySQL (TiDB Serverless) y MongoDB, e integran seis servicios externos. Todo se despliega con Docker en Render.
@@ -152,6 +162,7 @@ El diagrama es interactivo: al hacer clic en cada componente se abre su detalle,
 - [Práctica 05 · Diagrama de Roles de Usuario](https://jffa25.github.io/SICPES_INTEGRADORA/RolesDeUsuario/diagrama-roles-usuario-sicpes.html)
 - [Práctica 07 · Sketches y navegación](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
 - [Diagrama de Arquitectura](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html)
+- [Matriz RACI del Proyecto](https://jffa25.github.io/SICPES_INTEGRADORA/MatrizRACI/index.html)
 
 ## Identidad Visual
 
@@ -200,6 +211,13 @@ El organigrama muestra cómo se reparte el trabajo en el equipo: la líder de pr
 El diagrama de Gantt organiza las actividades del proyecto en el tiempo: qué tareas hay, cuánto duran, en qué orden se hacen y cuáles dependen de otras. Sirve para dar seguimiento al avance y detectar retrasos.
 
 ![Gantt](images/Diagrama_Gantt_SICPES.jpeg)
+
+### Matriz de Asignación de Responsabilidades (RACI)
+
+La matriz RACI de SICPES, estructurada con el agente de IA **Archify**, formaliza las responsabilidades de 30 actividades técnicas a lo largo de 6 fases del ciclo de vida del software. Cumple estrictamente la regla de un único responsable final (*Accountable*) por actividad y garantiza un balance equitativo de trabajo entre los desarrolladores y los stakeholders del negocio.
+
+- Documentación y análisis completo: [README de la Matriz RACI](MatrizRACI/README.md)
+- Herramienta web interactiva con filtros, búsqueda y métricas: [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/MatrizRACI/index.html)
 
 ## Nuestro Equipo
 
