@@ -1,6 +1,6 @@
 /**
  * data.js - Datos maestros de la Matriz RACI de SICPES
- * Proyecto Integrador - Universidad Tecnológica de la Huasteca Hidalguense (UTHH)
+ * Proyecto Integrador - Universidad Tecnológica de Xicotepec de Juárez (UTXJ)
  * Generado y estructurado con el Agente de Inteligencia Artificial Archify
  */
 
@@ -9,7 +9,7 @@ const RACI_DATA = {
     project: "SICPES",
     fullName: "Sistema Integral de Control de Pensión de Estudiantes",
     slogan: "Una pensión más ordenada para un mejor estudiar",
-    institution: "Universidad Tecnológica de la Huasteca Hidalguense (UTHH)",
+    institution: "Universidad Tecnológica de Xicotepec de Juárez (UTXJ)",
     career: "Ingeniería en Desarrollo y Gestión de Software",
     version: "2.0.0",
     date: "Noviembre 2026",
@@ -102,13 +102,13 @@ const RACI_DATA = {
       avatar: null,
       tag: "Stakeholder",
       teamMember: false,
-      description: "Representante de las necesidades de negocio del sector de hospedaje estudiantil en Huejutla. Valida reglas operativas, cobros y aceptación de uso."
+      description: "Representante de las necesidades de negocio del sector de hospedaje estudiantil en Xicotepec. Valida reglas operativas, cobros y aceptación de uso."
     },
     {
       id: "DOC",
       code: "DOC",
       name: "M.T.I Marco Antonio Ramírez Hernández",
-      title: "Docente Asesor / Evaluador Institucional UTHH",
+      title: "Docente Asesor / Evaluador Institucional UTXJ",
       github: "MTI-MarcoRHb",
       avatar: "https://github.com/MTI-MarcoRHb.png",
       tag: "Institucional",
@@ -205,7 +205,7 @@ const RACI_DATA = {
         BD: { type: "R", note: "Estima tiempos de modelado relacional, NoSQL y migraciones." },
         FE: { type: "R", note: "Estima tiempos de diseño de sketches, wireframes, PWA y Flutter." },
         PO: { type: "I", note: "Recibe el calendario de revisiones y demostraciones de avance." },
-        DOC: { type: "C", note: "Establece las fechas de corte y firmas institucionales de la UTHH." },
+        DOC: { type: "C", note: "Establece las fechas de corte y firmas institucionales de la UTXJ." },
         EST: { type: "I", note: "No interviene directamente en la calendarización interna." }
       }
     },
@@ -648,8 +648,8 @@ const RACI_DATA = {
       id: "T28",
       phaseId: "F6",
       code: "ACT-28",
-      name: "Revisión Académica de Entregables y Cumplimiento de Firmas UTHH",
-      description: "Cotejo de todas las prácticas del proyecto integrador contra los instrumentos de evaluación institucional de la UTHH para la firma de aprobación.",
+      name: "Revisión Académica de Entregables y Cumplimiento de Firmas UTXJ",
+      description: "Cotejo de todas las prácticas del proyecto integrador contra los instrumentos de evaluación institucional de la UTXJ para la firma de aprobación.",
       deliverable: "Carpeta de evidencias completa, repositorio actualizado y acta de evaluación firmada.",
       raci: {
         LP: { type: "R", note: "Presenta las evidencias, defiende el proyecto y gestiona las observaciones docentes." },
@@ -722,3 +722,4 @@ const RACI_DATA = {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = RACI_DATA;
 }
+

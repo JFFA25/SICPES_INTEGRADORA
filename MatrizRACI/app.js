@@ -1,6 +1,6 @@
 /**
  * app.js - Controlador Interactivo de la Matriz RACI
- * SICPES - Proyecto Integrador UTHH
+ * SICPES - Proyecto Integrador UTXJ
  * Desarrollado con el Agente de Arquitectura Archify
  */
 
@@ -514,3 +514,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+

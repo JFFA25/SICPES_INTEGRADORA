@@ -1,6 +1,6 @@
 # Matriz RACI del Proyecto Integrador SICPES
 
-> **Institución:** Universidad Tecnológica de la Huasteca Hidalguense (UTHH)  
+> **Institución:** Universidad Tecnológica de Xicotepec de Juárez (UTXJ)  
 > **Carrera:** Ingeniería en Desarrollo y Gestión de Software  
 > **Asignatura:** Proyecto Integrador  
 > **Proyecto:** Sistema Integral de Control de Pensión de Estudiantes (**SICPES**)  
@@ -27,11 +27,11 @@ La **Matriz RACI** es un modelo de gobernanza organizacional y de gestión de pr
 
 ## 2. Catálogo de Roles del Proyecto SICPES
 
-Para estructurar la matriz se integraron tanto los roles internos del equipo de desarrollo de la UTHH como los actores clave y *stakeholders* del ecosistema de pensiones estudiantiles en Huejutla de Reyes, Hgo.
+Para estructurar la matriz se integraron tanto los roles internos del equipo de desarrollo de la UTXJ como los actores clave y *stakeholders* del ecosistema de pensiones estudiantiles en Xicotepec de Juárez, Pue.
 
 ```mermaid
 graph TD
-  subgraph Equipo_Desarrollo_UTHH ["Equipo de Desarrollo UTHH"]
+  subgraph Equipo_Desarrollo_UTXJ ["Equipo de Desarrollo UTXJ"]
     LP["<b>LP: José Francisco Flores Amador</b><br/>Líder de Proyecto / Fullstack / Documentación"]
     BE["<b>BE: Edgar Cabrera Velázquez</b><br/>Backend Developer / Seguridad & APIs"]
     BD["<b>BD: Edwin Hernández Campos</b><br/>Database Administrator / TiDB & MongoDB"]
@@ -76,7 +76,7 @@ graph TD
    Aporta la visión comercial del arrendamiento de habitaciones para estudiantes, valida flujos de cobro, contratos, reglas de reserva y criterios de aceptación.
 
 6. **DOC &mdash; M.T.I Marco Antonio Ramírez Hernández** (`@MTI-MarcoRHb`)  
-   *Docente Asesor / Evaluador Institucional UTHH*  
+   *Docente Asesor / Evaluador Institucional UTXJ*  
    Auditoría académica y metodológica de las prácticas de integradora, revisión de rúbricas institucionales y otorgamiento formal de firmas.
 
 7. **EST &mdash; Estudiante Residente** (*Usuario Final*)  
@@ -153,7 +153,7 @@ graph TD
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **ACT-26** | **Automatización de CI/CD en Render y GitHub Pages**<br/>*Entregable: Pipelines automáticos (.github/workflows).* | **A** | **R** | C | **R** | I | C | I | **LP (Flores A.)** |
 | **ACT-27** | **Elaboración de Manuales de Usuario (Estudiante y Admin)**<br/>*Entregable: Manuales ilustrados paso a paso.* | **A** | C | I | **R** | C | C | I | **LP (Flores A.)** |
-| **ACT-28** | **Revisión Académica de Entregables y Firmas UTHH**<br/>*Entregable: Carpeta completa y rúbrica acreditada.* | **R** | **R** | **R** | **R** | I | **A** | I | **DOC (Docente UTHH)** |
+| **ACT-28** | **Revisión Académica de Entregables y Firmas UTXJ**<br/>*Entregable: Carpeta completa y rúbrica acreditada.* | **R** | **R** | **R** | **R** | I | **A** | I | **DOC (Docente UTXJ)** |
 | **ACT-29** | **Monitoreo Operativo, Logs y Plan de Contingencia**<br/>*Entregable: Métricas de uptime, snapshots TiDB y alertas.* | C | **A** | **R** | I | I | I | I | **BE (Cabrera V.)** |
 | **ACT-30** | **Gestión de Retroalimentación y Mejora Continua (HU-05)**<br/>*Entregable: Tablero de satisfacción y backlog v2.1.* | **A** | C | C | **R** | C | I | C | **LP (Flores A.)** |
 
@@ -174,7 +174,7 @@ Para asegurar la viabilidad del proyecto y certificar la salud de la matriz, se 
 │ BD (Hernández Campos - BD)      │ 9  │ 2  │ 10 │ 9  │ 30     │
 │ FE (Pazos Cruz - Frontend/UX)   │ 9  │ 6  │ 9  │ 6  │ 30     │
 │ PO (Arrendador - Dueño Negocio) │ 0  │ 2  │ 12 │ 16 │ 30     │
-│ DOC (Docente Evaluador UTHH)    │ 0  │ 1  │ 20 │ 9  │ 30     │
+│ DOC (Docente Evaluador UTXJ)    │ 0  │ 1  │ 20 │ 9  │ 30     │
 │ EST (Estudiante Residente)      │ 3  │ 0  │ 4  │ 23 │ 30     │
 ├─────────────────────────────────┼────┼────┼────┼────┼────────┤
 │ TOTALES                         │ 33 │ 30 │ 79 │ 68 │ 210    │
@@ -205,7 +205,7 @@ De acuerdo con las directrices de diseño de arquitectura del proyecto SICPES, l
 flowchart TD
   In1["Roles del Equipo y Organigrama SICPES"] --> Archify["Agente de IA Archify<br/>(Motor de Arquitectura y PMO)"]
   In2["Historias de Usuario y Reglas de Negocio"] --> Archify
-  In3["Requerimientos de Integradora UTHH"] --> Archify
+  In3["Requerimientos de Integradora UTXJ"] --> Archify
   
   Archify --> Engine1["Validador de Regla de Oro<br/>(Single Accountable Check)"]
   Archify --> Engine2["Balanceador de Cargas Técnicas<br/>(Workload Equalizer)"]
@@ -221,13 +221,13 @@ flowchart TD
 #### Prompt 1: Modelado de Roles y Alcance del Ciclo de Vida
 ```text
 [PROMPT · ANÁLISIS DE ROLES Y FASES DEL SDLC]
-"Actúa como el Agente Archify, arquitecto de software y director de PMO para el proyecto SICPES de la UTHH.
+"Actúa como el Agente Archify, arquitecto de software y director de PMO para el proyecto SICPES de la UTXJ.
 Analiza la estructura del equipo:
 - José Francisco Flores Amador: Líder de Proyecto / Fullstack / Documentación.
 - Edgar Cabrera Velázquez: Backend Developer / Seguridad & APIs.
 - Edwin Hernández Campos: Database Administrator / TiDB MySQL & MongoDB.
 - Giovany Raul Pazos Cruz: Frontend Developer / UX/UI PWA React & Flutter.
-Junto con los stakeholders externos: Arrendador (Product Owner), M.T.I Marco Antonio Ramírez Hernández (Docente UTHH) y Estudiantes Residentes.
+Junto con los stakeholders externos: Arrendador (Product Owner), M.T.I Marco Antonio Ramírez Hernández (Docente UTXJ) y Estudiantes Residentes.
 Desglosa el proyecto en 6 fases fundamentales del ciclo de vida de desarrollo y propón 30 actividades clave para gobernar el proyecto."
 ```
 
@@ -279,8 +279,9 @@ El entregable se encuentra desplegado y listo para su consulta en la siguiente U
 
 | Rol | Nombre | Institución / Cargo | Firma / Estatus |
 | :--- | :--- | :--- | :--- |
-| **Líder de Proyecto** | José Francisco Flores Amador | UTHH &middot; 10° Cuatrimestre IDGS | Validado |
-| **Backend & Seguridad** | Edgar Cabrera Velázquez | UTHH &middot; 10° Cuatrimestre IDGS | Validado |
-| **Base de Datos** | Edwin Hernández Campos | UTHH &middot; 10° Cuatrimestre IDGS | Validado |
-| **Frontend & UX/UI** | Giovany Raul Pazos Cruz | UTHH &middot; 10° Cuatrimestre IDGS | Validado |
-| **Docente Asesor** | M.T.I Marco Antonio Ramírez Hernández | Profesor de Tiempo Completo UTHH | En Revisión |
+| **Líder de Proyecto** | José Francisco Flores Amador | UTXJ &middot; 10° Cuatrimestre IDGS | Validado |
+| **Backend & Seguridad** | Edgar Cabrera Velázquez | UTXJ &middot; 10° Cuatrimestre IDGS | Validado |
+| **Base de Datos** | Edwin Hernández Campos | UTXJ &middot; 10° Cuatrimestre IDGS | Validado |
+| **Frontend & UX/UI** | Giovany Raul Pazos Cruz | UTXJ &middot; 10° Cuatrimestre IDGS | Validado |
+| **Docente Asesor** | M.T.I Marco Antonio Ramírez Hernández | Profesor de Tiempo Completo UTXJ | En Revisión |
+

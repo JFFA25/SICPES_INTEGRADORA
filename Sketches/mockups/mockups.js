@@ -129,7 +129,7 @@
     'roberto morales': '../images/mockups/admin_roberto.jpg',
     'admin': '../images/mockups/admin_roberto.jpg',
     'administrador': '../images/mockups/admin_roberto.jpg',
-    // Equipo desarrollador SICPES (UTHH)
+    // Equipo desarrollador SICPES (UTXJ)
     'jose francisco flores amador': '../images/mockups/team_jffa25.png',
     'josé francisco flores amador': '../images/mockups/team_jffa25.png',
     'edgar cabrera velázquez': '../images/mockups/team_edgar-cbr.png',
@@ -819,7 +819,7 @@
       ['Giovany Raul Pazos Cruz', 'Frontend / Interfaz PWA React/Vite y Móvil Flutter', '@giova0412']
     ];
     return `
-      ${pageHead('CRÉDITOS INSTITUCIONALES · PANTALLA COMÚN', 'Acerca del equipo / empresa', 'Equipo desarrollador del Proyecto Integrador SICPES · UTHH.', `<button type="button" class="mk-btn mk-secondary" data-mk-go="aboutSoftware">← Acerca del software</button>`)}
+      ${pageHead('CRÉDITOS INSTITUCIONALES · PANTALLA COMÚN', 'Acerca del equipo / empresa', 'Equipo desarrollador del Proyecto Integrador SICPES · UTXJ.', `<button type="button" class="mk-btn mk-secondary" data-mk-go="aboutSoftware">← Acerca del software</button>`)}
       <div class="mk-main-grid">
         ${members.map(([name, role, gh]) => `
           <article class="mk-card">
@@ -827,7 +827,7 @@
               <div class="mk-user-row">${avatar(name)}<div><strong>${esc(name)}</strong><small>${esc(role)}</small></div></div>
               ${status('Activo')}
             </div>
-            <p class="mk-muted">GitHub: <strong>${esc(gh)}</strong> · Ingeniería en Desarrollo y Gestión de Software (UTHH).</p>
+            <p class="mk-muted">GitHub: <strong>${esc(gh)}</strong> · Ingeniería en Desarrollo y Gestión de Software (UTXJ).</p>
           </article>
         `).join('')}
       </div>
