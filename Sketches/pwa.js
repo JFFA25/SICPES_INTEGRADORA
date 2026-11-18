@@ -58,7 +58,7 @@ const PWA_SCREENS = {
   floors: { role: 'admin', title: 'Pisos', label: 'PISOS', route: '/admin/pisos' },
   settings: { role: 'admin', title: 'Configuración global', label: 'CONFIGURACIÓN', route: '/admin/configuracion' }
 };
-const PWA_SHARED = ['splash','loading','forgotPassword','lockAccount','unlockAccount','aboutSoftware','aboutTeam'];
+const PWA_SHARED = ['splash','forgotPassword','lockAccount','unlockAccount','loading','aboutSoftware','aboutTeam'];
 const PWA_CODES = { splash:'C1', landing:'E1', studentLogin:'E2', forgotPassword:'E3', lockAccount:'C2', unlockAccount:'C3', register:'E4', verifyEmail:'E5', loading:'E6', home:'E7', reserve:'E8', roomDetail:'E9', requestStatus:'E10', payments:'E11', paymentDetail:'E12', rateService:'E13', rateConfirm:'E14', profile:'E15', aboutSoftware:'C4', aboutTeam:'C5', adminLogin:'A1', reservations:'A2', assignRoom:'A3', pendingPayments:'A4', validatePayment:'A5', debts:'A6', floors:'A7', settings:'A8' };
 const PWA_STUDENT = ['splash','landing','studentLogin','forgotPassword','lockAccount','unlockAccount','register','verifyEmail','loading','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile','aboutSoftware','aboutTeam'];
 const PWA_ADMIN = ['splash','adminLogin','forgotPassword','lockAccount','unlockAccount','loading','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings','aboutSoftware','aboutTeam'];
@@ -97,7 +97,7 @@ const PWA_ACTIONS = {
   settings:[['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo / empresa'],['adminLogin','Cerrar sesión'],['reservations','Panel superior: Reservaciones'],['pendingPayments','Panel superior: Pagos'],['floors','Panel superior: Pisos']]
 };
 
-const pwaState = { screen: 'landing', role: 'student', history: [], type: 'Individual', filter: 'Todas', paymentFilter: 'Todos', debtFilter: 'Todos', rating: 0, zones: false, loadingTimer: null, toastTimer: null, mapScrollY: 0 };
+const pwaState = { screen: 'splash', role: 'student', history: [], type: 'Individual', filter: 'Todas', paymentFilter: 'Todos', debtFilter: 'Todos', rating: 0, zones: false, loadingTimer: null, toastTimer: null, mapScrollY: 0 };
 
 const pwaScreenEl = document.querySelector('#pwaScreen');
 const pwaToastEl = document.querySelector('#pwaToast');
@@ -115,7 +115,7 @@ function pwaGo(screen, options = {}) {
   pwaRender();
 }
 function pwaBack() { const previous = pwaState.history.pop(); if (previous) { pwaState.screen = previous; pwaRender(); } else pwaToast('No hay una pantalla anterior.'); }
-function pwaSetRole(role) { pwaState.role = role; pwaState.history = []; pwaGo(role === 'student' ? 'landing' : 'adminLogin', { replace: true }); }
+function pwaSetRole(role) { pwaState.role = role; pwaState.history = []; pwaGo('splash', { replace: true }); }
 
 /* --- Piezas compartidas de la interfaz web --- */
 function pwaField(label, placeholder, type = 'text', value = '') {

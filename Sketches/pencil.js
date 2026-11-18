@@ -9,7 +9,7 @@
   const HAND = "'Patrick Hand', 'Caveat', cursive, system-ui";
   const DISPLAY = "'Caveat', 'Patrick Hand', cursive, system-ui";
 
-  const SHARED = ['splash', 'loading', 'forgotPassword', 'lockAccount', 'unlockAccount', 'aboutSoftware', 'aboutTeam'];
+  const SHARED = ['splash', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'aboutSoftware', 'aboutTeam'];
   const STUDENT = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
   const ADMIN = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
 
@@ -55,7 +55,7 @@
     CODE_TO_ID[META[id].code] = id;
   });
 
-  const state = { role: 'student', platform: 'mobile', screen: 'landing' };
+  const state = { role: 'student', platform: 'mobile', screen: 'splash' };
   let lastFocus = null;
 
   function node(name, attrs) {

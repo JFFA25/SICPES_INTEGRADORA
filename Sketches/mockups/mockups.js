@@ -18,7 +18,7 @@
   const ROOT = D.roots;
 
   const state = {
-    screen: 'landing',
+    screen: 'splash',
     role: 'student',
     platform: 'mobile',
     history: [],

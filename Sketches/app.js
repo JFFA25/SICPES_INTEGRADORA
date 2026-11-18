@@ -60,7 +60,7 @@ const SCREENS = {
   settings: { role: 'admin', title: 'Configuración global', label: 'CONFIGURACIÓN' }
 };
 /* 15 pantallas de estudiante; la carga compartida (E6) se dibuja una sola vez en esta fila. */
-const SHARED_SCREENS = ['splash', 'loading', 'forgotPassword', 'lockAccount', 'unlockAccount', 'aboutSoftware', 'aboutTeam'];
+const SHARED_SCREENS = ['splash', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'aboutSoftware', 'aboutTeam'];
 const studentFlow = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
 const adminFlow = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
 /* Códigos para identificar rápidamente cada pantalla en la lista y el diagrama. */
@@ -99,7 +99,7 @@ const SCREEN_ACTIONS = {
   floors:[['reservations','Reservaciones en la barra inferior'],['pendingPayments','Pagos en la barra inferior'],['settings','Configuración en la barra inferior']],
   settings:[['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo / empresa'],['adminLogin','Cerrar sesión'],['reservations','Reservaciones en la barra inferior'],['pendingPayments','Pagos en la barra inferior'],['floors','Pisos en la barra inferior']]
 };
-const state = { screen: 'landing', role: 'student', history: [], type: 'Individual', filter: 'Todas', paymentFilter: 'Todos', debtFilter: 'Todos', rating: 0, zones: false, loadingTimer: null, toastTimer: null };
+const state = { screen: 'splash', role: 'student', history: [], type: 'Individual', filter: 'Todas', paymentFilter: 'Todos', debtFilter: 'Todos', rating: 0, zones: false, loadingTimer: null, toastTimer: null };
 const phone = document.querySelector('#phoneScreen');
 const toastEl = document.querySelector('#toast');
 
@@ -115,7 +115,7 @@ function go(screen, options = {}) {
   render();
 }
 function back() { const previous = state.history.pop(); if (previous) { state.screen = previous; render(); } else toast('No hay una pantalla anterior.'); }
-function setRole(role) { state.role = role; state.history = []; go(role === 'student' ? 'landing' : 'adminLogin', { replace: true }); }
+function setRole(role) { state.role = role; state.history = []; go('splash', { replace: true }); }
 function header(backControl = !ROOT_SCREENS.has(state.screen)) { return `<header class="app-header"><span class="app-logo"><img class="app-logo-img" src="../images/SICPES_Producto.png" alt=""> SICPES <span>/ RESIDENCIAL</span></span>${backControl ? '<button class="back-link clickable" data-action="back">← ATRÁS</button>' : '<span class="mono-label">DEMO</span>'}</header>`; }
 function field(label, placeholder, type='text', value='') { return `<label class="field"><span>${label}</span><input type="${type}" placeholder="${placeholder}" value="${esc(value)}"></label>`; }
 function nav(role, active) {

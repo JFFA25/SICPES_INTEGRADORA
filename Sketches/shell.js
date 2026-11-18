@@ -11,13 +11,13 @@
   const SECTION_BUTTON = { sketches: 'Sketches', wireframes: 'Wireframes', mockups: 'Mockups', prototype: 'Prototipo' };
   const PLATFORM_LABEL = { mobile: 'MÓVIL', pwa: 'PWA' };
   const ROLE_LABEL = { student: 'ESTUDIANTE', admin: 'ADMINISTRADOR', shared: 'COMUNES (AMBOS ROLES)' };
-  const STORE_KEY = 'sicpes-shell-context';
+  const STORE_KEY = 'sicpes-shell-context-v2';
 
   const state = {
-    section: 'wireframes',
+    section: 'sketches',
     platform: 'mobile',
     role: 'student',
-    screen: 'landing',
+    screen: 'splash',
     history: [],
     zones: false,
     searchQuery: '',
@@ -77,8 +77,7 @@
   }
 
   function initialScreen(role) {
-    if (role === 'shared') return 'splash';
-    return role === 'admin' ? 'adminLogin' : 'landing';
+    return 'splash';
   }
 
   function signature(detail) {
@@ -256,7 +255,7 @@
     }).join('');
   }
 
-  /* ---------- Lista de pantallas con apartado de pantallas en común ---------- */
+  /* ---------- Lista de pantallas en secuencia natural del recorrido ---------- */
   function renderScreenList() {
     const list = byId('shellScreenList');
     if (!list) return;
@@ -267,7 +266,7 @@
     const query = (state.searchQuery || '').trim().toLowerCase();
     let matches = 0;
 
-    function renderBtn(id, isShared) {
+    function renderBtn(id, isShared, stepNum) {
       const active = id === state.screen;
       const title = screenTitle(id);
       const code = screenCode(id);
@@ -281,15 +280,28 @@
 
     let html = '';
     if (state.role === 'shared') {
-      html += '<div class="shell-shared-summary"><strong>Apartado · Pantallas en común (' + sharedIds.length + ')</strong><p>Interfaces compartidas entre <b>Estudiante (Usuario)</b> y <b>Administrador</b>: Splash, Carga, Recuperación, Bloqueo, Desbloqueo, Acerca del software y Acerca del equipo.</p></div>';
-      html += sharedIds.map(id => renderBtn(id, true)).join('');
+      html += '<div class="shell-shared-summary"><strong>Apartado · Pantallas en común (' + sharedIds.length + ')</strong><p>Secuencia cronológica de interfaces compartidas entre <b>Estudiante</b> y <b>Administrador</b>.</p></div>';
+      html += sharedIds.map((id, idx) => renderBtn(id, true, idx + 1)).join('');
     } else {
-      const exclusiveIds = screens.filter(id => !sharedSet.has(id));
-      const roleTitle = state.role === 'admin' ? 'Exclusivas · Administrador (' + exclusiveIds.length + ')' : 'Exclusivas · Estudiante (' + exclusiveIds.length + ')';
-      html += '<div class="shell-group-title">' + esc(roleTitle) + '</div>';
-      html += exclusiveIds.map(id => renderBtn(id, false)).join('');
-      html += '<div class="shell-group-title shell-group-shared">Apartado · Pantallas en común (' + sharedIds.length + ')</div>';
-      html += sharedIds.map(id => renderBtn(id, true)).join('');
+      const stageHeaders = state.role === 'admin'
+        ? {
+            splash: '1. Arranque y Acceso (1–6)',
+            reservations: '2. Reservaciones y Cobros (7–11)',
+            floors: '3. Inventario, Ajustes e Info (12–15)'
+          }
+        : {
+            splash: '1. Arranque y Acceso (1–9)',
+            home: '2. Inicio y Reservaciones (10–13)',
+            payments: '3. Pagos y Evaluación (14–17)',
+            profile: '4. Cuenta e Información (18–20)'
+          };
+
+      screens.forEach((id, idx) => {
+        if (stageHeaders[id]) {
+          html += '<div class="shell-group-title">' + esc(stageHeaders[id]) + '</div>';
+        }
+        html += renderBtn(id, sharedSet.has(id), idx + 1);
+      });
     }
 
     if (query && matches === 0) {
