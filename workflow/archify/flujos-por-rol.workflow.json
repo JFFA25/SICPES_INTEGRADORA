@@ -1,0 +1,48 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "SICPES · Flujos por rol de usuario",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "estudiante", "label": "Estudiante" },
+    { "id": "admin", "label": "Administrador" },
+    { "id": "sistema", "label": "Sistema SICPES" }
+  ],
+  "phases": [
+    { "id": "ingreso", "label": "Ingreso", "fromCol": 0, "toCol": 1 },
+    { "id": "operacion", "label": "Operación diaria", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "seguimiento", "label": "Pago y seguimiento", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["acceder", "buscar", "solicitar", "pago_estado", "evaluar"],
+  "nodes": [
+    { "id": "auth", "lane": "sistema", "col": 0, "type": "security", "label": "Autenticación", "sublabel": "credenciales", "width": 112 },
+    { "id": "acceder", "lane": "estudiante", "col": 1, "type": "frontend", "label": "Acceso", "sublabel": "estudiante", "width": 112 },
+    { "id": "acceder_admin", "lane": "admin", "col": 1, "type": "frontend", "label": "Acceso", "sublabel": "administrador", "width": 112 },
+    { "id": "buscar", "lane": "estudiante", "col": 2, "type": "frontend", "label": "Buscar pensión", "sublabel": "pensión y filtros", "width": 112 },
+    { "id": "solicitar", "lane": "estudiante", "col": 3, "type": "frontend", "label": "Solicitar", "sublabel": "cuarto elegido", "width": 112 },
+    { "id": "revisar", "lane": "admin", "col": 3, "type": "security", "label": "Revisar", "sublabel": "solicitudes", "tag": "gate humano", "width": 112 },
+    { "id": "pago_estado", "lane": "estudiante", "col": 4, "type": "frontend", "label": "Pago y estado", "sublabel": "comprobante y adeudo", "width": 112 },
+    { "id": "validar", "lane": "admin", "col": 4, "type": "security", "label": "Validar pago", "tag": "gate humano", "width": 112 },
+    { "id": "evaluar", "lane": "estudiante", "col": 5, "type": "frontend", "label": "Evaluación", "sublabel": "calificación 1 a 5", "width": 112 },
+    { "id": "adeudos", "lane": "admin", "col": 5, "type": "database", "label": "Adeudos", "sublabel": "historial y reportes", "width": 112 }
+  ],
+  "edges": [
+    { "from": "auth", "to": "acceder", "label": "valida rol" },
+    { "from": "auth", "to": "acceder_admin", "label": "valida rol" },
+    { "from": "acceder", "to": "buscar" },
+    { "from": "buscar", "to": "solicitar" },
+    { "from": "solicitar", "to": "pago_estado" },
+    { "from": "pago_estado", "to": "evaluar" },
+    { "from": "solicitar", "to": "revisar", "label": "solicitud" },
+    { "from": "pago_estado", "to": "validar", "label": "comprobante" },
+    { "from": "revisar", "to": "validar", "label": "aprobada" },
+    { "from": "validar", "to": "adeudos", "label": "registra" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Ruta del estudiante", "items": ["Busca pensión disponible y solicita una reserva", "Sube su comprobante y consulta su estado de cuenta", "Al final califica el servicio de 1 a 5"] },
+    { "dot": "cyan", "title": "Ruta del administrador", "items": ["Revisa y aprueba las solicitudes recibidas", "Valida los pagos y mantiene el control de adeudos", "Consulta el historial para sus reportes"] },
+    { "dot": "amber", "title": "Puntos compartidos", "items": ["Ambos roles inician con autenticación verificada", "La solicitud del estudiante llega al panel del administrador", "Solo el pago validado habilita contrato y evaluación"] }
+  ]
+}

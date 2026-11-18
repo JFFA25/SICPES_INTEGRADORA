@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flujos por rol de usuario · SICPES</title>
+<meta name="description" content="Flujos por rol de usuario en SICPES: rutas paralelas del Estudiante y del Administrador, desde la autenticación hasta el pago y el seguimiento.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#2F8A5C; --green:#4CAF50; --light:#81C784; --sage:#C7CCB9; --cream:#FDFBF7;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --page-glow1:#1d4d34; --page-glow2:rgba(19,51,34,.85);
+  --page-bg1:#153B28; --page-bg2:#102a1d; --page-bg3:#0E2318;
+  --surface-a:rgba(21,59,40,.62); --surface-b:rgba(14,35,24,.78);
+  --hairline:rgba(199,204,185,.18); --shadow:rgba(4,18,11,.45);
+  --ink:#FDFBF7; --ink-soft:#E4F1E6; --muted:#C7CCB9; --head:#123322;
+  --accent:#81C784; --accent2:#4CAF50; --deep:#2F8A5C; --gate:#D9A441;
+  --card-a:#1B4630; --card-b:#123322;
+  --band:rgba(129,199,132,.06);
+  --plate:rgba(12,30,20,.88); --frame:rgba(199,204,185,.4);
+  --btn-bg:rgba(18,51,34,.62); --focus:#F2C14E; --reject:#F08C8A;
+}
+html[data-theme="light"]{
+  --page-glow1:#DFF0E3; --page-glow2:rgba(230,242,232,.9);
+  --page-bg1:#F2F8F2; --page-bg2:#F7FBF6; --page-bg3:#FDFBF7;
+  --surface-a:rgba(255,255,255,.82); --surface-b:rgba(240,247,241,.9);
+  --hairline:rgba(47,138,92,.22); --shadow:rgba(31,74,52,.16);
+  --ink:#123322; --ink-soft:#25563A; --muted:#4E6355; --head:#123322;
+  --accent:#2F8A5C; --accent2:#2F8A5C; --deep:#1E6B43; --gate:#B26A00;
+  --card-a:#FFFFFF; --card-b:#EAF4EC;
+  --band:rgba(47,138,92,.05);
+  --plate:rgba(253,251,247,.94); --frame:rgba(47,138,92,.4);
+  --btn-bg:rgba(255,255,255,.85); --focus:#B26A00; --reject:#B4322F;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 720px at 16% -12%, var(--page-glow1) 0%, rgba(21,59,40,0) 58%),
+    radial-gradient(1000px 640px at 112% 6%, var(--page-glow2) 0%, rgba(14,35,24,0) 60%),
+    linear-gradient(160deg, var(--page-bg1) 0%, var(--page-bg2) 55%, var(--page-bg3) 100%);
+  background-attachment:fixed;
+  transition:background 320ms var(--ease),color 320ms var(--ease);
+}
+main{max-width:1520px;margin:0 auto;padding:18px clamp(12px,3vw,40px) 60px}
+h1,h2,h3,p{margin:0}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin:4px 0 14px}
+.eyebrow{margin:0;font-size:.74rem;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.tools{display:flex;gap:10px;flex-wrap:wrap}
+.tools button{
+  border:1px solid var(--hairline);border-radius:11px;padding:9px 14px;background:var(--btn-bg);color:var(--ink);
+  font:inherit;font-size:.85rem;cursor:pointer;
+  transition:border-color 160ms var(--ease),transform 160ms var(--ease),background 160ms var(--ease);
+}
+.tools button:hover{border-color:var(--accent);transform:translateY(-1px)}
+button:focus-visible,[tabindex="0"]:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+.masthead{
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:18px 24px;margin-bottom:22px;
+  border:1px solid var(--hairline);border-radius:22px;
+  background:linear-gradient(160deg,var(--surface-a),var(--surface-b));
+  box-shadow:0 18px 50px var(--shadow);
+}
+.masthead .logos{display:flex;align-items:center;gap:16px}
+.masthead .logos img{height:66px;width:auto;filter:drop-shadow(0 6px 16px rgba(4,18,11,.35))}
+.masthead .brand h1{font-size:2.15rem;font-weight:800;letter-spacing:.08em;line-height:1}
+.masthead .brand h1 .accent{color:var(--accent)}
+.masthead .brand .motto{margin-top:6px;color:var(--muted);font-style:italic;font-size:.98rem}
+.masthead .sep{width:1px;align-self:stretch;background:var(--hairline);margin:0 4px}
+.masthead .meta{margin-left:auto;text-align:right;color:var(--muted);font-size:.82rem;line-height:1.5}
+.masthead .meta b{color:var(--ink);font-weight:750;letter-spacing:.02em}
+
+.board{
+  border:1px solid var(--hairline);border-radius:22px;padding:clamp(12px,2vw,22px);margin-bottom:22px;
+  background:linear-gradient(160deg,var(--surface-a),var(--surface-b));
+  box-shadow:0 18px 50px var(--shadow);
+}
+.board h2{font-size:1.2rem;color:var(--ink)}
+.board .sub{margin:4px 0 16px;color:var(--muted);font-size:.9rem}
+.scroll{overflow-x:auto;overflow-y:hidden;border-radius:16px;padding-bottom:6px}
+.stage{position:relative}
+.grid{display:grid;gap:12px 16px;position:relative;z-index:1}
+
+.phase{
+  grid-row:1;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:0 10px;border-radius:12px;border:1.5px dashed var(--frame);
+  background:rgba(76,175,80,.10);color:var(--accent);
+  font-weight:750;letter-spacing:.13em;text-transform:uppercase;font-size:.7rem;
+}
+.phase.emphasis{background:rgba(76,175,80,.2);border-style:solid;border-color:var(--accent2);color:var(--accent)}
+.phase.dashed{background:transparent;color:var(--muted)}
+
+.band{grid-column:1/-1;border-radius:16px;background:var(--band);border:1px solid var(--hairline);z-index:0}
+.lane{grid-column:1;z-index:2;display:flex;align-items:center;gap:10px;padding:0 8px;font-weight:700;color:var(--ink-soft);font-size:.95rem}
+.lane .dot{width:11px;height:11px;border-radius:50%;background:var(--accent2);flex:none}
+.lane.exception{color:var(--reject)}
+.lane.exception .dot{background:var(--reject)}
+
+.cell{position:relative;z-index:2}
+.node{
+  --tc:var(--green);
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:1px;
+  padding:9px 12px;border-radius:14px;border:1.5px solid var(--hairline);border-left-width:5px;border-left-color:var(--tc);
+  background:linear-gradient(160deg,var(--card-a),var(--card-b));color:var(--ink);text-align:left;
+  font:inherit;cursor:pointer;box-shadow:0 8px 18px rgba(4,18,11,.28);
+  transition:transform 180ms var(--ease),box-shadow 180ms var(--ease),border-color 180ms var(--ease),opacity 200ms var(--ease);
+}
+.node .n-label{font-weight:750;font-size:.97rem;line-height:1.16}
+.node .n-sub{font-size:.77rem;color:var(--muted)}
+.node .n-tag{
+  margin-top:3px;align-self:flex-start;font-size:.64rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--deep);background:rgba(129,199,132,.18);border:1px solid rgba(129,199,132,.45);border-radius:99px;padding:1px 8px;
+}
+html[data-theme="light"] .node .n-tag{color:#1F6B45;background:#E4F1E6;border-color:#81C784}
+.node:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(4,18,11,.42)}
+.type-frontend{--tc:var(--green)}
+.type-backend{--tc:var(--forest)}
+.type-database{--tc:#6FAF8F}
+.type-security{--tc:var(--gate)}
+.type-cloud{--tc:#5FB0A6}
+.type-exception{--tc:var(--reject)}
+.node.hl{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(76,175,80,.35),0 14px 28px rgba(4,18,11,.45)}
+.stage.focus .node:not(.hl){opacity:.32}
+
+.links{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+.links .edge{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#ah);transition:opacity 220ms var(--ease),stroke-width 180ms var(--ease)}
+.links .edge.return{stroke:var(--muted);stroke-dasharray:9 7;marker-end:url(#ah-mut)}
+.links .edge.error,.links .edge.security{stroke:var(--reject);marker-end:url(#ah-rej)}
+.links .edge.dim{opacity:.12}
+.links .edge.hl{stroke:var(--accent2);stroke-width:3.8;marker-end:url(#ah-hl)}
+.links .lbl{font-size:11.5px;font-weight:650;fill:var(--ink-soft)}
+.links .lbl-bg{fill:var(--plate);stroke:var(--frame);stroke-width:1}
+.links .lbl-g{transition:opacity 220ms var(--ease)}
+#ah path{fill:var(--accent)} #ah-rej path{fill:var(--reject)} #ah-mut path{fill:var(--muted)} #ah-hl path{fill:var(--accent2)}
+
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.legend .item{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border:1px solid var(--hairline);border-radius:12px;background:var(--btn-bg)}
+.legend .sample{flex:none;width:34px;height:12px;border-radius:3px;margin-top:4px}
+.legend .item b{display:block;color:var(--ink);font-size:.9rem;font-weight:750}
+.legend .item span{color:var(--muted);font-size:.82rem}
+.legend .s-main{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.legend .s-return{background:repeating-linear-gradient(90deg,var(--muted) 0 6px,transparent 6px 11px)}
+.legend .s-reject{background:var(--reject)}
+.legend .s-gate{background:var(--gate)}
+.legend .s-lane{background:var(--accent2)}
+.legend .s-phase{background:rgba(76,175,80,.35);border:1px dashed var(--frame)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.cards .card{padding:16px 18px;border:1px solid var(--hairline);border-radius:16px;background:linear-gradient(160deg,var(--surface-a),var(--surface-b));box-shadow:0 14px 34px var(--shadow)}
+.cards .card h3{display:flex;align-items:center;gap:9px;font-size:1rem;margin-bottom:8px}
+.cards .dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.emerald{background:var(--green)} .dot.amber{background:var(--gate)} .dot.cyan{background:#5FB0A6}
+.cards ul{margin:0;padding-left:18px;color:var(--ink-soft)}
+.cards li{margin:5px 0;font-size:.92rem}
+
+dialog#detail{border:1px solid var(--hairline);border-radius:18px;color:var(--ink);width:min(480px,92vw);padding:0;
+  background:linear-gradient(160deg,var(--card-a),var(--card-b));box-shadow:0 30px 70px rgba(0,0,0,.5)}
+dialog#detail::backdrop{background:rgba(6,18,12,.62)}
+.dg-head{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 12px;border-bottom:1px solid var(--hairline)}
+.dg-kind{font-size:.66rem;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.dg-title{font-size:1.2rem;font-weight:800;margin-top:2px}
+.dg-sub{color:var(--muted);font-size:.9rem}
+.dg-close{margin-left:auto;border:1px solid var(--hairline);border-radius:9px;background:var(--btn-bg);color:var(--ink);width:34px;height:34px;cursor:pointer;font-size:1rem}
+.dg-body{padding:16px 20px 20px}
+.dg-body h4{margin:0 0 8px;font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+.dg-facts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.dg-facts span{font-size:.8rem;padding:4px 11px;border-radius:99px;border:1px solid var(--hairline);background:var(--btn-bg)}
+.dg-list{list-style:none;margin:0;padding:0}
+.dg-list li{display:flex;gap:9px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--hairline);font-size:.9rem}
+.dg-list li:last-child{border-bottom:0}
+.dg-list .arw{color:var(--accent);font-weight:800}
+.dg-list .lb{color:var(--muted);font-size:.82rem}
+
+.hint{margin:12px 4px 0;color:var(--muted);font-size:.83rem}
+footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:30px}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media print{
+  .toolbar,.tools,.hint,footer{display:none}
+  body{background:#fff;color:#000}
+  .masthead,.board,.cards .card{box-shadow:none;border-color:#bbb}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1 class="sr-only">Flujos por rol de usuario en SICPES</h1>
+
+  <div class="toolbar">
+    <p class="eyebrow">SICPES · Workflow · Flujos por rol</p>
+    <div class="tools">
+      <button id="themeBtn" type="button">Tema claro / oscuro</button>
+      <button id="printBtn" type="button">Imprimir / PDF</button>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <div class="logos">
+      <img src="../images/SICPES_Empresa.png" alt="Logo de la empresa SICPES">
+      <img src="../images/SICPES_Producto.png" alt="Logo del producto SICPES">
+    </div>
+    <div class="brand">
+      <h1>SICP<span class="accent">ES</span></h1>
+      <p class="motto">Sistema Integral de Control de Pensión de Estudiantes</p>
+    </div>
+    <div class="meta">
+      <div><b>Flujos por rol de usuario</b></div>
+      <div>Estudiante y Administrador · rutas paralelas</div>
+    </div>
+  </header>
+
+  <section class="board">
+    <h2>Qué hace cada rol y dónde se cruzan</h2>
+    <p class="sub">Dos rutas en paralelo que nacen de la misma autenticación y coinciden en la solicitud, el pago y el seguimiento.</p>
+    <div class="scroll">
+      <div class="stage" id="stage">
+        <svg class="links" id="links" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+            <marker id="ah-hl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+            <marker id="ah-rej" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+            <marker id="ah-mut" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+          </defs>
+          <g id="edgeLayer"></g>
+        </svg>
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+    <p class="hint">Pasa el cursor sobre un paso para resaltar sus relaciones; haz clic para ver el detalle.</p>
+  </section>
+
+  <section class="board" aria-label="Leyenda">
+    <h2>Leyenda</h2>
+    <p class="sub">El mismo lenguaje visual en los tres workflows.</p>
+    <div class="legend">
+      <div class="item"><span class="sample s-lane"></span><div><b>Carril</b><span>Franja por rol: estudiante, administrador o sistema.</span></div></div>
+      <div class="item"><span class="sample s-phase"></span><div><b>Fase</b><span>Bloque de tiempo que agrupa columnas (ingreso, operación, seguimiento).</span></div></div>
+      <div class="item"><span class="sample s-main"></span><div><b>Relación principal</b><span>Flujo normal del proceso.</span></div></div>
+      <div class="item"><span class="sample s-return"></span><div><b>Retorno / corrección</b><span>Vuelve a un paso previo.</span></div></div>
+      <div class="item"><span class="sample s-reject"></span><div><b>Rechazo o control</b><span>Decisión que detiene o desvía el flujo.</span></div></div>
+      <div class="item"><span class="sample s-gate"></span><div><b>Puerta de control</b><span>Nodo que requiere intervención humana (gate).</span></div></div>
+    </div>
+  </section>
+
+  <section class="cards" id="cards" aria-label="Conclusiones"></section>
+
+  <footer>SICPES · Flujos por rol · Diagrama interactivo (tema claro/oscuro, resaltado e inspección por paso)</footer>
+</main>
+
+<dialog id="detail" aria-labelledby="dgTitle">
+  <div class="dg-head">
+    <div>
+      <div class="dg-kind" id="dgKind">Paso</div>
+      <div class="dg-title" id="dgTitle">—</div>
+      <div class="dg-sub" id="dgSub"></div>
+    </div>
+    <button class="dg-close" id="dgClose" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dg-body">
+    <div class="dg-facts" id="dgFacts"></div>
+    <h4>Relaciones</h4>
+    <ul class="dg-list" id="dgList"></ul>
+  </div>
+</dialog>
+
+<script>
+const spec = {
+  eyebrow: "Flujos por rol",
+  lanes: [
+    { id: "estudiante", label: "Estudiante" },
+    { id: "admin", label: "Administrador" },
+    { id: "sistema", label: "Sistema SICPES" }
+  ],
+  phases: [
+    { label: "Ingreso", fromCol: 0, toCol: 1 },
+    { label: "Operación diaria", fromCol: 2, toCol: 3, variant: "emphasis" },
+    { label: "Pago y seguimiento", fromCol: 4, toCol: 5, variant: "dashed" }
+  ],
+  nodes: [
+    { id: "auth", lane: "sistema", col: 0, type: "security", label: "Autenticación", sublabel: "credenciales" },
+    { id: "acceder", lane: "estudiante", col: 1, type: "frontend", label: "Acceso", sublabel: "estudiante" },
+    { id: "acceder_admin", lane: "admin", col: 1, type: "frontend", label: "Acceso", sublabel: "administrador" },
+    { id: "buscar", lane: "estudiante", col: 2, type: "frontend", label: "Buscar pensión", sublabel: "pensión y filtros" },
+    { id: "solicitar", lane: "estudiante", col: 3, type: "frontend", label: "Solicitar", sublabel: "cuarto elegido" },
+    { id: "revisar", lane: "admin", col: 3, type: "security", label: "Revisar", sublabel: "solicitudes", tag: "gate humano" },
+    { id: "pago_estado", lane: "estudiante", col: 4, type: "frontend", label: "Pago y estado", sublabel: "comprobante y adeudo" },
+    { id: "validar", lane: "admin", col: 4, type: "security", label: "Validar pago", tag: "gate humano" },
+    { id: "evaluar", lane: "estudiante", col: 5, type: "frontend", label: "Evaluación", sublabel: "calificación 1 a 5" },
+    { id: "adeudos", lane: "admin", col: 5, type: "database", label: "Adeudos", sublabel: "historial y reportes" }
+  ],
+  edges: [
+    { from: "auth", to: "acceder", label: "valida rol" },
+    { from: "auth", to: "acceder_admin", label: "valida rol" },
+    { from: "acceder", to: "buscar" },
+    { from: "buscar", to: "solicitar" },
+    { from: "solicitar", to: "pago_estado" },
+    { from: "pago_estado", to: "evaluar" },
+    { from: "solicitar", to: "revisar", label: "solicitud" },
+    { from: "pago_estado", to: "validar", label: "comprobante" },
+    { from: "revisar", to: "validar", label: "aprobada" },
+    { from: "validar", to: "adeudos", label: "registra" }
+  ],
+  cards: [
+    { dot: "emerald", title: "Ruta del estudiante", items: ["Busca pensión disponible y solicita una reserva", "Sube su comprobante y consulta su estado de cuenta", "Al final califica el servicio de 1 a 5"] },
+    { dot: "cyan", title: "Ruta del administrador", items: ["Revisa y aprueba las solicitudes recibidas", "Valida los pagos y mantiene el control de adeudos", "Consulta el historial para sus reportes"] },
+    { dot: "amber", title: "Puntos compartidos", items: ["Ambos roles inician con autenticación verificada", "La solicitud del estudiante llega al panel del administrador", "Solo el pago validado habilita contrato y evaluación"] }
+  ]
+};
+
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById("stage");
+const grid = document.getElementById("grid");
+const links = document.getElementById("links");
+const edgeLayer = document.getElementById("edgeLayer");
+const nodeEls = {}, edgeEls = [], lblEls = [];
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])); }
+
+(function build(){
+  const COLS = Math.max.apply(null, spec.nodes.map(n => n.col).concat(spec.phases.map(p => p.toCol))) + 1;
+  const LANES = spec.lanes.length;
+  grid.style.gridTemplateColumns = "180px repeat(" + COLS + ", minmax(158px,1fr))";
+  grid.style.gridTemplateRows = "44px repeat(" + LANES + ", 106px)";
+  stage.style.minWidth = (180 + COLS * 176 + (COLS - 1) * 16) + "px";
+
+  spec.phases.forEach(p => {
+    const el = document.createElement("div");
+    el.className = "phase" + (p.variant ? " " + p.variant : "");
+    el.style.gridColumn = (p.fromCol + 2) + " / span " + (p.toCol - p.fromCol + 1);
+    el.textContent = p.label;
+    grid.appendChild(el);
+  });
+
+  const cellMap = {};
+  spec.lanes.forEach((lane, li) => {
+    const band = document.createElement("div");
+    band.className = "band";
+    band.style.gridRow = (li + 2) + "";
+    grid.appendChild(band);
+
+    const l = document.createElement("div");
+    l.className = "lane" + (lane.variant ? " " + lane.variant : "");
+    l.style.gridRow = (li + 2) + "";
+    l.innerHTML = '<span class="dot"></span><span>' + esc(lane.label) + '</span>';
+    grid.appendChild(l);
+
+    for (let c = 0; c < COLS; c++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.style.gridColumn = (c + 2) + "";
+      cell.style.gridRow = (li + 2) + "";
+      grid.appendChild(cell);
+      cellMap[lane.id + ":" + c] = cell;
+    }
+  });
+
+  spec.nodes.forEach(n => {
+    const cell = cellMap[n.lane + ":" + n.col];
+    if (!cell) return;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "node type-" + (n.type || "frontend");
+    b.dataset.id = n.id;
+    b.setAttribute("aria-label", n.label + (n.sublabel ? ", " + n.sublabel : "") + ". Ver detalle.");
+    b.innerHTML = '<span class="n-label">' + esc(n.label) + '</span>' +
+      (n.sublabel ? '<span class="n-sub">' + esc(n.sublabel) + '</span>' : '') +
+      (n.tag ? '<span class="n-tag">' + esc(n.tag) + '</span>' : '');
+    cell.appendChild(b);
+    nodeEls[n.id] = b;
+  });
+})();
+
+function rel(el, base){
+  const r = el.getBoundingClientRect();
+  return { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height, cx: r.left - base.left + r.width / 2, cy: r.top - base.top + r.height / 2 };
+}
+
+function drawEdges(){
+  const base = stage.getBoundingClientRect();
+  const W = stage.scrollWidth, H = stage.scrollHeight;
+  links.setAttribute("viewBox", "0 0 " + W + " " + H);
+  edgeLayer.innerHTML = "";
+  edgeEls.length = 0; lblEls.length = 0;
+
+  spec.edges.forEach((e, i) => {
+    const a = nodeEls[e.from], b = nodeEls[e.to];
+    if (!a || !b) return;
+    const ra = rel(a, base), rb = rel(b, base);
+    const forward = rb.cx > ra.cx + 4;
+    const sameCol = Math.abs(rb.cx - ra.cx) <= ra.w * 0.5;
+    let d, lp;
+
+    if (forward && !sameCol) {
+      const sx = ra.x + ra.w, sy = ra.cy, tx = rb.x, ty = rb.cy, mx = (sx + tx) / 2;
+      d = "M " + sx + " " + sy + " H " + mx + " V " + ty + " H " + tx;
+      lp = { x: mx, y: (sy + ty) / 2 };
+    } else if (sameCol) {
+      const down = rb.cy > ra.cy;
+      const sx = ra.cx, sy = down ? ra.y + ra.h : ra.y, ty = down ? rb.y : rb.y + rb.h;
+      d = "M " + sx + " " + sy + " V " + ty;
+      lp = { x: sx, y: (sy + ty) / 2 };
+    } else {
+      const sx = ra.cx, sy = ra.y + ra.h, tx = rb.cx, ty = rb.y + rb.h;
+      const my = Math.max(ra.y + ra.h, rb.y + rb.h) + 36;
+      d = "M " + sx + " " + sy + " V " + my + " H " + tx + " V " + ty;
+      lp = { x: (sx + tx) / 2, y: my };
+    }
+
+    const cls = "edge" + (e.role ? " " + e.role : "") + (e.variant ? " " + e.variant : "");
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", d);
+    p.setAttribute("class", cls);
+    edgeLayer.appendChild(p);
+    edgeEls[i] = p;
+
+    if (e.label) {
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "lbl-g");
+      const bg = document.createElementNS(NS, "rect");
+      bg.setAttribute("class", "lbl-bg");
+      bg.setAttribute("rx", "5");
+      const tx = document.createElementNS(NS, "text");
+      tx.setAttribute("class", "lbl");
+      tx.setAttribute("x", lp.x + 6);
+      tx.setAttribute("y", lp.y + 4);
+      tx.textContent = e.label;
+      g.appendChild(bg); g.appendChild(tx);
+      edgeLayer.appendChild(g);
+      const w = tx.getComputedTextLength ? tx.getComputedTextLength() : e.label.length * 6.4;
+      bg.setAttribute("x", lp.x);
+      bg.setAttribute("y", lp.y - 9);
+      bg.setAttribute("width", w + 12);
+      bg.setAttribute("height", 18);
+      lblEls[i] = g;
+    }
+  });
+}
+
+function clearFocus(){
+  stage.classList.remove("focus");
+  Object.keys(nodeEls).forEach(id => nodeEls[id].classList.remove("hl"));
+  spec.edges.forEach((e, i) => {
+    if (edgeEls[i]) edgeEls[i].classList.remove("hl", "dim");
+    if (lblEls[i]) lblEls[i].style.opacity = "";
+  });
+}
+
+function focusNode(id){
+  stage.classList.add("focus");
+  Object.keys(nodeEls).forEach(k => nodeEls[k].classList.toggle("hl", k === id));
+  spec.edges.forEach((e, i) => {
+    const on = e.from === id || e.to === id;
+    if (edgeEls[i]) { edgeEls[i].classList.toggle("hl", on); edgeEls[i].classList.toggle("dim", !on); }
+    if (lblEls[i]) lblEls[i].style.opacity = on ? "1" : ".2";
+  });
+}
+
+const byId = {};
+spec.nodes.forEach(n => byId[n.id] = n);
+const laneLabel = {};
+spec.lanes.forEach(l => laneLabel[l.id] = l.label);
+
+Object.keys(nodeEls).forEach(id => {
+  const el = nodeEls[id];
+  el.addEventListener("mouseenter", () => focusNode(id));
+  el.addEventListener("mouseleave", clearFocus);
+  el.addEventListener("focus", () => focusNode(id));
+  el.addEventListener("blur", clearFocus);
+  el.addEventListener("click", () => openDetail(id));
+});
+
+const dlg = document.getElementById("detail");
+const dgKind = document.getElementById("dgKind");
+const dgTitle = document.getElementById("dgTitle");
+const dgSub = document.getElementById("dgSub");
+const dgFacts = document.getElementById("dgFacts");
+const dgList = document.getElementById("dgList");
+
+const typeName = { frontend: "Interfaz", backend: "Backend", database: "Datos", security: "Control", cloud: "Infraestructura", exception: "Excepción" };
+
+function openDetail(id){
+  const n = byId[id];
+  if (!n) return;
+  dgKind.textContent = typeName[n.type] || "Paso";
+  dgTitle.textContent = n.label;
+  dgSub.textContent = n.sublabel || "";
+  dgFacts.innerHTML = '<span>Carril: ' + esc(laneLabel[n.lane] || n.lane) + '</span>' +
+    (n.tag ? '<span>' + esc(n.tag) + '</span>' : '') +
+    '<span>Columna ' + (n.col + 1) + '</span>';
+  const incoming = spec.edges.filter(e => e.to === id);
+  const outgoing = spec.edges.filter(e => e.from === id);
+  const rows = [];
+  outgoing.forEach(e => rows.push('<li><span class="arw">→</span><div>' + esc(byId[e.to].label) + (e.label ? ' <span class="lb">(' + esc(e.label) + ')</span>' : '') + '</div></li>'));
+  incoming.forEach(e => rows.push('<li><span class="arw">←</span><div>' + esc(byId[e.from].label) + (e.label ? ' <span class="lb">(' + esc(e.label) + ')</span>' : '') + '</div></li>'));
+  dgList.innerHTML = rows.length ? rows.join("") : '<li><span class="lb">Sin relaciones registradas.</span></li>';
+  if (typeof dlg.showModal === "function") dlg.showModal();
+}
+document.getElementById("dgClose").onclick = () => dlg.close();
+dlg.addEventListener("click", ev => { if (ev.target === dlg) dlg.close(); });
+
+const cards = document.getElementById("cards");
+cards.innerHTML = spec.cards.map(c =>
+  '<div class="card"><h3><span class="dot ' + c.dot + '"></span>' + esc(c.title) + '</h3><ul>' +
+  c.items.map(t => '<li>' + esc(t) + '</li>').join("") + '</ul></div>').join("");
+
+const KEY = "sicpes-workflow-theme";
+try { const t = localStorage.getItem(KEY); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+try {
+  const q = new URLSearchParams(location.search).get("theme");
+  if (q === "light" || q === "dark") document.documentElement.dataset.theme = q;
+} catch (e) {}
+document.getElementById("themeBtn").onclick = () => {
+  const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(KEY, next); } catch (e) {}
+};
+document.getElementById("printBtn").onclick = () => window.print();
+
+let rt;
+window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawEdges, 140); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawEdges);
+requestAnimationFrame(() => requestAnimationFrame(drawEdges));
+window.addEventListener("load", drawEdges);
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "SICPES · Flujo operativo del sistema",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "estudiante", "label": "Estudiante" },
+    { "id": "sistema", "label": "Sistema SICPES" },
+    { "id": "admin", "label": "Administrador" },
+    { "id": "excepciones", "label": "Rechazos y esperas", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "acceso", "label": "Acceso", "fromCol": 0, "toCol": 1 },
+    { "id": "reserva", "label": "Búsqueda y reserva", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "cierre", "label": "Pago y cierre", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["registro", "verificacion", "busqueda", "solicitud", "revision", "pago", "validar_pago", "contrato", "evaluacion"],
+  "nodes": [
+    { "id": "registro", "lane": "estudiante", "col": 0, "type": "frontend", "label": "Registro", "sublabel": "datos personales", "width": 166 },
+    { "id": "verificacion", "lane": "sistema", "col": 1, "type": "security", "label": "Verificación", "sublabel": "código por Mailtrap", "width": 166 },
+    { "id": "busqueda", "lane": "estudiante", "col": 2, "type": "frontend", "label": "Buscar pensión", "sublabel": "filtros y mapa", "width": 166 },
+    { "id": "solicitud", "lane": "estudiante", "col": 3, "type": "frontend", "label": "Solicitar", "sublabel": "reserva de cuarto", "width": 166 },
+    { "id": "revision", "lane": "admin", "col": 4, "type": "security", "label": "Revisar", "sublabel": "solicitud", "tag": "gate humano", "width": 166 },
+    { "id": "rechazo", "lane": "excepciones", "col": 4, "type": "security", "label": "Sin cupo", "sublabel": "solicitud rechazada", "width": 166 },
+    { "id": "pago", "lane": "estudiante", "col": 4, "type": "frontend", "label": "Pago y adeudo", "sublabel": "estado de cuenta", "width": 166 },
+    { "id": "validar_pago", "lane": "admin", "col": 5, "type": "security", "label": "Validar pago", "tag": "gate humano", "width": 166 },
+    { "id": "contrato", "lane": "sistema", "col": 5, "type": "backend", "label": "Contrato PDF", "sublabel": "recibo y registro", "width": 166 },
+    { "id": "evaluacion", "lane": "estudiante", "col": 5, "type": "frontend", "label": "Evaluación", "sublabel": "calificación 1–5", "width": 166 }
+  ],
+  "edges": [
+    { "from": "registro", "to": "verificacion" },
+    { "from": "verificacion", "to": "busqueda", "label": "envía código" },
+    { "from": "busqueda", "to": "solicitud", "label": "ruta con Maps + OSRM" },
+    { "from": "solicitud", "to": "revision" },
+    { "from": "solicitud", "to": "rechazo", "label": "sin cupo", "role": "error", "variant": "security" },
+    { "from": "rechazo", "to": "busqueda", "label": "busca otra opción", "role": "return", "variant": "dashed" },
+    { "from": "revision", "to": "pago", "label": "aprobada" },
+    { "from": "pago", "to": "validar_pago", "label": "comprobante" },
+    { "from": "validar_pago", "to": "contrato" },
+    { "from": "contrato", "to": "evaluacion" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Camino principal", "items": ["El estudiante se registra y verifica su correo", "Busca pensión, ve la ruta a pie y solicita una reserva", "El administrador revisa y aprueba antes del pago"] },
+    { "dot": "amber", "title": "Puntos de espera", "items": ["La verificación depende de Mailtrap y la ruta de Maps + OSRM", "La solicitud espera la revisión del administrador", "Si no hay cupo, el estudiante vuelve a buscar"] },
+    { "dot": "cyan", "title": "Resultado", "items": ["Pago validado y contrato en PDF registrados", "Historial de pagos y adeudos consultable", "Evaluación de 1 a 5 para mejorar el servicio"] }
+  ]
+}
