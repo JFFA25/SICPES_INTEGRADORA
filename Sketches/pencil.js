@@ -1,3 +1,8 @@
+/* ============================================================
+   SICPES · Renderizador de Bocetos a Lápiz (Rough.js)
+   Alineado 1:1 en medidas (390 × 844 Móvil / 1440 × 900 PWA) y
+   ubicación exacta de componentes con 4 · Prototipo (#mkCanvas).
+   ============================================================ */
 (function () {
   'use strict';
 
@@ -13,31 +18,10 @@
   const STUDENT = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
   const ADMIN = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
 
-  const NAV_SCREENS = new Set(['home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings']);
-
-  function activeNav(id) {
-    if (id === 'home' || id === 'requestStatus' || id === 'rateConfirm') return 'home';
-    if (id === 'reserve' || id === 'roomDetail') return 'reserve';
-    if (id === 'payments' || id === 'paymentDetail') return 'payments';
-    if (id === 'profile' || id === 'rateService') return 'profile';
-    if (id === 'reservations' || id === 'assignRoom') return 'reservations';
-    if (id === 'pendingPayments' || id === 'validatePayment' || id === 'debts') return 'pendingPayments';
-    if (id === 'floors') return 'floors';
-    if (id === 'settings') return 'settings';
-    return '';
-  }
-
-  function menuFor(role, platform) {
-    return role === 'admin'
-      ? [['reservations', 'Reservaciones'], ['pendingPayments', 'Pagos'], ['floors', 'Pisos'], ['settings', 'Configuración']]
-      : [['home', 'Inicio'], ['reserve', platform === 'pwa' ? 'Reservar' : 'Peticiones'], ['payments', 'Pagos'], ['profile', 'Cuenta']];
-  }
-
   const META = {
     splash: { code: 'C1', title: 'SPLASH SCREEN' }, landing: { code: 'E1', title: 'LANDING' }, studentLogin: { code: 'E2', title: 'INICIAR SESIÓN' },
     forgotPassword: { code: 'E3', title: 'RECUPERAR CONTRASEÑA' }, lockAccount: { code: 'C2', title: 'CUENTA BLOQUEADA' },
     unlockAccount: { code: 'C3', title: 'CÓDIGO DE DESBLOQUEO' }, register: { code: 'E4', title: 'CREAR CUENTA' },
-
     verifyEmail: { code: 'E5', title: 'VERIFICAR CORREO' }, loading: { code: 'E6', title: 'SINCRONIZANDO' },
     home: { code: 'E7', title: 'INICIO' }, reserve: { code: 'E8', title: 'RESERVAR HABITACIÓN' },
     roomDetail: { code: 'E9', title: 'DETALLE DE HABITACIÓN' }, requestStatus: { code: 'E10', title: 'ESTADO DE MI PETICIÓN' },
@@ -50,10 +34,36 @@
     debts: { code: 'A6', title: 'ADEUDOS' }, floors: { code: 'A7', title: 'PISOS' }, settings: { code: 'A8', title: 'CONFIGURACIÓN GLOBAL' }
   };
 
-  const CODE_TO_ID = {};
-  Object.keys(META).forEach(function (id) {
-    CODE_TO_ID[META[id].code] = id;
-  });
+  const SCREEN_NOTES = {
+    splash: 'arranque -> E1 o A1',
+    landing: 'CTA principal -> abre E8',
+    studentLogin: 'valida credenciales -> E6',
+    forgotPassword: 'envía enlace -> vuelve a login',
+    lockAccount: '3 intentos -> desbloqueo C3',
+    unlockAccount: 'valida OTP 6 dígitos -> E6',
+    register: 'registro -> verificar correo E5',
+    verifyEmail: 'confirma OTP -> carga E6',
+    loading: 'sincroniza -> redirige a Home',
+    home: 'resumen residente -> E8 / E11',
+    reserve: 'configura y solicita -> E10',
+    roomDetail: 'solicitar cuarto -> abre E10',
+    requestStatus: 'línea de tiempo de solicitud',
+    payments: 'historial y carga -> abre E12',
+    paymentDetail: 'comprobante digital + voucher',
+    rateService: 'califica 1-5 -> abre E14',
+    rateConfirm: 'confirmación -> vuelve a E7',
+    profile: 'datos y accesos -> C4 / C5',
+    aboutSoftware: 'ficha técnica -> equipo C5',
+    aboutTeam: 'créditos UTXJ -> volver',
+    adminLogin: 'acceso admin -> carga E6',
+    reservations: 'seleccionar solicitud -> A3',
+    assignRoom: 'asignar o rechazar -> A2',
+    pendingPayments: 'revisar pago -> abre A5',
+    validatePayment: 'aprobar o rechazar -> A4',
+    debts: 'cartera vencida -> recordatorio',
+    floors: 'alta/baja de pisos y cuartos',
+    settings: 'tarifas y avisos globales'
+  };
 
   const state = { role: 'student', platform: 'mobile', screen: 'splash' };
   let lastFocus = null;
@@ -66,8 +76,8 @@
 
   function sizeFor(platform) {
     return platform === 'pwa'
-      ? { width: 1200, height: 820, tx: 0 }
-      : { width: 440, height: 880, tx: 0 };
+      ? { width: 1440, height: 900, tx: 0 }
+      : { width: 390, height: 844, tx: 0 };
   }
 
   function roughIn(svg) {
@@ -83,26 +93,25 @@
       });
       return api;
     }
-    // Fallback simple si rough no está cargado
     return {
       rectangle: function (x, y, w, h, opts) {
-        const el = node('rect', { x: x, y: y, width: w, height: h, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8, rx: 3 });
+        const el = node('rect', { x: x, y: y, width: w, height: h, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.6, rx: 3 });
         svg.appendChild(el);
         return el;
       },
       line: function (x1, y1, x2, y2, opts) {
-        const el = node('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        const el = node('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.6 });
         svg.appendChild(el);
         return el;
       },
       circle: function (x, y, d, opts) {
-        const el = node('circle', { cx: x, cy: y, r: d / 2, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        const el = node('circle', { cx: x, cy: y, r: d / 2, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.6 });
         svg.appendChild(el);
         return el;
       },
       polygon: function (points, opts) {
         const pts = (points || []).map(function (pt) { return pt[0] + ',' + pt[1]; }).join(' ');
-        const el = node('polygon', { points: pts, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.8 });
+        const el = node('polygon', { points: pts, fill: (opts && opts.fill) || 'none', stroke: (opts && opts.stroke) || PEN, 'stroke-width': (opts && opts.strokeWidth) || 1.6 });
         svg.appendChild(el);
         return el;
       }
@@ -110,22 +119,29 @@
   }
 
   function rect(r, x, y, w, h, extra) {
-    const options = Object.assign({ stroke: PEN, strokeWidth: 1.8, roughness: 0.9, bowing: 0.7, fill: PAPER, fillStyle: 'solid' }, extra || {});
+    const options = Object.assign({ stroke: PEN, strokeWidth: 1.6, roughness: 0.85, bowing: 0.65, fill: PAPER, fillStyle: 'solid' }, extra || {});
     return r.rectangle(x, y, w, h, options);
   }
 
   function line(r, x1, y1, x2, y2, width) {
-    return r.line(x1, y1, x2, y2, { stroke: PEN, strokeWidth: width || 1.8, roughness: 0.8, bowing: 0.6 });
+    return r.line(x1, y1, x2, y2, { stroke: PEN, strokeWidth: width || 1.5, roughness: 0.75, bowing: 0.55 });
   }
 
   function text(svg, x, y, value, size, options) {
     const opts = options || {};
     const item = node('text', {
-      x: x, y: y, fill: opts.fill || PEN, 'font-family': opts.display ? DISPLAY : HAND,
-      'font-size': size || 15, 'font-weight': opts.weight || 400, 'text-anchor': opts.anchor || 'start'
+      x: x,
+      y: y,
+      fill: opts.fill || PEN,
+      'font-family': opts.display ? DISPLAY : HAND,
+      'font-size': size || 14,
+      'font-weight': opts.weight || 400,
+      'text-anchor': opts.anchor || 'start'
     });
     if (opts.spacing) item.setAttribute('letter-spacing', opts.spacing);
-    if (opts.transform) item.setAttribute('transform', opts.transform);
+    if (opts.halo) {
+      item.setAttribute('style', 'paint-order: stroke; stroke: #FAF7EE; stroke-width: 3.4px; stroke-linejoin: round;');
+    }
     item.textContent = value == null ? '' : String(value);
     svg.appendChild(item);
     return item;
@@ -140,261 +156,34 @@
     return str.length > max ? str.slice(0, Math.max(1, max - 1)) + '…' : str;
   }
 
-  function resolveScreenFromCode(str) {
-    if (!str) return null;
-    const match = String(str).match(/\b([C][1-5]|[EA][1-9]|E1[0-5]|A[1-8])\b/);
-    if (match && CODE_TO_ID[match[1]]) return CODE_TO_ID[match[1]];
-    return null;
-  }
-
-  function wrapInteractive(svg, dest, label, callback) {
-    if (!dest) {
-      callback(svg);
-      return;
-    }
-    const targetMeta = META[dest] || { code: '', title: dest };
-    const titleText = 'Ir a: ' + (targetMeta.code ? targetMeta.code + ' · ' : '') + targetMeta.title;
-    const g = node('g', {
-      'class': 'pencil-interactive clickable',
-      'data-shell-go': dest,
-      'role': 'button',
-      'tabindex': '0',
-      'aria-label': label ? (label + ' (' + titleText + ')') : titleText
-    });
-    const tip = node('title');
-    tip.textContent = titleText;
-    g.appendChild(tip);
-    svg.appendChild(g);
-    callback(g);
-  }
-
-  // 1. Recuadro de etiqueta en la esquina superior izquierda [ E1 · LANDING ]
-  function drawTag(r, svg, p) {
-    const val = p.text || 'PANTALLA';
-    const tagW = Math.max(110, val.length * 7.8 + 22);
-    const tagH = 24;
-    r.rectangle(p.x, p.y, tagW, tagH, { stroke: PEN, strokeWidth: 1.8, fill: '#FFFFFF', fillStyle: 'solid', roughness: 0.6 });
-    text(svg, p.x + 10, p.y + 16, val, 11, { weight: 700, display: false, spacing: '0.08em' });
-  }
-
-  // 2. Marco de teléfono móvil con status bar
-  function drawPhoneFrame(r, svg, p) {
-    // Sombra suave a mano
-    rect(r, p.x + 8, p.y + 10, p.w, p.h, { fill: '#1E1E1E', stroke: '#1E1E1E', roughness: 0.5 });
-    // Carcasa principal
-    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 2.6, roughness: 0.7, fill: '#FFFFFF', fillStyle: 'solid' });
-    // Bocina / Altavoz superior
-    line(r, p.x + p.w / 2 - 32, p.y + 14, p.x + p.w / 2 + 32, p.y + 14, 2);
-    // Cámara frontal (círculo con X pequeño)
-    r.circle(p.x + p.w / 2 - 46, p.y + 14, 7, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
-    line(r, p.x + p.w / 2 - 48, p.y + 12, p.x + p.w / 2 - 44, p.y + 16, 1);
-    line(r, p.x + p.w / 2 - 44, p.y + 12, p.x + p.w / 2 - 48, p.y + 16, 1);
-    // Barra de estado: Hora 9:41 e indicadores simulados
-    text(svg, p.x + 22, p.y + 36, '9:41', 11, { weight: 700 });
-    // Iconos de señal y batería
-    line(r, p.x + p.w - 56, p.y + 33, p.x + p.w - 56, p.y + 26, 1.4);
-    line(r, p.x + p.w - 51, p.y + 33, p.x + p.w - 51, p.y + 23, 1.6);
-    line(r, p.x + p.w - 46, p.y + 33, p.x + p.w - 46, p.y + 20, 1.8);
-    // Batería
-    r.rectangle(p.x + p.w - 38, p.y + 24, 20, 10, { strokeWidth: 1.4, fill: 'none', roughness: 0.6 });
-    r.rectangle(p.x + p.w - 18, p.y + 27, 2.5, 4, { strokeWidth: 1.2, fill: PEN, fillStyle: 'solid' });
-    // Barra inferior home indicator
-    line(r, p.x + p.w / 2 - 45, p.y + p.h - 12, p.x + p.w / 2 + 45, p.y + p.h - 12, 2.8);
-  }
-
-  // 3. Marco de ventana de navegador (PWA) con barra de direcciones
-  function drawBrowserFrame(r, svg, p) {
-    rect(r, p.x + 8, p.y + 10, p.w, p.h, { fill: '#1E1E1E', stroke: '#1E1E1E', roughness: 0.5 });
-    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 2.6, roughness: 0.7, fill: '#FFFFFF', fillStyle: 'solid' });
-    // Barra superior
-    line(r, p.x, p.y + 36, p.x + p.w, p.y + 36, 1.8);
-    // 3 botones de ventana (o o o)
-    [0, 1, 2].forEach(function (i) {
-      r.circle(p.x + 18 + i * 16, p.y + 18, 9, { stroke: PEN, strokeWidth: 1.4, roughness: 0.5, fill: 'none' });
-    });
-    // Barra de direcciones URL
-    const urlBoxW = Math.min(p.w - 180, 560);
-    const urlBoxX = p.x + (p.w - urlBoxW) / 2;
-    rect(r, urlBoxX, p.y + 8, urlBoxW, 20, { strokeWidth: 1.3, roughness: 0.6, fill: '#F8F6F0' });
-    // Icono candado en URL
-    r.circle(urlBoxX + 14, p.y + 17, 6, { stroke: PEN, strokeWidth: 1.2, fill: 'none' });
-    text(svg, urlBoxX + 26, p.y + 22, p.url || 'https://app.sicpes.mx', 10, { fill: '#444' });
-    // Controles de minimizar / cerrar
-    text(svg, p.x + p.w - 48, p.y + 22, '— □ ×', 11, { fill: '#777' });
-  }
-
-  // 4. Imagen: cuadrado / rectángulo cruzado por una gran X
   function drawImage(r, svg, p) {
-    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 1.9, roughness: 0.8 });
-    // Gran X de esquina a esquina
-    line(r, p.x + 4, p.y + 4, p.x + p.w - 4, p.y + p.h - 4, 1.5);
-    line(r, p.x + p.w - 4, p.y + 4, p.x + 4, p.y + p.h - 4, 1.5);
-    if (p.label) {
-      const lblW = Math.min(p.w - 12, p.label.length * 6.5 + 16);
-      r.rectangle(p.x + (p.w - lblW) / 2, p.y + (p.h - 18) / 2, lblW, 18, { fill: '#FFFDF8', stroke: PEN, strokeWidth: 1.2, roughness: 0.6 });
-      centeredText(svg, p.x + p.w / 2, p.y + (p.h) / 2 + 4, fit(p.label, 30), 10, { weight: 700 });
+    rect(r, p.x, p.y, p.w, p.h, { strokeWidth: 1.7, roughness: 0.8, fill: '#F5F0E3' });
+    line(r, p.x + 3, p.y + 3, p.x + p.w - 3, p.y + p.h - 3, 1.3);
+    line(r, p.x + p.w - 3, p.y + 3, p.x + 3, p.y + p.h - 3, 1.3);
+    if (p.label && p.w >= 46 && p.h >= 24) {
+      const lblW = Math.min(p.w - 8, p.label.length * 6.2 + 12);
+      r.rectangle(p.x + (p.w - lblW) / 2, p.y + (p.h - 16) / 2, lblW, 16, { fill: '#FFFDF8', fillStyle: 'solid', stroke: PEN, strokeWidth: 1.1, roughness: 0.5 });
+      centeredText(svg, p.x + p.w / 2, p.y + p.h / 2 + 3.5, fit(p.label, 24), 9.5, { weight: 700 });
     }
   }
 
-  // 5. Avatar / Foto de perfil: círculo cruzado por una X
   function drawAvatar(r, svg, p) {
-    const diam = (p.r || 16) * 2;
-    r.circle(p.x, p.y, diam, { stroke: PEN, strokeWidth: 1.8, roughness: 0.7, fill: '#FFFDF8' });
-    const rad = (p.r || 16) * 0.7;
-    line(r, p.x - rad, p.y - rad, p.x + rad, p.y + rad, 1.5);
-    line(r, p.x + rad, p.y - rad, p.x - rad, p.y + rad, 1.5);
+    const diam = Math.max(10, (p.r || 14) * 2);
+    r.circle(p.x, p.y, diam, { stroke: PEN, strokeWidth: 1.6, roughness: 0.65, fill: '#FFFDF8', fillStyle: 'solid' });
+    const rad = (diam / 2) * 0.65;
+    line(r, p.x - rad, p.y - rad, p.x + rad, p.y + rad, 1.3);
+    line(r, p.x + rad, p.y - rad, p.x - rad, p.y + rad, 1.3);
   }
 
-  // 6. Rayas horizontales de texto
-  function drawTextLines(r, svg, p) {
-    const count = p.count || 2;
-    const spacing = 10;
-    const thick = p.thickness || 1.8;
-    for (let i = 0; i < count; i++) {
-      const len = (p.lengths && p.lengths[i]) || (p.w ? p.w * (1 - i * 0.2) : 160);
-      const y = p.y + i * spacing;
-      line(r, p.x, y, p.x + len, y, thick);
-    }
-  }
-
-  // 7. Barra de búsqueda con lupa
-  function drawSearchBar(r, svg, p) {
-    rect(r, p.x, p.y, p.w, p.h || 34, { strokeWidth: 1.8, roughness: 0.75 });
-    // Lupa (círculo con palito)
-    r.circle(p.x + 16, p.y + (p.h || 34) / 2 - 1, 10, { stroke: PEN, strokeWidth: 1.5, fill: 'none' });
-    line(r, p.x + 20, p.y + (p.h || 34) / 2 + 3, p.x + 25, p.y + (p.h || 34) / 2 + 8, 1.8);
-    text(svg, p.x + 34, p.y + (p.h || 34) / 2 + 5, fit(p.placeholder || 'Buscar...', 40), 12, { fill: '#666' });
-  }
-
-  // 8. Chip / Pastilla
-  function drawChip(r, svg, p) {
-    const chipW = p.w || Math.max(50, (p.text || '').length * 7 + 18);
-    const chipH = p.h || 24;
-    const dest = p.go || null;
-    wrapInteractive(svg, dest, p.text, function (container) {
-      const cR = roughIn(container);
-      cR.rectangle(p.x, p.y, chipW, chipH, { stroke: PEN, strokeWidth: 1.6, roughness: 0.7, fill: p.active ? '#EAE5D4' : '#FFFDF8' });
-      centeredText(container, p.x + chipW / 2, p.y + chipH / 2 + 4, fit(p.text || '', 20), 10.5, { weight: p.active ? 700 : 400 });
-      if (dest) {
-        const hit = node('rect', { x: p.x, y: p.y, width: chipW, height: chipH, fill: 'transparent', 'pointer-events': 'all' });
-        container.appendChild(hit);
-      }
-    });
-  }
-
-  // 9. Campo de formulario
-  function drawField(r, svg, p) {
-    text(svg, p.x, p.y - 6, fit(p.label || '', 50), 10, { spacing: '0.08em', weight: 700 });
-    rect(r, p.x, p.y, p.w, 42, { strokeWidth: 1.8, roughness: 0.75 });
-    line(r, p.x + 12, p.y + 28, p.x + Math.min(p.w - 24, 180), p.y + 28, 1.2);
-    text(svg, p.x + 12, p.y + 22, fit(p.placeholder || 'Escribe aquí…', 32), 12, { fill: '#777' });
-  }
-
-  // 10. Botón redondeado con interactividad
-  function drawButton(r, svg, p) {
-    const dest = p.go || null;
-    wrapInteractive(svg, dest, p.text, function (container) {
-      const cR = roughIn(container);
-      if (p.style === 'hatched') {
-        cR.rectangle(p.x, p.y, p.w, p.h, {
-          stroke: PEN, strokeWidth: 2.2, fill: PEN, fillStyle: 'hachure',
-          fillWeight: 1.5, hachureAngle: -42, hachureGap: 3.2, roughness: 0.85
-        });
-        centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 15, { fill: '#FFFDF8', weight: 700, display: true });
-      } else if (p.style === 'link') {
-        text(container, p.x, p.y + (p.h || 20) / 2 + 5, p.text || '', 12, { weight: 700, fill: PEN });
-        line(cR, p.x, p.y + (p.h || 20) / 2 + 8, p.x + Math.min(p.w, p.text.length * 7), p.y + (p.h || 20) / 2 + 8, 1.2);
-      } else {
-        rect(cR, p.x, p.y, p.w, p.h, { strokeWidth: 2.0, roughness: 0.8 });
-        centeredText(container, p.x + p.w / 2, p.y + p.h / 2 + 5, p.text || '', 14, { weight: 400, display: true });
-      }
-      if (dest) {
-        const hit = node('rect', { x: p.x, y: p.y, width: p.w, height: p.h || 24, fill: 'transparent', 'pointer-events': 'all' });
-        container.appendChild(hit);
-      }
-    });
-  }
-
-  // 11. Barra inferior de navegación (móvil) con iconos circulares con X
-  function drawBottomNav(r, svg, p, role) {
-    rect(r, p.x, p.y, p.w, 48, { strokeWidth: 2.0, roughness: 0.7, fill: '#FFFDF8' });
-    const itemW = p.w / Math.max(1, (p.items || []).length);
-    const menu = menuFor(role, 'mobile');
-
-    (p.items || []).forEach(function (item, index) {
-      const dest = (menu[index] && menu[index][0]) || null;
-      const cx = p.x + itemW * index + itemW / 2;
-      wrapInteractive(svg, dest, item, function (container) {
-        const cR = roughIn(container);
-        if (index === p.active) {
-          cR.rectangle(p.x + itemW * index + 4, p.y + 3, itemW - 8, 42, {
-            stroke: 'none', fill: '#EAE5D4', fillStyle: 'solid', roughness: 0.7
-          });
-        }
-        // Icono circular con X
-        cR.circle(cx, p.y + 16, 15, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
-        line(cR, cx - 4, p.y + 12, cx + 4, p.y + 20, 1.2);
-        line(cR, cx + 4, p.y + 12, cx - 4, p.y + 20, 1.2);
-        // Texto
-        centeredText(container, cx, p.y + 38, fit(item, 12), 10, { weight: index === p.active ? 700 : 400 });
-        const hit = node('rect', { x: p.x + itemW * index, y: p.y, width: itemW, height: 48, fill: 'transparent', 'pointer-events': 'all' });
-        container.appendChild(hit);
-      });
-    });
-  }
-
-  // 12. Barra lateral de navegación (PWA)
-  function drawSideNav(r, svg, p, role) {
-    rect(r, p.x, p.y, p.w, p.h || 650, { strokeWidth: 2.0, roughness: 0.75, fill: '#FFFDF8' });
-    line(r, p.x + 10, p.y + 44, p.x + p.w - 10, p.y + 44, 1.4);
-    text(svg, p.x + 14, p.y + 30, 'SICPES MENÚ', 12, { spacing: '0.12em', weight: 700 });
-
-    const menu = menuFor(role, 'pwa');
-    const activeIndex = Number.isInteger(p.active) ? p.active : 0;
-
-    (p.items || []).forEach(function (item, index) {
-      const dest = (menu[index] && menu[index][0]) || null;
-      wrapInteractive(svg, dest, item, function (container) {
-        const cR = roughIn(container);
-        const iy = p.y + 55 + index * 46;
-        if (index === activeIndex) {
-          cR.rectangle(p.x + 8, iy, p.w - 16, 36, {
-            stroke: 'none', fill: '#EAE5D4', fillStyle: 'solid', roughness: 0.7
-          });
-        }
-        // Icono circular con X
-        cR.circle(p.x + 24, iy + 18, 16, { stroke: PEN, strokeWidth: 1.4, roughness: 0.6 });
-        line(cR, p.x + 20, iy + 14, p.x + 28, iy + 22, 1.2);
-        line(cR, p.x + 28, iy + 14, p.x + 20, iy + 22, 1.2);
-        // Texto
-        text(container, p.x + 44, iy + 22, fit(item, 18), 13.5, { weight: index === activeIndex ? 700 : 400 });
-        const hit = node('rect', { x: p.x + 8, y: iy, width: p.w - 16, height: 36, fill: 'transparent', 'pointer-events': 'all' });
-        container.appendChild(hit);
-      });
-    });
-  }
-
-  // 13. Barra superior de PWA
-  function drawTopNav(r, svg, p) {
-    const items = p.items || [];
-    const count = Math.max(1, items.length);
-    const itemW = p.w / count;
-    items.forEach(function (item, index) {
-      centeredText(svg, p.x + itemW * index + itemW / 2, p.y + 18, fit(item, 14), 12, { weight: 400 });
-    });
-  }
-
-  // 14. Anotación manuscrita con flecha curva
   function drawNote(r, svg, p, width) {
     const val = p.text || '';
-    const dest = p.go || resolveScreenFromCode(val);
-    const noteW = Math.min(220, Math.max(85, val.length * 6.5 + 24));
-    const noteH = 28;
-    let nx = p.x;
-    let ny = p.y;
-    if (nx + noteW > width - 10) nx = Math.max(10, width - noteW - 10);
-    const targetX = p.target && Number(p.target.x) || nx - 20;
-    const targetY = p.target && Number(p.target.y) || ny + 10;
+    const dest = p.go || null;
+    const noteW = Math.min(200, Math.max(88, val.length * 6.2 + 20));
+    const noteH = 24;
+    let nx = Math.max(8, Math.min(width - noteW - 8, p.x));
+    let ny = Math.max(8, p.y);
+    const targetX = p.target && Number(p.target.x) || (nx - 16);
+    const targetY = p.target && Number(p.target.y) || (ny + 10);
 
     const markerId = 'arrow-' + Math.random().toString(36).slice(2, 8);
     const rootSvg = svg.ownerSVGElement || svg;
@@ -403,137 +192,437 @@
       defs = node('defs');
       rootSvg.insertBefore(defs, rootSvg.firstChild);
     }
-    const marker = node('marker', { id: markerId, markerWidth: 8, markerHeight: 6, refX: 7, refY: 3, orient: 'auto' });
-    marker.appendChild(node('path', { d: 'M0,0 L0,6 L8,3 z', fill: PEN }));
+    const marker = node('marker', { id: markerId, markerWidth: 7, markerHeight: 6, refX: 6, refY: 3, orient: 'auto' });
+    marker.appendChild(node('path', { d: 'M0,0 L0,6 L7,3 z', fill: PEN }));
     defs.appendChild(marker);
 
     const curve = node('path', {
-      d: 'M ' + (nx + 10) + ' ' + (ny + 14) + ' Q ' + ((nx + targetX) / 2) + ' ' + (targetY + 20) + ' ' + targetX + ' ' + targetY,
-      fill: 'none', stroke: PEN, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-dasharray': '3 2', 'marker-end': 'url(#' + markerId + ')'
+      d: 'M ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ' Q ' + ((nx + targetX) / 2) + ' ' + (Math.min(ny, targetY) - 12) + ' ' + targetX + ' ' + targetY,
+      fill: 'none', stroke: PEN, 'stroke-width': 1.4, 'stroke-linecap': 'round', 'stroke-dasharray': '3 2', 'marker-end': 'url(#' + markerId + ')'
     });
     svg.appendChild(curve);
 
-    wrapInteractive(svg, dest, val, function (container) {
-      const cR = roughIn(container);
-      const noteRect = cR.rectangle(nx, ny, noteW, noteH, {
-        stroke: dest ? '#2F8A5C' : '#B8A856', strokeWidth: 1.4, fill: NOTE, fillStyle: 'solid', roughness: 1.3
-      });
-      const noteText = text(container, nx + 8, ny + 18, fit(val, 32), 12, { fill: STICKY_TEXT });
-      noteRect.setAttribute('transform', 'rotate(-1.5 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
-      noteText.setAttribute('transform', 'rotate(-1.5 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
-      if (dest) {
-        const hit = node('rect', { x: nx, y: ny, width: noteW, height: noteH, fill: 'transparent', 'pointer-events': 'all' });
-        container.appendChild(hit);
-      }
+    const g = dest
+      ? node('g', { 'class': 'pencil-interactive clickable', 'data-shell-go': dest, 'role': 'button', 'tabindex': '0' })
+      : svg;
+    if (dest) svg.appendChild(g);
+    const cR = roughIn(g);
+    const noteRect = cR.rectangle(nx, ny, noteW, noteH, {
+      stroke: dest ? '#2F8A5C' : '#B8A856', strokeWidth: 1.3, fill: NOTE, fillStyle: 'solid', roughness: 1.1
     });
+    const noteText = text(g, nx + 8, ny + 16, fit(val, 30), 11, { fill: STICKY_TEXT });
+    noteRect.setAttribute('transform', 'rotate(-1.2 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
+    noteText.setAttribute('transform', 'rotate(-1.2 ' + (nx + noteW / 2) + ' ' + (ny + noteH / 2) + ')');
   }
 
-  // 15. Tabs
-  function drawTabs(r, svg, p) {
-    const count = Math.max(1, (p.items || []).length);
-    const width = (p.w || 320) / count;
-    rect(r, p.x, p.y, p.w || 320, 32, { strokeWidth: 1.6, roughness: 0.7 });
-    (p.items || []).forEach(function (item, index) {
-      const x = p.x + index * width;
-      if (index > 0) line(r, x, p.y + 2, x, p.y + 30, 1.2);
-      if (index === p.active) {
-        r.rectangle(x + 4, p.y + 22, width - 8, 4, { stroke: PEN, strokeWidth: 2.8, roughness: 0.6, fill: PEN, fillStyle: 'solid' });
-      }
-      centeredText(svg, x + width / 2, p.y + 19, fit(item, 14), 11, { weight: index === p.active ? 700 : 400 });
-    });
+  function resolveActionDest(action, role) {
+    if (!action) return null;
+    const isAdmin = role === 'admin';
+    if (action === 'student-login' || action === 'admin-login' || action === 'verify-email' || action === 'unlock-code') return 'loading';
+    if (action === 'register') return 'verifyEmail';
+    if (action === 'forgot-send') return isAdmin ? 'adminLogin' : 'studentLogin';
+    if (action === 'reserve' || action === 'room-request') return 'requestStatus';
+    if (action === 'send-rating') return 'rateConfirm';
+    if (action === 'assign-room' || action === 'reject-room') return 'reservations';
+    if (action === 'approve-payment' || action === 'reject-payment') return 'pendingPayments';
+    if (action === 'logout') return isAdmin ? 'adminLogin' : 'studentLogin';
+    return null;
   }
 
-  // 16. Tabla
-  function drawTable(r, svg, p) {
-    const headers = p.headers || [];
-    const rows = p.rows || [];
-    const col = p.w / Math.max(1, headers.length);
-    const rowH = 34;
-    const h = 30 + rows.length * rowH;
-    rect(r, p.x, p.y, p.w, h, { strokeWidth: 1.8, roughness: 0.75 });
-    r.rectangle(p.x + 2, p.y + 2, p.w - 4, 28, { stroke: 'none', fill: '#ECE7DA', fillStyle: 'solid', roughness: 0.6 });
-
-    headers.forEach(function (header, index) {
-      text(svg, p.x + 8 + index * col, p.y + 20, fit(header, Math.max(5, Math.floor(col / 7))), 11, { weight: 700 });
-    });
-    rows.forEach(function (row, rowIndex) {
-      const y = p.y + 30 + rowIndex * rowH;
-      if (rowIndex > 0) line(r, p.x + 2, y, p.x + p.w - 2, y, 1.1);
-      row.forEach(function (cell, cellIndex) {
-        text(svg, p.x + 8 + cellIndex * col, y + 22, fit(cell, Math.max(5, Math.floor(col / 6.5))), 11, { weight: cellIndex === 0 ? 700 : 400 });
-      });
-    });
+  function labelForImageEl(el) {
+    if (el.classList.contains('mk-qr')) return 'QR';
+    if (el.classList.contains('mk-proof')) return 'VOUCHER SPEI';
+    if (el.classList.contains('mk-dropzone')) return 'ARCHIVO';
+    if (el.classList.contains('mk-profile-cover')) return 'PORTADA';
+    if (el.classList.contains('mk-room-thumb') || el.classList.contains('mk-room-option-thumb')) return 'CUARTO';
+    return 'FOTO';
   }
 
-  // 17. 5 Estrellas a lápiz
-  function drawStars(r, svg, p) {
-    for (let index = 0; index < 5; index += 1) {
-      const cx = p.x + 18 + index * 36;
-      const cy = p.y + 12;
-      const points = [];
-      for (let point = 0; point < 10; point += 1) {
-        const radius = point % 2 === 0 ? 15 : 6.5;
-        const angle = -Math.PI / 2 + point * Math.PI / 5;
-        points.push([cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius]);
-      }
-      r.polygon(points, { stroke: PEN, strokeWidth: 1.6, roughness: 0.8, fill: '#FFFDF8' });
+  /* ---------- Trazador 1:1 desde el DOM en vivo de 4 · Prototipo (#mkCanvas) ---------- */
+
+  function tracePrototypeToPencil(r, group, mkCanvas, W, H, screenId, platform, currentRole) {
+    const cRect = mkCanvas.getBoundingClientRect();
+    if (cRect.width < 10 || cRect.height < 10) return false;
+    const scaleX = cRect.width / W;
+    const scaleY = cRect.height / H;
+
+    function rel(el) {
+      if (!el || el.hidden) return null;
+      const cs = window.getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return null;
+      const br = el.getBoundingClientRect();
+      if (br.width < 1 || br.height < 1) return null;
+      const x = (br.left - cRect.left) / scaleX;
+      const y = (br.top - cRect.top) / scaleY;
+      const w = br.width / scaleX;
+      const h = br.height / scaleY;
+      return { el: el, cs: cs, x: x, y: y, w: w, h: h, cx: x + w / 2, cy: y + h / 2, right: x + w, bottom: y + h };
     }
-  }
 
-  // Despachador principal de partes
-  function drawPart(r, svg, p, width, mobileDevice, screenId, role) {
-    if (p.type === 'tag') return drawTag(r, svg, p);
-    if (p.type === 'phoneFrame') return drawPhoneFrame(r, svg, p);
-    if (p.type === 'browserFrame') return drawBrowserFrame(r, svg, p);
-    if (p.type === 'header') {
-      rect(r, p.x, p.y, p.w, p.h || 30, { fill: '#F5F1E5', strokeWidth: 1.8 });
-      text(svg, p.x + 12, p.y + (p.h || 30) - 9, fit(p.label || 'SICPES', 30), 14, { weight: 700, display: true });
-      line(r, p.x + 12, p.y + (p.h || 30) - 4, p.x + Math.min(p.w - 12, 110), p.y + (p.h || 30) - 4, 1.2);
-      return;
+    function inViewport(b) {
+      return b && b.bottom > 1 && b.y < H - 1 && b.right > 1 && b.x < W - 1;
     }
-    if (p.type === 'title') return text(svg, p.x, p.y, fit(p.text || '', 42), p.size || 24, { weight: 700, display: true });
-    if (p.type === 'subtitle') return text(svg, p.x, p.y, fit(p.text || '', 60), p.size || 12, { weight: 400 });
-    if (p.type === 'sectionTitle') {
-      text(svg, p.x, p.y, fit(p.text || '', 45), 14, { weight: 700 });
-      line(r, p.x, p.y + 4, p.x + Math.min(180, (p.text || '').length * 7), p.y + 4, 1.2);
-      return;
+
+    // 1. Marco exterior exacto (390 × 844 en Móvil, 1440 × 900 en PWA)
+    r.rectangle(1.5, 1.5, W - 3, H - 3, { stroke: PEN, strokeWidth: 2.3, roughness: 0.75, fill: 'none' });
+
+    // 2. Barras de estructura / Chrome (statusbar, browser bar, appbar, topbar, sidebar, auth-art, bottomnav, footer)
+    const statusEl = mkCanvas.querySelector('.mk-statusbar');
+    if (statusEl) {
+      const b = rel(statusEl);
+      if (inViewport(b)) {
+        line(r, b.x, b.bottom, b.right, b.bottom, 1.3);
+        line(r, b.right - 46, b.cy + 4, b.right - 46, b.cy - 1, 1.3);
+        line(r, b.right - 42, b.cy + 4, b.right - 42, b.cy - 3, 1.4);
+        line(r, b.right - 38, b.cy + 4, b.right - 38, b.cy - 5, 1.5);
+        r.rectangle(b.right - 31, b.cy - 4, 15, 8, { stroke: PEN, strokeWidth: 1.2, fill: 'none', roughness: 0.5 });
+      }
     }
-    if (p.type === 'image') return drawImage(r, svg, p);
-    if (p.type === 'avatar') return drawAvatar(r, svg, p);
-    if (p.type === 'textLines') return drawTextLines(r, svg, p);
-    if (p.type === 'searchBar') return drawSearchBar(r, svg, p);
-    if (p.type === 'chip') return drawChip(r, svg, p);
-    if (p.type === 'field') return drawField(r, svg, p);
-    if (p.type === 'button') return drawButton(r, svg, p);
-    if (p.type === 'card') {
-      const dest = p.go || null;
-      wrapInteractive(svg, dest, 'Tarjeta', function (container) {
-        const cR = roughIn(container);
-        rect(cR, p.x, p.y, p.w, p.h, { strokeWidth: 1.8, roughness: 0.75 });
-        if (dest) {
-          const hit = node('rect', { x: p.x, y: p.y, width: p.w, height: p.h, fill: 'transparent', 'pointer-events': 'all' });
-          container.appendChild(hit);
+
+    const browserEl = mkCanvas.querySelector('.mk-browser');
+    if (browserEl) {
+      const b = rel(browserEl);
+      if (inViewport(b)) {
+        rect(r, b.x, b.y, b.w, b.h, { fill: '#F3EFE2', strokeWidth: 1.5 });
+        mkCanvas.querySelectorAll('.mk-browser-dots i').forEach(dot => {
+          const db = rel(dot);
+          if (db) r.circle(db.cx, db.cy, Math.max(7, db.w), { stroke: PEN, strokeWidth: 1.3, fill: '#FFFDF8', fillStyle: 'solid' });
+        });
+        const urlEl = mkCanvas.querySelector('.mk-browser-url');
+        const ub = urlEl ? rel(urlEl) : null;
+        if (ub) {
+          rect(r, ub.x, ub.y, ub.w, ub.h, { fill: '#FFFDF8', strokeWidth: 1.2 });
         }
+      }
+    }
+
+    mkCanvas.querySelectorAll('.mk-appbar, .mk-pwa-top, .mk-public-top, .mk-auth-m-top, .mk-auth-m-foot, .mk-landing-footer').forEach(el => {
+      const b = rel(el);
+      if (inViewport(b)) {
+        rect(r, b.x, b.y, b.w, b.h, { fill: '#F5F0E3', strokeWidth: 1.5 });
+      }
+    });
+
+    const sideEl = mkCanvas.querySelector('.mk-pwa-side');
+    if (sideEl) {
+      const b = rel(sideEl);
+      if (inViewport(b)) {
+        rect(r, b.x, b.y, b.w, b.h, { fill: '#F6F2E6', strokeWidth: 1.6 });
+      }
+    }
+
+    const authArtEl = mkCanvas.querySelector('.mk-auth-art');
+    if (authArtEl) {
+      const b = rel(authArtEl);
+      if (inViewport(b)) {
+        r.rectangle(b.x, b.y, b.w, b.h, {
+          stroke: PEN, strokeWidth: 1.6, fill: 'rgba(23,23,23,0.06)',
+          fillStyle: 'hachure', fillWeight: 0.9, hachureAngle: -38, hachureGap: 11, roughness: 0.8
+        });
+      }
+    }
+
+    const bottomNavEl = mkCanvas.querySelector('.mk-bottomnav');
+    if (bottomNavEl) {
+      const b = rel(bottomNavEl);
+      if (inViewport(b)) {
+        rect(r, b.x, b.y, b.w, b.h, { fill: '#F5F0E3', strokeWidth: 1.6 });
+      }
+    }
+
+    // 3. Tarjetas y contenedores ordenados de mayor a menor área
+    const cardSelector = [
+      '.mk-card', '.mk-stat', '.mk-feature', '.mk-kpi', '.mk-fact',
+      '.mk-auth-m-card', '.mk-auth-p-card', '.mk-loading-card', '.mk-floating-card',
+      '.mk-status-hero', '.mk-list-row', '.mk-room-option',
+      '.mk-notice', '.mk-soft-note', '.mk-security-note',
+      '.mk-amount-block', '.mk-receipt-amount', '.mk-side-help',
+      '.mk-service-grid span', '.mk-service-item', '.mk-quote'
+    ].join(',');
+
+    const cardBoxes = Array.from(mkCanvas.querySelectorAll(cardSelector))
+      .map(el => rel(el))
+      .filter(b => inViewport(b) && b.w >= 18 && b.h >= 16)
+      .sort((a, b) => (b.w * b.h) - (a.w * a.h));
+
+    cardBoxes.forEach(b => {
+      const isTinted = b.el.matches('.mk-stat, .mk-feature, .mk-kpi, .mk-fact, .mk-soft-note, .mk-security-note, .mk-notice, .mk-status-hero, .mk-amount-block, .mk-receipt-amount, .mk-side-help, .mk-service-grid span, .mk-service-item, .mk-quote');
+      const isSelected = b.el.classList.contains('selected');
+      if (isSelected) {
+        r.rectangle(b.x, b.y, b.w, b.h, {
+          stroke: PEN, strokeWidth: 1.9, fill: 'rgba(23,23,23,0.08)',
+          fillStyle: 'hachure', fillWeight: 1.0, hachureGap: 6, roughness: 0.8
+        });
+      } else {
+        rect(r, b.x, b.y, b.w, b.h, {
+          fill: isTinted ? '#F5F0E3' : '#FFFDF8',
+          strokeWidth: b.el.matches('.mk-card, .mk-auth-m-card, .mk-auth-p-card, .mk-loading-card, .mk-floating-card') ? 1.65 : 1.3,
+          roughness: 0.8
+        });
+      }
+    });
+
+    // 4. Imágenes, fotos, miniaturas, portada, dropzones y QR (cajas con cruz X)
+    const imgSelector = '.mk-photo-wrap, .mk-room-thumb, .mk-gallery-main, .mk-gallery-thumbs button, .mk-auth-art-visual, .mk-proof, .mk-room-option-thumb, .mk-profile-cover, .mk-dropzone, .mk-qr';
+    mkCanvas.querySelectorAll(imgSelector).forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b) || b.w < 14 || b.h < 14) return;
+      if (el.classList.contains('mk-dropzone')) {
+        r.rectangle(b.x, b.y, b.w, b.h, { stroke: PEN, strokeWidth: 1.4, fill: '#F7F3E8', fillStyle: 'solid', roughness: 0.85 });
+        return;
+      }
+      const showLabel = b.w >= 54 && b.h >= 34 && !el.closest('.mk-gallery-thumbs');
+      drawImage(r, group, {
+        x: b.x,
+        y: b.y,
+        w: b.w,
+        h: b.h,
+        label: showLabel ? labelForImageEl(el) : ''
       });
-      return;
+    });
+
+    // 5. Logos, avatares y círculos con X
+    mkCanvas.querySelectorAll('.mk-logo-img').forEach(el => {
+      const b = rel(el);
+      if (inViewport(b)) {
+        drawImage(r, group, { x: b.x, y: b.y, w: b.w, h: b.h, label: '' });
+      }
+    });
+
+    const avatarSelector = '.mk-avatar, .mk-status-hero-icon, .mk-stat-icon, .mk-list-avatar, .mk-timeline-dot';
+    mkCanvas.querySelectorAll(avatarSelector).forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      const rad = Math.max(5, Math.min(b.w, b.h) / 2);
+      drawAvatar(r, group, { x: b.cx, y: b.cy, r: rad });
+    });
+
+    // 6. Barras de progreso, ocupación y líneas divisorias
+    mkCanvas.querySelectorAll('.mk-progress, .mk-occupancy').forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      rect(r, b.x, b.y, b.w, b.h, { fill: '#F2EDE0', strokeWidth: 1.3 });
+      const fillEl = el.firstElementChild;
+      const fb = fillEl ? rel(fillEl) : null;
+      const fw = (fb && fb.w > 4) ? fb.w : Math.round(b.w * 0.65);
+      r.rectangle(b.x, b.y, Math.min(b.w, fw), b.h, {
+        stroke: PEN, strokeWidth: 1.3, fill: PEN,
+        fillStyle: 'hachure', fillWeight: 1.3, hachureGap: 3.5, roughness: 0.6
+      });
+    });
+
+    mkCanvas.querySelectorAll('.mk-divider, .mk-receipt-lines span, .mk-price-lines span, .mk-info-rows > div, .mk-switch-list label').forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      if (el.classList.contains('mk-divider')) {
+        line(r, b.x, b.cy, b.cx - 48, b.cy, 1.1);
+        line(r, b.cx + 48, b.cy, b.right, b.cy, 1.1);
+      } else {
+        line(r, b.x, b.bottom, b.right, b.bottom, 0.9);
+      }
+    });
+
+    // 7. Botones, opciones, pestañas de filtro, celdas de calificación, chips de estado e ítems de navegación
+    const btnSelector = [
+      '.mk-btn', '.mk-choice', '.mk-filter-tab', '.mk-rating-cell',
+      '.mk-side-item', '.mk-pwa-link', '.mk-navitem',
+      '.mk-social-row button', '.mk-iconbtn', '.mk-menu-btn',
+      '.mk-stepper span', '.mk-status', '.mk-room-tags span',
+      '.mk-loading-steps span', '.mk-profile-links button'
+    ].join(',');
+
+    mkCanvas.querySelectorAll(btnSelector).forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b) || b.w < 12 || b.h < 12) return;
+
+      if (el.classList.contains('mk-navitem')) {
+        if (el.classList.contains('active')) {
+          r.rectangle(b.x + 6, b.y + 4, b.w - 12, b.h - 8, {
+            stroke: PEN, strokeWidth: 1.3, fill: 'rgba(23,23,23,0.09)',
+            fillStyle: 'hachure', hachureGap: 5, roughness: 0.7
+          });
+        }
+        drawAvatar(r, group, { x: b.cx, y: b.y + 15, r: 7 });
+        return;
+      }
+
+      const isPrimary = el.classList.contains('mk-primary');
+      const isActive = el.classList.contains('active') || el.classList.contains('selected');
+
+      if (isPrimary) {
+        r.rectangle(b.x, b.y, b.w, b.h, {
+          stroke: PEN, strokeWidth: 2.0, fill: PEN,
+          fillStyle: 'hachure', fillWeight: 1.35, hachureAngle: -42, hachureGap: 3.8, roughness: 0.85
+        });
+      } else if (isActive) {
+        r.rectangle(b.x, b.y, b.w, b.h, {
+          stroke: PEN, strokeWidth: 1.8, fill: '#575248',
+          fillStyle: 'hachure', fillWeight: 1.1, hachureAngle: -42, hachureGap: 4.8, roughness: 0.8
+        });
+      } else {
+        rect(r, b.x, b.y, b.w, b.h, {
+          fill: el.matches('.mk-status, .mk-room-tags span, .mk-stepper span, .mk-loading-steps span') ? '#F5F0E3' : '#FFFDF8',
+          strokeWidth: 1.35,
+          roughness: 0.75
+        });
+      }
+    });
+
+    // 8. Campos de formulario (inputs, selects, textareas, OTP y checkboxes/switches)
+    mkCanvas.querySelectorAll('.mk-field input, .mk-field select, .mk-field textarea, .mk-code-row input').forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      rect(r, b.x, b.y, b.w, b.h, { fill: '#FFFFFF', strokeWidth: 1.65, roughness: 0.75 });
+      const rawVal = (
+        el.value ||
+        el.getAttribute('placeholder') ||
+        (el.tagName === 'SELECT' && el.options && el.options[0] ? el.options[0].text : '') ||
+        ''
+      ).trim();
+
+      if (el.closest('.mk-code-row')) {
+        centeredText(group, b.cx, b.cy + 6, rawVal || '•', 18, { weight: 700, display: true });
+      } else {
+        if (rawVal) {
+          const maxChars = Math.max(6, Math.floor((b.w - 24) / 6.4));
+          const ty = el.tagName === 'TEXTAREA' ? (b.y + 18) : (b.cy + 4.5);
+          text(group, b.x + 11, ty, fit(rawVal, maxChars), 12, { fill: el.value ? PEN : '#6B6559' });
+        }
+        line(r, b.x + 10, b.bottom - 6, b.x + Math.min(b.w - 18, 140), b.bottom - 6, 0.9);
+        if (el.tagName === 'SELECT') {
+          line(r, b.right - 18, b.cy - 2, b.right - 14, b.cy + 3, 1.3);
+          line(r, b.right - 14, b.cy + 3, b.right - 10, b.cy - 2, 1.3);
+        }
+      }
+    });
+
+    mkCanvas.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      rect(r, b.x, b.y, Math.max(13, b.w), Math.max(13, b.h), {
+        fill: el.checked ? '#E8E2D2' : '#FFFFFF',
+        strokeWidth: 1.4
+      });
+      if (el.checked) {
+        line(r, b.x + 3, b.cy, b.cx, b.bottom - 3, 1.4);
+        line(r, b.cx, b.bottom - 3, b.right - 2, b.y + 3, 1.4);
+      }
+    });
+
+    // 9. Todos los textos visibles posicionados en sus coordenadas reales línea por línea
+    const range = document.createRange();
+    const walker = document.createTreeWalker(mkCanvas, NodeFilter.SHOW_TEXT, null);
+    let textNode;
+    while ((textNode = walker.nextNode())) {
+      const fullStr = (textNode.nodeValue || '').replace(/\s+/g, ' ').trim();
+      if (!fullStr) continue;
+      const parent = textNode.parentElement;
+      if (!parent) continue;
+      const pTag = parent.tagName.toLowerCase();
+      if (pTag === 'script' || pTag === 'style' || pTag === 'svg' || pTag === 'option' || pTag === 'textarea' || pTag === 'input') continue;
+      if (parent.closest('svg, .mk-qr')) continue;
+
+      const cs = window.getComputedStyle(parent);
+      if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+
+      range.selectNodeContents(textNode);
+      const clientRects = Array.from(range.getClientRects()).filter(cr => cr.width >= 2 && cr.height >= 4);
+      if (!clientRects.length) continue;
+
+      const fs = parseFloat(cs.fontSize) || 12;
+      const isBold = parseInt(cs.fontWeight, 10) >= 600 || cs.fontWeight === 'bold' || pTag === 'strong' || pTag === 'b' || pTag === 'h1' || pTag === 'h2' || pTag === 'h3';
+      const isDisplay = isBold && (fs >= 14 || pTag === 'h1' || pTag === 'h2' || pTag === 'h3' || parent.matches('.mk-display, .mk-page-title, .mk-auth-title, .mk-title'));
+      const onHatched = Boolean(parent.closest('.mk-btn.mk-primary, .mk-choice.selected, .mk-filter-tab.active, .mk-side-item.active, .mk-pwa-link.active, .mk-rating-cell.selected'));
+      const fontSize = isDisplay ? Math.round(fs * 1.08) : Math.round(fs * 1.02);
+
+      if (clientRects.length === 1) {
+        const cr = clientRects[0];
+        const rx = (cr.left - cRect.left) / scaleX;
+        const ry = (cr.top - cRect.top) / scaleY;
+        const rh = cr.height / scaleY;
+        if (ry + rh < 2 || ry > H - 2) continue;
+        text(group, rx, ry + rh * 0.78, fullStr, fontSize, {
+          weight: isBold ? 700 : 400,
+          display: isDisplay,
+          halo: onHatched
+        });
+      } else {
+        // Repartir palabras proporcionalmente al ancho de cada renglón envuelto por el navegador
+        const words = fullStr.split(' ');
+        const totalW = clientRects.reduce((acc, cr) => acc + cr.width, 0) || 1;
+        let wordIdx = 0;
+        for (let i = 0; i < clientRects.length; i++) {
+          const cr = clientRects[i];
+          const rx = (cr.left - cRect.left) / scaleX;
+          const ry = (cr.top - cRect.top) / scaleY;
+          const rh = cr.height / scaleY;
+          const share = i === clientRects.length - 1
+            ? (words.length - wordIdx)
+            : Math.max(1, Math.round((cr.width / totalW) * words.length));
+          const lineWords = words.slice(wordIdx, wordIdx + share);
+          wordIdx += share;
+          if (!lineWords.length) continue;
+          if (ry + rh < 2 || ry > H - 2) continue;
+          text(group, rx, ry + rh * 0.78, lineWords.join(' '), fontSize, {
+            weight: isBold ? 700 : 400,
+            display: isDisplay,
+            halo: onHatched
+          });
+        }
+      }
     }
-    if (p.type === 'tabs') return drawTabs(r, svg, p);
-    if (p.type === 'table') return drawTable(r, svg, p);
-    if (p.type === 'stars') return drawStars(r, svg, p);
-    if (p.type === 'divider') {
-      line(r, p.x, p.y, p.x + p.w / 2 - 45, p.y, 1.2);
-      centeredText(svg, p.x + p.w / 2, p.y + 4, fit(p.text || 'O', 25), 10, { fill: '#777' });
-      line(r, p.x + p.w / 2 + 45, p.y, p.x + p.w, p.y, 1.2);
-      return;
+
+    // 10. Zonas clicables interactivas exactas (1:1 con botones y enlaces de #mkCanvas)
+    mkCanvas.querySelectorAll('[data-mk-go], [data-mk-action]').forEach(el => {
+      const dest = el.dataset.mkGo || resolveActionDest(el.dataset.mkAction, currentRole);
+      if (!dest || !META[dest]) return;
+      const b = rel(el);
+      if (!inViewport(b)) return;
+      const targetMeta = META[dest];
+      const titleText = 'Ir a: ' + targetMeta.code + ' · ' + targetMeta.title;
+      const g = node('g', {
+        'class': 'pencil-interactive clickable',
+        'data-shell-go': dest,
+        'role': 'button',
+        'tabindex': '0',
+        'aria-label': titleText
+      });
+      const tip = node('title');
+      tip.textContent = titleText;
+      g.appendChild(tip);
+      g.appendChild(node('rect', {
+        x: b.x,
+        y: b.y,
+        width: b.w,
+        height: b.h,
+        rx: 4,
+        fill: 'transparent',
+        'pointer-events': 'all'
+      }));
+      group.appendChild(g);
+    });
+
+    // 11. Nota adhesiva manuscrita apuntando al CTA principal
+    const primaryBtn = mkCanvas.querySelector('.mk-btn.mk-primary, [data-mk-go]');
+    const pb = primaryBtn ? rel(primaryBtn) : null;
+    const noteStr = SCREEN_NOTES[screenId];
+    if (noteStr && pb && inViewport(pb)) {
+      const dest = primaryBtn.dataset.mkGo || resolveActionDest(primaryBtn.dataset.mkAction, currentRole);
+      const nx = platform === 'pwa' ? Math.min(W - 210, Math.max(230, pb.right + 18)) : Math.max(14, Math.min(W - 185, pb.cx - 20));
+      const ny = platform === 'pwa' ? Math.max(46, pb.y - 34) : Math.max(36, Math.min(H - 86, pb.bottom + 10));
+      drawNote(r, group, {
+        x: nx,
+        y: ny,
+        text: noteStr,
+        go: dest,
+        target: { x: pb.cx, y: pb.cy }
+      }, W);
     }
-    if (p.type === 'bottomNav') return drawBottomNav(r, svg, p, role);
-    if (p.type === 'sideNav') return drawSideNav(r, svg, p, role);
-    if (p.type === 'topNav') return drawTopNav(r, svg, p);
-    if (p.type === 'note') return drawNote(r, svg, p, width);
+
+    return true;
   }
 
   function buildSvg(screenId, platform, forDownload) {
-    const spec = (window.PENCIL_SCREENS || {})[screenId];
     const dimensions = sizeFor(platform);
     const svg = node('svg', {
       viewBox: '0 0 ' + dimensions.width + ' ' + dimensions.height,
@@ -551,40 +640,55 @@
     }
 
     const defs = node('defs');
-    // Filtro de distorsión orgánica para trazo a mano
     const filter = node('filter', { id: 'pencil-wobble', x: '-2%', y: '-2%', width: '104%', height: '104%' });
     const feTurb = node('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.035', numOctaves: '2', result: 'noise' });
-    const feDisp = node('feDisplacementMap', { in: 'SourceGraphic', in2: 'noise', scale: '1.2', xChannelSelector: 'R', yChannelSelector: 'G' });
+    const feDisp = node('feDisplacementMap', { in: 'SourceGraphic', in2: 'noise', scale: '1.05', xChannelSelector: 'R', yChannelSelector: 'G' });
     filter.appendChild(feTurb);
     filter.appendChild(feDisp);
     defs.appendChild(filter);
 
-    // Patrón de puntos de cuaderno de bocetos
     const patternId = 'dots-' + screenId + '-' + platform + '-' + Math.random().toString(36).slice(2, 7);
-    const pattern = node('pattern', { id: patternId, width: 20, height: 20, patternUnits: 'userSpaceOnUse' });
-    pattern.appendChild(node('circle', { cx: 2, cy: 2, r: 0.9, fill: '#DDD7C4' }));
+    const pattern = node('pattern', { id: patternId, width: 18, height: 18, patternUnits: 'userSpaceOnUse' });
+    pattern.appendChild(node('circle', { cx: 2, cy: 2, r: 0.85, fill: '#DDD7C4' }));
     defs.appendChild(pattern);
     svg.appendChild(defs);
 
-    // Fondo de papel
-    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, fill: '#FAF7EE' }));
-    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, fill: 'url(#' + patternId + ')' }));
-
-    if (!spec) {
-      text(svg, 30, 70, 'FALTA DEFINIR ' + screenId, 22, { fill: '#9B2C2C', weight: 700 });
-      return svg;
-    }
+    const rx = platform === 'mobile' ? 35 : 12;
+    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, rx: rx, fill: '#FAF7EE' }));
+    svg.appendChild(node('rect', { x: 0, y: 0, width: dimensions.width, height: dimensions.height, rx: rx, fill: 'url(#' + patternId + ')' }));
 
     const group = node('g', { filter: 'url(#pencil-wobble)' });
     svg.appendChild(group);
 
     const r = roughIn(group);
-    const parts = platform === 'mobile' ? (spec.mobile || []) : (spec.desktop || []);
-    const currentRole = spec.role === 'Administrador' ? 'admin' : (state.role === 'admin' ? 'admin' : 'student');
+    const spec = (window.PENCIL_SCREENS || {})[screenId];
+    const currentRole = (spec && spec.role === 'Administrador') ? 'admin' : (state.role === 'admin' ? 'admin' : 'student');
 
-    parts.forEach(function (part) {
-      drawPart(r, group, part, dimensions.width, platform === 'mobile', screenId, currentRole);
-    });
+    const mkCanvas = document.getElementById('mkCanvas');
+    let traced = false;
+    if (mkCanvas && window.SicpesMockups) {
+      const prevScreen = window.SicpesMockups.getScreen();
+      const prevRole = window.SicpesMockups.getRole();
+      const prevPlat = window.SicpesMockups.getPlatform();
+      const needSwitch = prevScreen !== screenId || prevPlat !== platform || prevRole !== currentRole;
+      if (needSwitch) {
+        window.SicpesMockups.showScreen(screenId, currentRole, platform);
+      }
+      if (screenId === 'loading') {
+        const fill = mkCanvas.querySelector('.mk-progress-fill');
+        const pct = mkCanvas.querySelector('#mkProgressPercent');
+        if (fill) fill.style.width = '68%';
+        if (pct) pct.textContent = '68%';
+      }
+      traced = tracePrototypeToPencil(r, group, mkCanvas, dimensions.width, dimensions.height, screenId, platform, currentRole);
+      if (needSwitch && forDownload) {
+        window.SicpesMockups.showScreen(prevScreen, prevRole, prevPlat);
+      }
+    }
+
+    if (!traced) {
+      setTimeout(renderStage, 60);
+    }
 
     return svg;
   }

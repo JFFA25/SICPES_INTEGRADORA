@@ -495,7 +495,17 @@ body.shell-section-mockups {
   flex: none;
   overflow: hidden;
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.18);
-  border-radius: 8px;
+  border-radius: 35px;
+}
+
+body.shell-platform-pwa .surface-viewport {
+  border-radius: 12px;
+}
+
+#mockupsView.is-bg-reference {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
 }
 
 .render-surface {
@@ -513,24 +523,27 @@ body.shell-section-mockups {
 }
 
 .render-mobile {
-  width: 414px;
-  height: 868px;
+  width: 390px;
+  height: 844px;
 }
 
 .render-mobile .phone-holder {
-  width: 414px !important;
-  height: 868px !important;
+  width: 390px !important;
+  height: 844px !important;
 }
 
 .render-mobile .phone {
-  width: 414px !important;
-  height: 868px !important;
+  width: 390px !important;
+  height: 844px !important;
+  padding: 0 !important;
+  border-radius: 35px !important;
   transform: none !important;
 }
 
 .render-mobile .phone-screen {
   width: 390px;
   height: 844px;
+  border-radius: 35px;
 }
 
 .render-pwa {
@@ -541,18 +554,18 @@ body.shell-section-mockups {
 .render-pwa .pwa-window {
   width: 1440px;
   height: 900px;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .render-pwa .pwa-window-screen {
-  height: 860px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  width: 1440px;
+  height: 900px;
+  overflow: hidden;
 }
 
 .render-pencil {
-  width: 1200px;
-  height: 820px;
+  width: 390px;
+  height: 844px;
   display: grid;
   place-items: center;
 }

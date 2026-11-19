@@ -91,19 +91,9 @@
   }
 
   function naturalSize() {
-    if (state.section === 'sketches') {
-      return state.platform === 'mobile'
-        ? { width: 440, height: 880 }
-        : { width: 1200, height: 820 };
-    }
-    if (state.section === 'mockups' || state.section === 'prototype') {
-      return state.platform === 'mobile'
-        ? { width: 390, height: 844 }
-        : { width: 1440, height: 900 };
-    }
-    return state.platform === 'pwa'
-      ? { width: 1640, height: 1140 }
-      : { width: 594, height: 1084 };
+    return state.platform === 'mobile'
+      ? { width: 390, height: 844 }
+      : { width: 1440, height: 900 };
   }
 
   function refit() {
@@ -137,6 +127,14 @@
     surface.style.height = size.height + 'px';
     surface.style.transform = 'scale(' + scale + ')';
     surface.style.transformOrigin = 'top left';
+
+    const mockupsSurface = byId('mockupsView');
+    if (mockupsSurface && mockupsSurface !== surface) {
+      mockupsSurface.style.width = size.width + 'px';
+      mockupsSurface.style.height = size.height + 'px';
+      mockupsSurface.style.transform = 'scale(' + scale + ')';
+      mockupsSurface.style.transformOrigin = 'top left';
+    }
 
     viewport.style.width = scaledW + 'px';
     viewport.style.height = scaledH + 'px';
@@ -172,7 +170,8 @@
     mobile.hidden = !(state.section === 'wireframes' && state.platform === 'mobile');
     pwa.hidden = !(state.section === 'wireframes' && state.platform === 'pwa');
     pencil.hidden = state.section !== 'sketches';
-    mockups.hidden = !(state.section === 'mockups' || state.section === 'prototype');
+    mockups.hidden = false;
+    mockups.classList.toggle('is-bg-reference', !(state.section === 'mockups' || state.section === 'prototype'));
 
     document.body.classList.remove(
       'shell-section-sketches', 'shell-section-wireframes', 'shell-section-mockups', 'shell-section-prototype',
@@ -388,7 +387,7 @@
     if (label) label.textContent = meta ? meta.label : String(state.screen).toUpperCase();
     if (size) {
       const dims = state.section === 'sketches'
-        ? (state.platform === 'pwa' ? 'LÁMINA · 1200 × 820 px' : 'LÁMINA · 440 × 880 px')
+        ? (state.platform === 'pwa' ? 'BOCETO · 1440 × 900 px' : 'BOCETO · 390 × 844 lp')
         : state.section === 'wireframes'
           ? (state.platform === 'pwa' ? 'CAJAS Y MEDIDAS · 1440 × 900 px' : 'CAJAS Y MEDIDAS · 390 × 844 lp')
           : (state.platform === 'pwa' ? '1440 × 900 px' : '390 × 844 px');
@@ -496,6 +495,26 @@
     }
   }
 
+  function syncWireframeFromPrototype() {
+    const mkCanvas = byId('mkCanvas');
+    if (!mkCanvas) return;
+    const target = state.platform === 'pwa' ? byId('pwaScreen') : byId('phoneScreen');
+    if (!target) return;
+    target.className = state.platform === 'pwa'
+      ? 'pwa-window-screen mk-viewport mk-pwa'
+      : 'phone-screen mk-viewport mk-mobile';
+    target.innerHTML = mkCanvas.innerHTML;
+    if (state.screen === 'loading') {
+      const fill = target.querySelector('.mk-progress-fill');
+      const pct = target.querySelector('#mkProgressPercent');
+      if (fill) fill.style.width = '68%';
+      if (pct) pct.textContent = '68%';
+    }
+    if (window.SicpesWireframeRedlines) {
+      window.SicpesWireframeRedlines.refresh();
+    }
+  }
+
   function applyAdapter() {
     const effectiveRole = state.role === 'admin' ? 'admin' : 'student';
     const detail = {
@@ -506,13 +525,28 @@
     };
     state.pending = signature(detail);
 
-    if (state.section === 'wireframes') {
-      const api = state.platform === 'pwa' ? window.SicpesWireframePwa : window.SicpesWireframeMobile;
-      if (api) api.showScreen(state.screen, effectiveRole);
-    } else if (state.section === 'sketches') {
-      if (window.SicpesSketches) window.SicpesSketches.showScreen(state.screen, state.role, state.platform);
-    } else if (window.SicpesMockups) {
+    updateSurfaces();
+    refit();
+
+    if (window.SicpesMockups) {
       window.SicpesMockups.showScreen(state.screen, effectiveRole, state.platform);
+      if (state.section !== 'prototype' && state.screen === 'loading') {
+        const mkCanvas = byId('mkCanvas');
+        if (mkCanvas) {
+          const fill = mkCanvas.querySelector('.mk-progress-fill');
+          const pct = mkCanvas.querySelector('#mkProgressPercent');
+          if (fill) fill.style.width = '68%';
+          if (pct) pct.textContent = '68%';
+        }
+      }
+    }
+
+    if (state.section === 'wireframes') {
+      syncWireframeFromPrototype();
+    } else if (state.section === 'sketches') {
+      if (window.SicpesSketches) {
+        window.SicpesSketches.showScreen(state.screen, state.role, state.platform);
+      }
     }
   }
 
@@ -876,6 +910,22 @@
         event.preventDefault();
         navigate(destination.dataset.shellGo);
         return;
+      }
+
+      if (state.section === 'wireframes' && event.target.closest('#mobileView, #pwaView')) {
+        const mkGo = event.target.closest('[data-mk-go]');
+        if (mkGo && mkGo.dataset.mkGo && screenMeta(mkGo.dataset.mkGo)) {
+          event.preventDefault();
+          navigate(mkGo.dataset.mkGo);
+          return;
+        }
+        setTimeout(() => {
+          if (window.SicpesMockups && window.SicpesMockups.getScreen() !== state.screen) {
+            navigate(window.SicpesMockups.getScreen());
+          } else {
+            syncWireframeFromPrototype();
+          }
+        }, 20);
       }
 
       if (event.target.closest('#fidelityJump')) {

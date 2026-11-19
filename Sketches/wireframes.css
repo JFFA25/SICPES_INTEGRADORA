@@ -1,7 +1,9 @@
 /* ============================================================
-   WIREFRAMES · MEDIA FIDELIDAD (Estilo Órbita Kids / UOC Etapa 2)
-   Lámina técnica #EFEFEF, cajas estructurales B/N, barras grises
-   conmutables y acotación redline (#E0003C) en px / lp / rem.
+   WIREFRAMES · MEDIA FIDELIDAD (Alineación 1:1 con 4 · Prototipo)
+   Misma geometría y plantilla estructural que el Prototipo
+   (390 × 844 en Móvil y 1440 × 900 en PWA), en escala técnica
+   Blanco/Negro, cajas de imagen con cruz diagonal (X), barras
+   estructurales B/N conmutables y cotas CAD (#E0003C).
    ============================================================ */
 
 #mobileView,
@@ -22,15 +24,17 @@
   --line-strong: #111111;
 }
 
-/* ---------- Lámina técnica exterior (#EFEFEF) para Móvil (594 × 1084) y PWA (1640 × 1140) ---------- */
+/* ---------- Dimensiones 1:1 con 4 · Prototipo: Móvil (390 × 844) y PWA (1440 × 900) ---------- */
 #mobileView.render-mobile {
-  width: 594px !important;
-  height: 1084px !important;
-  background: #EFEFEF !important;
+  width: 390px !important;
+  height: 844px !important;
+  background: #FFFFFF !important;
+  border-radius: 35px !important;
   position: absolute;
   top: 0;
   left: 0;
   overflow: hidden;
+  box-shadow: inset 0 0 0 2px #111111 !important;
 }
 
 #mobileView .wire-ruler-top,
@@ -39,22 +43,17 @@
   display: none !important;
 }
 
-#mobileView.render-mobile .phone-holder {
+#mobileView.render-mobile .phone-holder,
+#mobileView.render-mobile .phone,
+#mobileView.render-mobile .phone-screen {
   position: absolute !important;
-  left: 102px !important;
-  top: 88px !important;
+  left: 0 !important;
+  top: 0 !important;
   width: 390px !important;
   height: 844px !important;
   margin: 0 !important;
   padding: 0 !important;
-}
-
-#mobileView.render-mobile .phone {
-  width: 390px !important;
-  height: 844px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: 28px !important;
+  border-radius: 35px !important;
   background: #FFFFFF !important;
   box-shadow: none !important;
   transform: none !important;
@@ -64,42 +63,43 @@
   display: none !important;
 }
 
-#mobileView.render-mobile .phone-screen {
-  width: 390px !important;
-  height: 844px !important;
-  border-radius: 28px !important;
-  background: #FFFFFF !important;
-}
-
 #pwaView.render-pwa {
-  width: 1640px !important;
-  height: 1140px !important;
-  background: #EFEFEF !important;
+  width: 1440px !important;
+  height: 900px !important;
+  background: #FFFFFF !important;
+  border-radius: 12px !important;
   position: absolute;
   top: 0;
   left: 0;
   overflow: hidden;
+  box-shadow: inset 0 0 0 2px #111111 !important;
 }
 
 #pwaView.render-pwa .pwa-window {
   position: absolute !important;
-  left: 100px !important;
-  top: 96px !important;
+  left: 0 !important;
+  top: 0 !important;
   width: 1440px !important;
   height: 900px !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   border: none !important;
   box-shadow: none !important;
   background: #FFFFFF !important;
 }
 
-#pwaView.render-pwa .pwa-window-screen {
-  height: 860px !important;
-  background: #FFFFFF !important;
+#pwaView.render-pwa .pwa-window-bar {
+  display: none !important;
 }
 
-#pwaView .pwa-app-body {
-  grid-template-columns: 220px 1fr !important;
+#pwaView.render-pwa .pwa-window-screen {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 1440px !important;
+  height: 900px !important;
+  background: #FFFFFF !important;
+  transform: none !important;
+  overflow: hidden !important;
 }
 
 /* Capa SVG de cotas CAD, barras estructurales y redlines (#E0003C) */
@@ -109,231 +109,390 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 35;
+  z-index: 40;
   overflow: visible;
 }
 
-/* ---------- Paleta estructural Blanco y Negro (Wireframe puro) ---------- */
-#mobileView .phone-screen,
-#pwaView .pwa-window {
-  --wire-bg: #FFFFFF;
-  --wire-ink: #111111;
-  --wire-line: #BDBDBD;
-  --wire-muted: #555555;
-  --surface: #FFFFFF;
-  --surface2: #F6F6F6;
-  --surface3: #F0F0F0;
-  --line: #BDBDBD;
-  --line-strong: #111111;
-  --ink: #111111;
-  --ink-soft: #262626;
-  --muted: #555555;
-  --mid: #444444;
-  --paper: #F6F6F6;
-  --white: #FFFFFF;
-  --cream: #FFFFFF;
-  --green: #111111;
-  --forest: #111111;
-  --focus: #111111;
-  --accent-soft: #EFEFEF;
-  --ok: #222222;
-  --no: #444444;
-  --pwa-white: #FFFFFF;
-  --pwa-paper: #F6F6F6;
-  --pwa-line: #BDBDBD;
-  --pwa-mid: #444444;
-  --pwa-ink: #111111;
-  --pwa-green: #111111;
+/* ---------- Adaptación Blanco y Negro sobre la plantilla exacta del Prototipo (.mk-*) ---------- */
+#mobileView .mk-app,
+#mobileView .mk-mobile-app,
+#mobileView .mk-auth-m,
+#mobileView .mk-landing-m,
+#mobileView .mk-loading-m,
+#pwaView .mk-app,
+#pwaView .mk-pwa-app,
+#pwaView .mk-auth-pwa,
+#pwaView .mk-landing-pwa,
+#pwaView .mk-loading-pwa {
+  background: #FFFFFF !important;
+  color: #111111 !important;
 }
 
-#mobileView .app-header {
-  background: #F0F0F0;
-  margin: -37px -22px 18px;
-  padding: 37px 22px 12px;
-  border-bottom: 1.2px solid #111111;
-}
-
-#mobileView .bottom-nav {
-  background: #F6F6F6 !important;
-  border-top: 1.2px solid #111111 !important;
-}
-
-#pwaView .pwa-window-bar {
+#mobileView .mk-statusbar,
+#pwaView .mk-browser {
   background: #EAEAEA !important;
-  border-bottom: 1.2px solid #111111 !important;
+  color: #111111 !important;
+  border-bottom: 1.4px solid #111111 !important;
 }
 
-#pwaView .pwa-app-top {
-  background: #F0F0F0 !important;
-  border-bottom: 1.2px solid #111111 !important;
-}
-
-#pwaView .pwa-app-side {
-  background: #F6F6F6 !important;
-  border-right: 1.2px solid #111111 !important;
-}
-
-#mobileView .card,
-#mobileView .feature,
-#mobileView .stat,
-#mobileView .price-box,
-#mobileView .data-cell,
-#pwaView .pwa-card,
-#pwaView .pwa-feature,
-#pwaView .pwa-stat,
-#pwaView .pwa-data-cell {
+#pwaView .mk-browser-dots i {
   background: #FFFFFF !important;
-  border: 1.2px solid #BDBDBD !important;
+  border: 1.4px solid #111111 !important;
+}
+
+#pwaView .mk-browser-url {
+  background: #FFFFFF !important;
+  color: #222222 !important;
+  border: 1.2px solid #8C8C8C !important;
+}
+
+#mobileView .mk-appbar,
+#mobileView .mk-auth-m-top,
+#mobileView .mk-public-top,
+#pwaView .mk-pwa-top,
+#pwaView .mk-public-top {
+  background: #F4F4F4 !important;
+  color: #111111 !important;
+  border-bottom: 1.4px solid #111111 !important;
   box-shadow: none !important;
 }
 
-#mobileView .stat,
-#mobileView .feature,
-#pwaView .pwa-stat,
-#pwaView .pwa-feature,
-#pwaView .pwa-data-cell {
+#pwaView .mk-pwa-side {
   background: #F6F6F6 !important;
+  color: #111111 !important;
+  border-right: 1.4px solid #111111 !important;
 }
 
-/* Botones y elementos activos con borde negro técnico de 1.8px para máximo contraste con el rojo #E0003C */
-#mobileView .button,
-#mobileView .choice,
-#pwaView .pwa-button,
-#pwaView .pwa-choice,
-#pwaView .pwa-filter-tab,
-#pwaView .pwa-side-item {
+#pwaView .mk-auth-art,
+#pwaView .mk-auth-art-admin {
+  background: #F2F2F2 !important;
+  color: #111111 !important;
+  border-right: 1.5px solid #111111 !important;
+}
+
+#pwaView .mk-auth-panel {
   background: #FFFFFF !important;
   color: #111111 !important;
-  border: 1.2px solid #BDBDBD !important;
+}
+
+#mobileView .mk-bottomnav {
+  background: #F4F4F4 !important;
+  border-top: 1.4px solid #111111 !important;
   box-shadow: none !important;
 }
 
-#mobileView .button.primary,
-#mobileView .choice.selected,
-#mobileView .rating-cell.selected,
-#pwaView .pwa-button.pwa-primary,
-#pwaView .pwa-choice.selected,
-#pwaView .pwa-filter-tab.active,
-#pwaView .pwa-side-item.active,
-#pwaView .pwa-rating-cell.selected {
-  background: #EDEDED !important;
+#mobileView .mk-auth-m-foot,
+#mobileView .mk-landing-footer,
+#pwaView .mk-landing-footer,
+#pwaView .mk-auth-p-foot {
+  background: #F6F6F6 !important;
+  color: #333333 !important;
+  border-top: 1.2px solid #BDBDBD !important;
+}
+
+/* Tarjetas y contenedores estructurales */
+#mobileView .mk-card,
+#mobileView .mk-auth-m-card,
+#mobileView .mk-loading-card,
+#mobileView .mk-floating-card,
+#mobileView .mk-status-hero,
+#mobileView .mk-list-row,
+#mobileView .mk-room-option,
+#mobileView .mk-receipt,
+#pwaView .mk-card,
+#pwaView .mk-auth-p-card,
+#pwaView .mk-loading-card,
+#pwaView .mk-floating-card,
+#pwaView .mk-status-hero,
+#pwaView .mk-list-row,
+#pwaView .mk-room-option,
+#pwaView .mk-receipt {
+  background: #FFFFFF !important;
   color: #111111 !important;
-  border: 1.8px solid #111111 !important;
+  border: 1.3px solid #7A7A7A !important;
+  box-shadow: none !important;
+}
+
+#mobileView .mk-stat,
+#mobileView .mk-feature,
+#mobileView .mk-kpi,
+#mobileView .mk-fact,
+#mobileView .mk-soft-note,
+#mobileView .mk-security-note,
+#mobileView .mk-notice,
+#mobileView .mk-amount-block,
+#mobileView .mk-receipt-amount,
+#mobileView .mk-service-grid span,
+#mobileView .mk-service-item,
+#mobileView .mk-quote,
+#pwaView .mk-stat,
+#pwaView .mk-feature,
+#pwaView .mk-kpi,
+#pwaView .mk-fact,
+#pwaView .mk-soft-note,
+#pwaView .mk-security-note,
+#pwaView .mk-notice,
+#pwaView .mk-amount-block,
+#pwaView .mk-receipt-amount,
+#pwaView .mk-service-grid span,
+#pwaView .mk-service-item,
+#pwaView .mk-quote,
+#pwaView .mk-side-help {
+  background: #F6F6F6 !important;
+  color: #111111 !important;
+  border: 1.2px solid #9E9E9E !important;
+  box-shadow: none !important;
+}
+
+/* Textos y etiquetas en escala de grises */
+#mobileView .mk-eyebrow,
+#mobileView .mk-page-title,
+#mobileView .mk-display,
+#mobileView .mk-auth-title,
+#mobileView .mk-title,
+#mobileView .mk-card-title,
+#mobileView .mk-section-title,
+#mobileView .mk-logo-word,
+#mobileView .mk-logo-word small,
+#pwaView .mk-eyebrow,
+#pwaView .mk-page-title,
+#pwaView .mk-display,
+#pwaView .mk-auth-title,
+#pwaView .mk-title,
+#pwaView .mk-card-title,
+#pwaView .mk-section-title,
+#pwaView .mk-logo-word,
+#pwaView .mk-logo-word small,
+#pwaView .mk-side-label {
+  color: #111111 !important;
+}
+
+#mobileView .mk-lead,
+#mobileView .mk-subtitle,
+#mobileView .mk-muted,
+#mobileView .mk-body-text,
+#mobileView .mk-auth-note,
+#mobileView .mk-inline-link,
+#pwaView .mk-lead,
+#pwaView .mk-subtitle,
+#pwaView .mk-muted,
+#pwaView .mk-body-text,
+#pwaView .mk-auth-note,
+#pwaView .mk-inline-link {
+  color: #444444 !important;
+}
+
+#mobileView .mk-text-link,
+#mobileView .mk-inline-link button,
+#pwaView .mk-text-link,
+#pwaView .mk-inline-link button {
+  color: #111111 !important;
+  text-decoration: underline !important;
+}
+
+/* Botones, controles, tabs y navegación */
+#mobileView .mk-btn,
+#mobileView .mk-choice,
+#mobileView .mk-filter-tab,
+#mobileView .mk-navitem,
+#mobileView .mk-rating-cell,
+#mobileView .mk-iconbtn,
+#mobileView .mk-menu-btn,
+#mobileView .mk-social-row button,
+#mobileView .mk-profile-links button,
+#mobileView .mk-public-links button,
+#pwaView .mk-btn,
+#pwaView .mk-choice,
+#pwaView .mk-filter-tab,
+#pwaView .mk-side-item,
+#pwaView .mk-pwa-link,
+#pwaView .mk-rating-cell,
+#pwaView .mk-iconbtn,
+#pwaView .mk-social-row button,
+#pwaView .mk-profile-links button,
+#pwaView .mk-public-links button {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 1.2px solid #7A7A7A !important;
+  box-shadow: none !important;
+}
+
+#mobileView .mk-btn.mk-primary,
+#mobileView .mk-choice.selected,
+#mobileView .mk-filter-tab.active,
+#mobileView .mk-navitem.active,
+#mobileView .mk-rating-cell.selected,
+#mobileView .mk-room-option.selected,
+#mobileView .mk-stepper span.active,
+#pwaView .mk-btn.mk-primary,
+#pwaView .mk-choice.selected,
+#pwaView .mk-filter-tab.active,
+#pwaView .mk-side-item.active,
+#pwaView .mk-pwa-link.active,
+#pwaView .mk-rating-cell.selected,
+#pwaView .mk-room-option.selected,
+#pwaView .mk-stepper span.active {
+  background: #E4E4E4 !important;
+  color: #111111 !important;
+  border: 1.9px solid #111111 !important;
   font-weight: 700 !important;
+  box-shadow: none !important;
 }
 
-#pwaView .pwa-status,
-#pwaView .pwa-status.pwa-ok,
-#pwaView .pwa-status.pwa-pend,
-#pwaView .pwa-status.pwa-rev,
-#pwaView .pwa-status.pwa-no,
-#mobileView .status {
-  background: #F3F4F6 !important;
-  border: 1px solid #9CA3AF !important;
-  color: #111111 !important;
-}
-
-#pwaView .pwa-notice,
-#mobileView .notice {
-  border-left: 2.5px solid #111111 !important;
-  background: #F6F6F6 !important;
+/* Campos de formulario */
+#mobileView .mk-field > span,
+#pwaView .mk-field > span {
   color: #222222 !important;
 }
 
-#pwaView .pwa-switch:checked,
-#mobileView .switch:checked {
-  background: #6B7280 !important;
-}
-
-#pwaView .pwa-progress-fill,
-#mobileView .progress-fill {
-  background: #4B5563 !important;
-}
-
-#pwaView .pwa-timeline-item.pwa-done .pwa-dot,
-#pwaView .pwa-timeline-item.pwa-current .pwa-dot,
-#mobileView .timeline-item.done .dot,
-#mobileView .timeline-item.current .dot {
-  background: #4B5563 !important;
-  border-color: #111111 !important;
+#mobileView .mk-field input,
+#mobileView .mk-field select,
+#mobileView .mk-field textarea,
+#mobileView .mk-code-row input,
+#pwaView .mk-field input,
+#pwaView .mk-field select,
+#pwaView .mk-field textarea,
+#pwaView .mk-code-row input {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 1.3px solid #666666 !important;
   box-shadow: none !important;
 }
 
-/* La identidad gráfica se sustituye por una marca de posición [X]. */
-#mobileView .app-logo-img,
-#pwaView .pwa-app-logo-img,
-#mobileView .app-loading-logo,
-#pwaView .pwa-logo-img {
-  display: none !important;
+/* Chips de estado, barras de progreso, ocupación y timeline */
+#mobileView .mk-status,
+#mobileView .mk-room-tags span,
+#mobileView .mk-stepper span,
+#mobileView .mk-loading-steps span,
+#pwaView .mk-status,
+#pwaView .mk-room-tags span,
+#pwaView .mk-stepper span,
+#pwaView .mk-loading-steps span {
+  background: #F2F2F2 !important;
+  color: #111111 !important;
+  border: 1.1px solid #7A7A7A !important;
 }
 
-#mobileView .app-logo::before,
-#pwaView .pwa-app-logo::before {
-  content: "[X]";
-  display: inline-block;
-  margin-right: 6px;
-  padding: 1px 4px;
-  border: 1px solid #111111;
-  border-radius: 2px;
-  color: #111111;
-  font: 700 9px var(--mono);
-  vertical-align: 1px;
+#mobileView .mk-status i,
+#mobileView .mk-dot,
+#pwaView .mk-status i,
+#pwaView .mk-dot {
+  background: #111111 !important;
+}
+
+#mobileView .mk-progress,
+#mobileView .mk-occupancy,
+#pwaView .mk-progress,
+#pwaView .mk-occupancy {
+  background: #EAEAEA !important;
+  border: 1px solid #8C8C8C !important;
+}
+
+#mobileView .mk-progress-fill,
+#mobileView .mk-occupancy span,
+#pwaView .mk-progress-fill,
+#pwaView .mk-occupancy span {
+  background: #4B5563 !important;
+}
+
+#mobileView .mk-timeline-dot,
+#mobileView .mk-stat-icon,
+#mobileView .mk-status-hero-icon,
+#mobileView .mk-list-avatar,
+#pwaView .mk-timeline-dot,
+#pwaView .mk-stat-icon,
+#pwaView .mk-status-hero-icon,
+#pwaView .mk-list-avatar {
+  background: #EFEFEF !important;
+  color: #111111 !important;
+  border: 1.2px solid #111111 !important;
+  box-shadow: none !important;
 }
 
 /* ---------- Criterios Mosaic UOC & Órbita Kids:
-   Caja con cruz diagonal (X) en contenedores de imagen/logo/avatar ---------- */
-#mobileView .image-placeholder,
-#pwaView .pwa-image-placeholder,
-#pwaView .pwa-avatar-big {
+   Cajas con cruz diagonal (X) en fotografías, avatares, portadas, logos y QR ---------- */
+#mobileView .mk-photo-wrap,
+#mobileView .mk-room-thumb,
+#mobileView .mk-gallery-main,
+#mobileView .mk-gallery-thumbs button,
+#mobileView .mk-auth-art-visual,
+#mobileView .mk-proof,
+#mobileView .mk-room-option-thumb,
+#mobileView .mk-profile-cover,
+#mobileView .mk-avatar,
+#mobileView .mk-logo-img,
+#mobileView .mk-qr,
+#mobileView .mk-dropzone,
+#pwaView .mk-photo-wrap,
+#pwaView .mk-room-thumb,
+#pwaView .mk-gallery-main,
+#pwaView .mk-gallery-thumbs button,
+#pwaView .mk-auth-art-visual,
+#pwaView .mk-proof,
+#pwaView .mk-room-option-thumb,
+#pwaView .mk-profile-cover,
+#pwaView .mk-avatar,
+#pwaView .mk-logo-img,
+#pwaView .mk-qr,
+#pwaView .mk-dropzone {
   background:
-    linear-gradient(to top right, transparent calc(50% - 0.8px), #8C8C8C 50%, transparent calc(50% + 0.8px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.8px), #8C8C8C 50%, transparent calc(50% + 0.8px)),
-    #F4F4F4 !important;
+    linear-gradient(to top right, transparent calc(50% - 0.9px), #8C8C8C 50%, transparent calc(50% + 0.9px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.9px), #8C8C8C 50%, transparent calc(50% + 0.9px)),
+    #F2F2F2 !important;
   border: 1.4px solid #111111 !important;
-  color: #222222 !important;
-  font-weight: 700;
+  box-shadow: none !important;
   position: relative;
 }
 
-#mobileView .wire-logo-box {
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 14px;
-  border-radius: 8px;
+#mobileView .mk-photo,
+#mobileView .mk-avatar-img,
+#mobileView .mk-logo-img,
+#mobileView .mk-qr svg,
+#pwaView .mk-photo,
+#pwaView .mk-avatar-img,
+#pwaView .mk-logo-img,
+#pwaView .mk-qr svg {
+  opacity: 0 !important;
 }
 
-#mobileView .image-placeholder span,
-#pwaView .pwa-image-placeholder span,
-#pwaView .pwa-avatar-big span {
-  background: rgba(255, 255, 255, 0.92);
-  padding: 2px 6px;
-  border-radius: 2px;
-  border: 1px solid #9CA3AF;
-  font: 700 8.5px var(--mono);
-  color: #111111;
+#mobileView .mk-logo-lockup::before,
+#pwaView .mk-logo-lockup::before {
+  content: "[X]";
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.4px solid #111111;
+  border-radius: 6px;
+  background: #F2F2F2;
+  color: #111111 !important;
+  font: 700 9px var(--mono);
+  flex: none;
+}
+
+#mobileView .mk-logo-img,
+#pwaView .mk-logo-img {
+  display: none !important;
 }
 
 /* ---------- Modo Barras Estructurales B/N (Estilo Órbita Kids) ---------- */
-body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen *:not(.nav-icon):not(.image-placeholder),
-body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen *:not(.pwa-side-icon):not(.pwa-image-placeholder) {
+body.shell-section-wireframes.wire-bars-on #mobileView #phoneScreen *:not(.mk-icon),
+body.shell-section-wireframes.wire-bars-on #pwaView #pwaScreen *:not(.mk-icon) {
   color: transparent !important;
 }
 
-body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen input::placeholder,
-body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen input::placeholder,
-body.shell-section-wireframes.wire-bars-on #mobileView .phone-screen textarea::placeholder,
-body.shell-section-wireframes.wire-bars-on #pwaView .pwa-window-screen textarea::placeholder {
+body.shell-section-wireframes.wire-bars-on #mobileView #phoneScreen input::placeholder,
+body.shell-section-wireframes.wire-bars-on #pwaView #pwaScreen input::placeholder,
+body.shell-section-wireframes.wire-bars-on #mobileView #phoneScreen textarea::placeholder,
+body.shell-section-wireframes.wire-bars-on #pwaView #pwaScreen textarea::placeholder {
   color: transparent !important;
 }
 
-body.shell-section-wireframes.wire-bars-on #mobileView .app-logo::before,
-body.shell-section-wireframes.wire-bars-on #pwaView .pwa-app-logo::before {
-  color: #111111 !important;
-}
-
-body.shell-section-wireframes.wire-bars-on #mobileView .nav-item .nav-icon,
-body.shell-section-wireframes.wire-bars-on #pwaView .pwa-side-icon {
-  color: #111111 !important;
+body.shell-section-wireframes.wire-bars-on #mobileView .mk-logo-lockup::before,
+body.shell-section-wireframes.wire-bars-on #pwaView .mk-logo-lockup::before,
+body.shell-section-wireframes.wire-bars-on #mobileView .mk-icon,
+body.shell-section-wireframes.wire-bars-on #pwaView .mk-icon {
+  color: #222222 !important;
 }
 
 /* ---------- Barra de herramientas de Wireframe (Con medidas / Sin medidas · Barras / Texto) ---------- */
@@ -399,18 +558,18 @@ body.shell-section-wireframes .wire-mode-bar {
   color: var(--mid);
 }
 
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .clickable,
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) [data-go],
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) [data-pwa-go],
+body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) [data-mk-go],
+body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) [data-mk-action],
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) button,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) a,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) input,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) select,
 body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) textarea,
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-feature,
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-notice,
-body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .pwa-file-drop {
-  outline-color: rgba(224, 0, 60, 0.75) !important;
+body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .mk-feature,
+body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .mk-notice,
+body.shell-section-wireframes.shell-zones-on .render-surface:not([hidden]) .mk-dropzone {
+  outline: 2px solid rgba(224, 0, 60, 0.78) !important;
+  outline-offset: 2px !important;
 }
 
 body.shell-section-wireframes #diagramCanvas .thumb.current .thumb-box,
