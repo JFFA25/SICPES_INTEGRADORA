@@ -474,6 +474,16 @@
           strokeWidth: 1.35,
           roughness: 0.75
         });
+        const socSvg = el.querySelector('.mk-social-icon');
+        if (socSvg) {
+          const sb = rel(socSvg);
+          if (sb) {
+            const prov = socSvg.getAttribute('data-social') || '';
+            const glyph = prov === 'google' ? 'G' : prov === 'facebook' ? 'f' : prov === 'linkedin' ? 'in' : '•';
+            r.circle(sb.cx, sb.cy, Math.max(13, sb.w), { stroke: PEN, strokeWidth: 1.2, fill: '#F5F0E3', fillStyle: 'solid', roughness: 0.7 });
+            centeredText(group, sb.cx, sb.cy + 3.5, glyph, 9.5, { weight: 700, display: true });
+          }
+        }
       }
     });
 

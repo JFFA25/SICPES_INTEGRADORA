@@ -633,3 +633,8 @@ body.shell-section-wireframes #pwaMapCanvas .pwa-map-thumb.current {
   background: #E4E4E4 !important;
   border: 1px solid #B0B0B0 !important;
 }
+
+#mobileView .mk-social-icon,
+#pwaView .mk-social-icon {
+  filter: grayscale(1) contrast(1.25);
+}
