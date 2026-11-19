@@ -776,9 +776,8 @@
   }
 
   function splashView() {
-    const nextScreen = state.role === 'admin' ? 'adminLogin' : 'landing';
     return `
-      <div class="mk-splash-screen" data-mk-go="${nextScreen}" role="button" tabindex="0" aria-label="Pantalla de arranque SICPES">
+      <div class="mk-splash-screen" data-mk-go="loading" role="button" tabindex="0" aria-label="Pantalla de arranque SICPES">
         <div class="mk-splash-center">
           <div class="mk-splash-emblem">
             <img class="mk-splash-logo" src="../images/SICPES_Producto.png" alt="Logo SICPES">
@@ -989,12 +988,20 @@
     state.timer = setTimeout(() => {
       if (state.screen !== 'splash') return;
       if (window.SicpesShell && window.SicpesShell.getState().section !== 'prototype') return;
-      go(state.role === 'admin' ? 'adminLogin' : 'landing', { replace: true });
-    }, 1600);
+      state.loadingTarget = state.role === 'admin' ? 'adminLogin' : 'landing';
+      go('loading', { replace: true });
+    }, 1500);
   }
 
   function startLoading() {
     let progress = 0;
+    const prevScreen = state.history.length ? state.history[state.history.length - 1] : null;
+    const targetAfterLoad = state.loadingTarget ||
+      (prevScreen === 'splash' || !prevScreen
+        ? (state.role === 'admin' ? 'adminLogin' : 'landing')
+        : (state.role === 'admin' ? 'reservations' : 'home'));
+    state.loadingTarget = null;
+
     state.timer = setInterval(() => {
       progress = Math.min(progress + 9, 100);
       const fill = canvas.querySelector('.mk-progress-fill');
@@ -1005,14 +1012,14 @@
       pct.textContent = progress + '%';
       if (txt) {
         txt.textContent = progress < 40
-          ? 'Verificando sesión JWT y permisos…'
+          ? 'Inicializando módulos y sesión…'
           : progress < 80
             ? 'Consultando habitación y reservas en TiDB…'
             : 'Cargando estado de cuenta y avisos…';
       }
       if (progress === 100) {
         clearInterval(state.timer);
-        setTimeout(() => go(state.role === 'admin' ? 'reservations' : 'home', { replace: true }), 420);
+        setTimeout(() => go(targetAfterLoad, { replace: true }), 420);
       }
     }, 110);
   }
@@ -1095,8 +1102,8 @@
 
     const action = target.dataset.mkAction;
     if (action === 'back') { back(); return; }
-    if (action === 'student-login') { state.role = 'student'; go('loading'); return; }
-    if (action === 'admin-login') { state.role = 'admin'; go('loading'); return; }
+    if (action === 'student-login') { state.role = 'student'; state.loadingTarget = 'home'; go('loading'); return; }
+    if (action === 'admin-login') { state.role = 'admin'; state.loadingTarget = 'reservations'; go('loading'); return; }
     if (action === 'register') {
       const checked = canvas.querySelector('.mk-auth-m-card input[type=checkbox], .mk-auth-p-card input[type=checkbox]');
       if (checked && !checked.checked) { toast('Acepta los términos para continuar.'); return; }
@@ -1104,7 +1111,7 @@
       go('verifyEmail');
       return;
     }
-    if (action === 'verify-email') { toast('Código verificado correctamente.'); setTimeout(() => go('loading'), 450); return; }
+    if (action === 'verify-email') { toast('Código verificado correctamente.'); state.loadingTarget = 'home'; setTimeout(() => go('loading'), 450); return; }
     if (action === 'resend-code') { toast('Código reenviado a tu correo.'); return; }
     if (action === 'forgot-send') { toast('Enlace de recuperación enviado.'); return; }
     if (action === 'reserve') { toast('¡Reservación confirmada!'); setTimeout(() => go('requestStatus'), 550); return; }

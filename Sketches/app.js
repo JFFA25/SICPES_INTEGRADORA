@@ -38,7 +38,7 @@ const SCREENS = {
   unlockAccount: { role: 'shared', title: 'Código de desbloqueo', label: 'DESBLOQUEAR CUENTA' },
   register: { role: 'student', title: 'Crear cuenta', label: 'CREAR CUENTA' },
   verifyEmail: { role: 'student', title: 'Verificar correo', label: 'VERIFICAR CORREO' },
-  loading: { role: 'shared', title: 'Sincronizando', label: 'CARGA' },
+  loading: { role: 'shared', title: 'Loading Screen', label: 'LOADING SCREEN' },
   home: { role: 'student', title: 'Inicio', label: 'INICIO' },
   reserve: { role: 'student', title: 'Reservar habitación', label: 'RESERVAR HABITACIÓN' },
   roomDetail: { role: 'student', title: 'Detalle de habitación', label: 'DETALLE DE HABITACIÓN' },
@@ -60,9 +60,9 @@ const SCREENS = {
   settings: { role: 'admin', title: 'Configuración global', label: 'CONFIGURACIÓN' }
 };
 /* 15 pantallas de estudiante; la carga compartida (E6) se dibuja una sola vez en esta fila. */
-const SHARED_SCREENS = ['splash', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'aboutSoftware', 'aboutTeam'];
-const studentFlow = ['splash', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'loading', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
-const adminFlow = ['splash', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'loading', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
+const SHARED_SCREENS = ['splash', 'loading', 'forgotPassword', 'lockAccount', 'unlockAccount', 'aboutSoftware', 'aboutTeam'];
+const studentFlow = ['splash', 'loading', 'landing', 'studentLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'register', 'verifyEmail', 'home', 'reserve', 'roomDetail', 'requestStatus', 'payments', 'paymentDetail', 'rateService', 'rateConfirm', 'profile', 'aboutSoftware', 'aboutTeam'];
+const adminFlow = ['splash', 'loading', 'adminLogin', 'forgotPassword', 'lockAccount', 'unlockAccount', 'reservations', 'assignRoom', 'pendingPayments', 'validatePayment', 'debts', 'floors', 'settings', 'aboutSoftware', 'aboutTeam'];
 /* Códigos para identificar rápidamente cada pantalla en la lista y el diagrama. */
 const SCREEN_CODES = { splash:'C1', landing:'E1', studentLogin:'E2', forgotPassword:'E3', lockAccount:'C2', unlockAccount:'C3', register:'E4', verifyEmail:'E5', loading:'E6', home:'E7', reserve:'E8', roomDetail:'E9', requestStatus:'E10', payments:'E11', paymentDetail:'E12', rateService:'E13', rateConfirm:'E14', profile:'E15', aboutSoftware:'C4', aboutTeam:'C5', adminLogin:'A1', reservations:'A2', assignRoom:'A3', pendingPayments:'A4', validatePayment:'A5', debts:'A6', floors:'A7', settings:'A8' };
 const STUDENT_SCREENS = studentFlow;
@@ -70,7 +70,7 @@ const ADMIN_SCREENS = adminFlow;
 const ROOT_SCREENS = new Set(['splash','landing','home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Rutas visibles para el panel lateral: destino y acción que lleva a él. */
 const SCREEN_ACTIONS = {
-  splash:[['landing','Iniciar como Estudiante'],['adminLogin','Iniciar como Administrador'],['aboutSoftware','Acerca del software']],
+  splash:[['loading','Continuar a Loading Screen'],['landing','Ir a Landing (Estudiante)'],['adminLogin','Ir a Login Administrador']],
   landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada'],['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo']],
   studentLogin:[['loading','Entrar (credenciales válidas)'],['forgotPassword','¿Olvidaste tu contraseña?'],['lockAccount','3 intentos fallidos → Bloqueo'],['register','¿No tienes cuenta? Regístrate']],
   forgotPassword:[['studentLogin','Enviar enlace (Estudiante)'],['adminLogin','Enviar enlace (Administrador)'],['unlockAccount','Tengo código de verificación']],
@@ -78,7 +78,7 @@ const SCREEN_ACTIONS = {
   unlockAccount:[['loading','Validar código y entrar'],['studentLogin','Volver a Login Estudiante'],['adminLogin','Volver a Login Admin']],
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
   verifyEmail:[['loading','Verificar código'],['register','Reenviar código']],
-  loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
+  loading:[['landing','Terminar carga → Landing'],['adminLogin','Terminar carga → Login Admin'],['home','Ir a Inicio (Estudiante)'],['reservations','Ir a Reservaciones (Admin)']],
   home:[['reserve','Tarjeta Reservar habitación'],['requestStatus','Tarjeta Estado de mi petición'],['payments','Tarjeta Próximo pago'],['roomDetail','Habitación destacada'],['rateService','Evaluar el servicio'],['profile','Cuenta en la barra inferior']],
   reserve:[['roomDetail','Ver detalle de habitación'],['requestStatus','Reservar · Confirmar'],['home','Inicio en la barra inferior'],['payments','Pagos en la barra inferior'],['profile','Cuenta en la barra inferior']],
   roomDetail:[['requestStatus','Solicitar esta habitación'],['reserve','Volver al catálogo']],
@@ -192,14 +192,14 @@ const DG={TW:120,TH:96,GX:110,GY:72,LX:150,TOPY:56,LANEGAP:110,CORRIDORPITCH:36,
 const DIAGRAM={
   shared:{
     title:'PANTALLAS EN COMÚN · ESTUDIANTE Y ADMINISTRADOR',
-    note:'7 pantallas compartidas por ambos roles: C1 Splash Screen, E6 Pantalla de carga, E3 Recuperar contraseña, C2 Cuenta bloqueada, C3 Código de desbloqueo, C4 Acerca del software y C5 Acerca del equipo.',
+    note:'7 pantallas compartidas por ambos roles: C1 Splash Screen, E6 Loading Screen, E3 Recuperar contraseña, C2 Cuenta bloqueada, C3 Código de desbloqueo, C4 Acerca del software y C5 Acerca del equipo.',
     marker:'sicpesArrowShared',
     lanes:[
       {label:'INICIO Y ACERCA DE',rows:[['splash','loading','aboutSoftware','aboutTeam']]},
       {label:'SEGURIDAD CUENTA',rows:[['forgotPassword','lockAccount','unlockAccount']]}
     ],
     links:[
-      {from:'splash',to:'loading',kind:'h',label:'Autenticar'},
+      {from:'splash',to:'loading',kind:'h',label:'Cargar app'},
       {from:'loading',to:'aboutSoftware',kind:'h',label:'Info sistema'},
       {from:'aboutSoftware',to:'aboutTeam',kind:'h',label:'Ver equipo'},
       {from:'aboutTeam',to:'aboutSoftware',kind:'hr',label:'Software'},
@@ -213,7 +213,7 @@ const DIAGRAM={
     title:'ROL ESTUDIANTE',marker:'sicpesArrowStudent',
     lanes:[
       {label:'ACCESO',rows:[
-        ['splash','landing','studentLogin','loading'],
+        ['splash','loading','landing','studentLogin'],
         ['forgotPassword','lockAccount','unlockAccount','register','verifyEmail']
       ]},
       {label:'RESERVACIÓN',rows:[
@@ -226,12 +226,13 @@ const DIAGRAM={
       ]}
     ],
     links:[
-      {from:'splash',to:'landing',kind:'h',label:'Iniciar app'},
+      {from:'splash',to:'loading',kind:'h',label:'Cargar app'},
+      {from:'loading',to:'landing',kind:'h',label:'Iniciar app'},
       {from:'landing',to:'studentLogin',kind:'h',label:'Iniciar sesión'},
       {from:'studentLogin',to:'lockAccount',kind:'ct',label:'3 intentos'},
       {from:'lockAccount',to:'unlockAccount',kind:'h',label:'Código'},
       {from:'unlockAccount',to:'loading',kind:'ct',label:'Desbloquear'},
-      {from:'studentLogin',to:'loading',kind:'h',label:'Entrar'},
+      {from:'studentLogin',to:'home',kind:'cross',label:'Entrar'},
       {from:'studentLogin',to:'register',kind:'v',label:'Regístrate',off:18},
       {from:'register',to:'verifyEmail',kind:'h',label:'Registrarse'},
       {from:'verifyEmail',to:'loading',kind:'ct',label:'Verificar'},
@@ -256,18 +257,19 @@ const DIAGRAM={
   admin:{
     title:'ROL ADMINISTRADOR',note:'Acceso desde A1; comparte C1, E6, E3, C2, C3, C4 y C5 con el rol Estudiante',marker:'sicpesArrowAdmin',
     lanes:[
-      {label:'ACCESO',rows:[['splash','adminLogin','loading','reservations','assignRoom'],[null,'forgotPassword','lockAccount','unlockAccount',null]]},
+      {label:'ACCESO',rows:[['splash','loading','adminLogin','reservations','assignRoom'],[null,'forgotPassword','lockAccount','unlockAccount',null]]},
       {label:'PAGOS',rows:[['pendingPayments','validatePayment','debts']]},
       {label:'INVENTARIO',rows:[['floors','settings','aboutSoftware','aboutTeam']]}
     ],
     links:[
-      {from:'splash',to:'adminLogin',kind:'h',label:'Acceso admin'},
-      {from:'adminLogin',to:'loading',kind:'h',label:'Entrar'},
+      {from:'splash',to:'loading',kind:'h',label:'Cargar app'},
+      {from:'loading',to:'adminLogin',kind:'h',label:'Acceso admin'},
+      {from:'adminLogin',to:'reservations',kind:'h',label:'Entrar'},
       {from:'adminLogin',to:'forgotPassword',kind:'v',label:'¿Olvidaste?'},
       {from:'adminLogin',to:'lockAccount',kind:'ct',label:'3 intentos'},
       {from:'lockAccount',to:'unlockAccount',kind:'h',label:'Código'},
       {from:'unlockAccount',to:'loading',kind:'ct',label:'Desbloquear'},
-      {from:'loading',to:'reservations',kind:'h',label:'Cargar'},
+      {from:'loading',to:'reservations',kind:'ct',label:'Sincronizar'},
       {from:'reservations',to:'assignRoom',kind:'h',label:'Seleccionar'},
       {from:'assignRoom',to:'reservations',kind:'hr',label:'Confirmar'},
       {from:'reservations',to:'pendingPayments',kind:'cross',label:'Pagos'},

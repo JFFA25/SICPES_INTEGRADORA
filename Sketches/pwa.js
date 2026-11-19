@@ -37,7 +37,7 @@ const PWA_SCREENS = {
   unlockAccount: { role: 'shared', title: 'Código de desbloqueo', label: 'DESBLOQUEAR CUENTA', route: '/desbloquear' },
   register: { role: 'student', title: 'Crear cuenta', label: 'CREAR CUENTA', route: '/registro' },
   verifyEmail: { role: 'student', title: 'Verificar correo', label: 'VERIFICAR CORREO', route: '/verificar-correo' },
-  loading: { role: 'shared', title: 'Sincronizando', label: 'SINCRONIZANDO', route: '/cargando' },
+  loading: { role: 'shared', title: 'Loading Screen', label: 'LOADING SCREEN', route: '/cargando' },
   home: { role: 'student', title: 'Inicio', label: 'INICIO', route: '/panel' },
   reserve: { role: 'student', title: 'Reservar habitación', label: 'RESERVAR HABITACIÓN', route: '/reservar' },
   roomDetail: { role: 'student', title: 'Detalle de habitación', label: 'DETALLE DE HABITACIÓN', route: '/habitacion' },
@@ -58,14 +58,14 @@ const PWA_SCREENS = {
   floors: { role: 'admin', title: 'Pisos', label: 'PISOS', route: '/admin/pisos' },
   settings: { role: 'admin', title: 'Configuración global', label: 'CONFIGURACIÓN', route: '/admin/configuracion' }
 };
-const PWA_SHARED = ['splash','forgotPassword','lockAccount','unlockAccount','loading','aboutSoftware','aboutTeam'];
+const PWA_SHARED = ['splash','loading','forgotPassword','lockAccount','unlockAccount','aboutSoftware','aboutTeam'];
 const PWA_CODES = { splash:'C1', landing:'E1', studentLogin:'E2', forgotPassword:'E3', lockAccount:'C2', unlockAccount:'C3', register:'E4', verifyEmail:'E5', loading:'E6', home:'E7', reserve:'E8', roomDetail:'E9', requestStatus:'E10', payments:'E11', paymentDetail:'E12', rateService:'E13', rateConfirm:'E14', profile:'E15', aboutSoftware:'C4', aboutTeam:'C5', adminLogin:'A1', reservations:'A2', assignRoom:'A3', pendingPayments:'A4', validatePayment:'A5', debts:'A6', floors:'A7', settings:'A8' };
-const PWA_STUDENT = ['splash','landing','studentLogin','forgotPassword','lockAccount','unlockAccount','register','verifyEmail','loading','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile','aboutSoftware','aboutTeam'];
-const PWA_ADMIN = ['splash','adminLogin','forgotPassword','lockAccount','unlockAccount','loading','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings','aboutSoftware','aboutTeam'];
+const PWA_STUDENT = ['splash','loading','landing','studentLogin','forgotPassword','lockAccount','unlockAccount','register','verifyEmail','home','reserve','roomDetail','requestStatus','payments','paymentDetail','rateService','rateConfirm','profile','aboutSoftware','aboutTeam'];
+const PWA_ADMIN = ['splash','loading','adminLogin','forgotPassword','lockAccount','unlockAccount','reservations','assignRoom','pendingPayments','validatePayment','debts','floors','settings','aboutSoftware','aboutTeam'];
 const PWA_ROOTS = new Set(['splash','landing','home','reserve','payments','profile','reservations','pendingPayments','floors','settings']);
 /* Acciones disponibles por pantalla: [destino, texto visible]. */
 const PWA_ACTIONS = {
-  splash:[['landing','Iniciar como Estudiante'],['adminLogin','Iniciar como Administrador'],['aboutSoftware','Acerca del software']],
+  splash:[['loading','Continuar a Loading Screen'],['landing','Ir a Landing (Estudiante)'],['adminLogin','Ir a Login Administrador']],
   landing:[['studentLogin','Iniciar sesión'],['reserve','Explorar habitaciones'],['roomDetail','Habitación destacada'],['aboutSoftware','Acerca del software'],['aboutTeam','Acerca del equipo']],
   studentLogin:[['loading','Entrar al panel'],['forgotPassword','¿Olvidaste tu contraseña?'],['lockAccount','3 intentos fallidos → Bloqueo'],['register','Crear una cuenta nueva']],
   forgotPassword:[['studentLogin','Enviar enlace (Estudiante)'],['adminLogin','Enviar enlace (Administrador)'],['unlockAccount','Tengo código de verificación']],
@@ -74,7 +74,7 @@ const PWA_ACTIONS = {
 
   register:[['verifyEmail','Registrarse'],['studentLogin','¿Ya tienes cuenta? Iniciar sesión']],
   verifyEmail:[['loading','Verificar código'],['register','Reenviar código']],
-  loading:[['home','Terminar carga (estudiante)'],['reservations','Terminar carga (administrador)']],
+  loading:[['landing','Terminar carga → Landing'],['adminLogin','Terminar carga → Login Admin'],['home','Ir a Inicio (Estudiante)'],['reservations','Ir a Reservaciones (Admin)']],
   home:[['reserve','Tarjeta Reservar'],['requestStatus','Tarjeta Estado de mi petición'],['payments','Tarjeta Próximo pago'],['roomDetail','Habitación destacada'],['rateService','Evaluar el servicio'],['profile','Barra lateral: Cuenta']],
   reserve:[['roomDetail','Ver detalle de habitación'],['requestStatus','Confirmar reservación'],['payments','Barra lateral: Pagos'],['profile','Barra lateral: Cuenta']],
   roomDetail:[['requestStatus','Solicitar esta habitación'],['reserve','Volver al catálogo']],

@@ -11,7 +11,7 @@
   const SECTION_BUTTON = { sketches: 'Sketches', wireframes: 'Wireframes', mockups: 'Mockups', prototype: 'Prototipo' };
   const PLATFORM_LABEL = { mobile: 'MÓVIL', pwa: 'PWA' };
   const ROLE_LABEL = { student: 'ESTUDIANTE', admin: 'ADMINISTRADOR', shared: 'COMUNES (AMBOS ROLES)' };
-  const STORE_KEY = 'sicpes-shell-context-v2';
+  const STORE_KEY = 'sicpes-shell-context-v3';
 
   const state = {
     section: 'sketches',
@@ -206,7 +206,7 @@
         settings: [{ id: 'settings', title: 'Configuración' }],
         aboutSoftware: [{ id: 'settings', title: 'Configuración' }, { id: 'aboutSoftware', title: 'Acerca del software' }],
         aboutTeam: [{ id: 'settings', title: 'Configuración' }, { id: 'aboutSoftware', title: 'Software' }, { id: 'aboutTeam', title: 'Acerca del equipo' }],
-        loading: [{ id: 'adminLogin', title: 'Acceso admin' }, { id: 'loading', title: 'Sincronizando' }]
+        loading: [{ id: 'splash', title: 'Splash Screen' }, { id: 'loading', title: 'Loading Screen' }]
       };
       return paths[screen] || [{ id: screen, title: screenTitle(screen) }];
     }
@@ -220,7 +220,7 @@
       unlockAccount: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'lockAccount', title: 'Bloqueo' }, { id: 'unlockAccount', title: 'Código de desbloqueo' }],
       register: [{ id: 'studentLogin', title: 'Iniciar sesión' }, { id: 'register', title: 'Crear cuenta' }],
       verifyEmail: [{ id: 'register', title: 'Crear cuenta' }, { id: 'verifyEmail', title: 'Verificar correo' }],
-      loading: [{ id: 'loading', title: 'Sincronizando' }],
+      loading: [{ id: 'splash', title: 'Splash Screen' }, { id: 'loading', title: 'Loading Screen' }],
       home: [{ id: 'home', title: 'Inicio' }],
       reserve: [{ id: 'home', title: 'Inicio' }, { id: 'reserve', title: 'Reservar habitación' }],
       roomDetail: [{ id: 'home', title: 'Inicio' }, { id: 'reserve', title: 'Reservar' }, { id: 'roomDetail', title: 'Detalle de habitación' }],
