@@ -230,6 +230,7 @@
   }
 
   function labelForImageEl(el) {
+    if (el.classList.contains('mk-splash-emblem')) return 'LOGO SICPES';
     if (el.classList.contains('mk-qr')) return 'QR';
     if (el.classList.contains('mk-proof')) return 'VOUCHER SPEI';
     if (el.classList.contains('mk-dropzone')) return 'ARCHIVO';
@@ -337,7 +338,8 @@
       '.mk-status-hero', '.mk-list-row', '.mk-room-option',
       '.mk-notice', '.mk-soft-note', '.mk-security-note',
       '.mk-amount-block', '.mk-receipt-amount', '.mk-side-help',
-      '.mk-service-grid span', '.mk-service-item', '.mk-quote'
+      '.mk-service-grid span', '.mk-service-item', '.mk-quote',
+      '.mk-skeleton-box', '.mk-skeleton-panel', '.mk-sk-block', '.mk-splash-badge'
     ].join(',');
 
     const cardBoxes = Array.from(mkCanvas.querySelectorAll(cardSelector))
@@ -363,7 +365,7 @@
     });
 
     // 4. Imágenes, fotos, miniaturas, portada, dropzones y QR (cajas con cruz X)
-    const imgSelector = '.mk-photo-wrap, .mk-room-thumb, .mk-gallery-main, .mk-gallery-thumbs button, .mk-auth-art-visual, .mk-proof, .mk-room-option-thumb, .mk-profile-cover, .mk-dropzone, .mk-qr';
+    const imgSelector = '.mk-photo-wrap, .mk-room-thumb, .mk-gallery-main, .mk-gallery-thumbs button, .mk-auth-art-visual, .mk-proof, .mk-room-option-thumb, .mk-profile-cover, .mk-dropzone, .mk-qr, .mk-splash-emblem';
     mkCanvas.querySelectorAll(imgSelector).forEach(el => {
       const b = rel(el);
       if (!inViewport(b) || b.w < 14 || b.h < 14) return;
@@ -389,7 +391,7 @@
       }
     });
 
-    const avatarSelector = '.mk-avatar, .mk-status-hero-icon, .mk-stat-icon, .mk-list-avatar, .mk-timeline-dot';
+    const avatarSelector = '.mk-avatar, .mk-status-hero-icon, .mk-stat-icon, .mk-list-avatar, .mk-timeline-dot, .mk-spinner, .mk-sk-circle, .mk-splash-dots i';
     mkCanvas.querySelectorAll(avatarSelector).forEach(el => {
       const b = rel(el);
       if (!inViewport(b)) return;
@@ -409,6 +411,13 @@
         stroke: PEN, strokeWidth: 1.3, fill: PEN,
         fillStyle: 'hachure', fillWeight: 1.3, hachureGap: 3.5, roughness: 0.6
       });
+    });
+
+    mkCanvas.querySelectorAll('.mk-sk-line').forEach(el => {
+      const b = rel(el);
+      if (inViewport(b)) {
+        line(r, b.x, b.cy, b.right, b.cy, 2.2);
+      }
     });
 
     mkCanvas.querySelectorAll('.mk-divider, .mk-receipt-lines span, .mk-price-lines span, .mk-info-rows > div, .mk-switch-list label').forEach(el => {

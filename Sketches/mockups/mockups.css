@@ -2023,17 +2023,280 @@
   padding: 12px 16px;
 }
 
-/* ---------- Carga ---------- */
+/* ---------- Splash Screen (Branded Launch Screen) ---------- */
+.mk-splash-m,
+.mk-splash-pwa {
+  background:
+    radial-gradient(540px 420px at 50% 34%, rgba(76, 175, 80, 0.24), transparent 68%),
+    linear-gradient(165deg, #123321 0%, #17422B 52%, #0E2619 100%);
+  color: #FDFBF7;
+}
+
+.mk-splash-screen {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 44px 26px 28px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mk-splash-pwa .mk-splash-screen {
+  padding: 64px 40px 36px;
+}
+
+.mk-splash-center {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 460px;
+}
+
+.mk-splash-emblem {
+  width: 108px;
+  height: 108px;
+  border-radius: 30px;
+  background: #FFFFFF;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 0 0 8px rgba(129, 199, 132, 0.16),
+    0 0 0 18px rgba(129, 199, 132, 0.07),
+    0 20px 46px rgba(0, 0, 0, 0.32);
+  margin-bottom: 8px;
+}
+
+.mk-splash-pwa .mk-splash-emblem {
+  width: 122px;
+  height: 122px;
+  border-radius: 34px;
+  padding: 14px;
+}
+
+.mk-splash-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.mk-splash-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(129, 199, 132, 0.16);
+  border: 1px solid rgba(129, 199, 132, 0.38);
+  color: #A7E3B5;
+  font: 700 8.5px var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mk-splash-brand {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.mk-splash-pwa .mk-splash-brand {
+  font-size: 48px;
+}
+
+.mk-splash-title {
+  margin: 0;
+  color: #E2F2E6;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 310px;
+}
+
+.mk-splash-pwa .mk-splash-title {
+  font-size: 15px;
+  max-width: 420px;
+}
+
+.mk-splash-motto {
+  margin: 2px 0 0;
+  color: #9DC4A9;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.mk-splash-foot {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mk-splash-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mk-splash-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #81C784;
+  opacity: 0.85;
+}
+
+.mk-splash-dots i:nth-child(2) {
+  opacity: 0.55;
+}
+
+.mk-splash-dots i:nth-child(3) {
+  opacity: 0.3;
+}
+
+.mk-splash-ver {
+  color: rgba(226, 242, 230, 0.72);
+  font: 700 8.5px var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- Loading Screen (In-App Sync & Skeleton UI) ---------- */
 .mk-loading-m {
   background: radial-gradient(420px 340px at 50% 18%, #E9F6EB, #FDFBF7 65%);
-  justify-content: center;
-  padding: 18px;
 }
 
 .mk-loading-pwa {
   background: radial-gradient(720px 480px at 50% 22%, #E9F6EB, #FDFBF7 66%);
-  align-items: center;
-  justify-content: center;
+}
+
+.mk-loading-stage {
+  flex: 1;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mk-loading-pwa .mk-loading-stage {
+  padding: 26px 36px 32px;
+  gap: 20px;
+}
+
+.mk-skeleton-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.mk-loading-pwa .mk-skeleton-kpis {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.mk-skeleton-box {
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px dashed #D5DEC9;
+  background: rgba(255, 255, 255, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mk-sk-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #E3ECE4;
+  display: block;
+}
+
+.mk-sk-line {
+  height: 7px;
+  border-radius: 99px;
+  background: #E3ECE4;
+  display: block;
+}
+
+.mk-sk-lg { width: 72%; }
+.mk-sk-md { width: 48%; }
+.mk-sk-sm { width: 38%; }
+
+.mk-sk-block {
+  height: 36px;
+  border-radius: 8px;
+  background: #EBF1EB;
+  display: block;
+}
+
+.mk-skeleton-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.mk-loading-pwa .mk-skeleton-panels {
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.mk-skeleton-panel {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px dashed #D5DEC9;
+  background: rgba(255, 255, 255, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.mk-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 4px;
+  background: #EDF8EF;
+  border: 1px solid #CFE6D5;
+  display: grid;
+  place-items: center;
+}
+
+.mk-spinner-track {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3.5px solid #D6EAD9;
+  border-top-color: #2F8A5C;
+  border-right-color: #2F8A5C;
+  display: block;
+  animation: mk-spin 1s linear infinite;
+}
+
+@keyframes mk-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mk-loading-steps span.active {
+  border-color: #9AD2B0;
+  background: #E3F5E8;
+  color: #175435;
 }
 
 .mk-loading-card {

@@ -239,7 +239,7 @@
     const parts = [];
 
     // 1. Etiquetas de dimensión en contenedores de imagen con cruz X
-    const photoSelector = '.mk-photo-wrap, .mk-room-thumb, .mk-gallery-main, .mk-gallery-thumbs button, .mk-auth-art-visual, .mk-proof, .mk-room-option-thumb, .mk-profile-cover, .mk-dropzone, .mk-qr';
+    const photoSelector = '.mk-photo-wrap, .mk-room-thumb, .mk-gallery-main, .mk-gallery-thumbs button, .mk-auth-art-visual, .mk-proof, .mk-room-option-thumb, .mk-profile-cover, .mk-dropzone, .mk-qr, .mk-splash-emblem';
     rootEl.querySelectorAll(photoSelector).forEach(el => {
       const b = relBox(el, surfaceRect, scale);
       if (!insideClip(b, clip) || b.w < 32 || b.h < 24) return;
@@ -261,7 +261,8 @@
       '.mk-btn', '.mk-choice', '.mk-filter-tab', '.mk-rating-cell',
       '.mk-side-item', '.mk-pwa-link', '.mk-navitem',
       '.mk-field input', '.mk-field select', '.mk-field textarea', '.mk-code-row input',
-      '.mk-photo-wrap', '.mk-room-thumb', '.mk-gallery-main', '.mk-dropzone', '.mk-notice'
+      '.mk-photo-wrap', '.mk-room-thumb', '.mk-gallery-main', '.mk-dropzone', '.mk-notice',
+      '.mk-splash-emblem', '.mk-splash-badge', '.mk-skeleton-box', '.mk-skeleton-panel'
     ].join(',');
 
     const rawBoxes = Array.from(rootEl.querySelectorAll(boxSelector))
@@ -302,7 +303,7 @@
     }
 
     // 4. Avatares y círculos (⌀N ×K)
-    const circleSelector = '.mk-avatar, .mk-status-hero-icon, .mk-stat-icon, .mk-list-avatar, .mk-timeline-dot';
+    const circleSelector = '.mk-avatar, .mk-status-hero-icon, .mk-stat-icon, .mk-list-avatar, .mk-timeline-dot, .mk-spinner, .mk-sk-circle';
     const circles = Array.from(rootEl.querySelectorAll(circleSelector))
       .map(el => relBox(el, surfaceRect, scale))
       .filter(b => insideClip(b, clip) && b.w >= 10);
@@ -344,7 +345,7 @@
     });
 
     // 6. Especificaciones tipográficas (Aa fs/lh B)
-    const typoSelector = '.mk-display, .mk-page-title, .mk-auth-title, .mk-title, .mk-card-title, .mk-section-title, .mk-eyebrow, .mk-lead, .mk-stat strong, .mk-amount-block strong';
+    const typoSelector = '.mk-display, .mk-page-title, .mk-auth-title, .mk-title, .mk-card-title, .mk-section-title, .mk-eyebrow, .mk-lead, .mk-stat strong, .mk-amount-block strong, .mk-splash-brand, .mk-splash-title, .mk-splash-motto, .mk-splash-ver';
     const typoNodes = Array.from(rootEl.querySelectorAll(typoSelector));
     const seenTypoKinds = new Set();
 

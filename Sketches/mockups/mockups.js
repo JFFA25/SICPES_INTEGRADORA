@@ -322,11 +322,34 @@
     return `<div class="mk-app mk-landing-pwa">${browserBar('/')}${content}</div>`;
   }
 
-  function loadingFrame(content) {
+  function splashFrame(content) {
     if (state.platform === 'mobile') {
-      return `<div class="mk-app mk-loading-m">${mobileStatus()}${content}</div>`;
+      return `<div class="mk-app mk-splash-m">${mobileStatus()}${content}</div>`;
     }
-    return `<div class="mk-app mk-loading-pwa">${browserBar('/cargando')}${content}</div>`;
+    return `<div class="mk-app mk-splash-pwa">${browserBar('/splash')}${content}</div>`;
+  }
+
+  function loadingFrame(content) {
+    const M = data();
+    const name = state.role === 'admin' ? 'Admin SICPES' : M.student.name;
+    if (state.platform === 'mobile') {
+      return `<div class="mk-app mk-loading-m">
+        ${mobileStatus()}
+        <header class="mk-appbar">
+          ${logoLockup(true)}
+          <span class="mk-status mk-rev"><i></i>Sincronizando…</span>
+        </header>
+        ${content}
+      </div>`;
+    }
+    return `<div class="mk-app mk-loading-pwa">
+      ${browserBar('/cargando')}
+      <header class="mk-pwa-top">
+        ${logoLockup()}
+        <div class="mk-pwa-user"><span class="mk-status mk-rev"><i></i>Sincronizando sesión…</span>${avatar(name, 'mk-avatar-sm')}<span>${esc(name)}</span></div>
+      </header>
+      ${content}
+    </div>`;
   }
 
   /* ---------- Vistas ---------- */
@@ -434,14 +457,30 @@
   }
 
   function loadingView() {
-    return `<div class="mk-loading-card">
-      ${logoLockup()}
-      <span class="mk-eyebrow">PREPARANDO TU ESPACIO</span>
-      <h2>Sincronizando tu residencia</h2>
-      <p class="mk-lead">Estamos conectando tus reservaciones, pagos y avisos.</p>
-      <div class="mk-progress"><div class="mk-progress-fill"></div></div>
-      <div class="mk-progress-caption"><span id="mkProgressText">Conectando con SICPES</span><strong id="mkProgressPercent">0%</strong></div>
-      <div class="mk-loading-steps"><span class="done">${icon('check', 14)} Cuenta</span><span>${icon('clock', 14)} Reservación</span><span>${icon('clock', 14)} Pagos</span></div>
+    return `<div class="mk-loading-stage">
+      <div class="mk-skeleton-kpis" aria-hidden="true">
+        <div class="mk-skeleton-box"><span class="mk-sk-circle"></span><span class="mk-sk-line mk-sk-lg"></span><span class="mk-sk-line mk-sk-sm"></span></div>
+        <div class="mk-skeleton-box"><span class="mk-sk-circle"></span><span class="mk-sk-line mk-sk-lg"></span><span class="mk-sk-line mk-sk-sm"></span></div>
+        <div class="mk-skeleton-box"><span class="mk-sk-circle"></span><span class="mk-sk-line mk-sk-lg"></span><span class="mk-sk-line mk-sk-sm"></span></div>
+        <div class="mk-skeleton-box"><span class="mk-sk-circle"></span><span class="mk-sk-line mk-sk-lg"></span><span class="mk-sk-line mk-sk-sm"></span></div>
+      </div>
+      <div class="mk-loading-card">
+        <div class="mk-spinner" aria-hidden="true"><span class="mk-spinner-track"></span></div>
+        <span class="mk-eyebrow">SINCRONIZACIÓN EN SEGUNDO PLANO</span>
+        <h2>Sincronizando tu residencia</h2>
+        <p class="mk-lead">Descargando reservaciones, estado de cuenta y avisos desde el servidor.</p>
+        <div class="mk-progress"><div class="mk-progress-fill"></div></div>
+        <div class="mk-progress-caption"><span id="mkProgressText">Consultando habitación y reservas en TiDB…</span><strong id="mkProgressPercent">0%</strong></div>
+        <div class="mk-loading-steps">
+          <span class="done">${icon('check', 14)} 1. Sesión JWT</span>
+          <span class="active">${icon('clock', 14)} 2. Reservación</span>
+          <span>${icon('clock', 14)} 3. Pagos y avisos</span>
+        </div>
+      </div>
+      <div class="mk-skeleton-panels" aria-hidden="true">
+        <div class="mk-skeleton-panel"><span class="mk-sk-line mk-sk-md"></span><span class="mk-sk-block"></span><span class="mk-sk-line mk-sk-lg"></span></div>
+        <div class="mk-skeleton-panel"><span class="mk-sk-line mk-sk-md"></span><span class="mk-sk-block"></span><span class="mk-sk-line mk-sk-lg"></span></div>
+      </div>
     </div>`;
   }
 
@@ -737,20 +776,22 @@
   }
 
   function splashView() {
+    const nextScreen = state.role === 'admin' ? 'adminLogin' : 'landing';
     return `
-      <div class="mk-loading-card">
-        <div class="mk-loading-brand">${logoLockup(false)}</div>
-        <span class="mk-eyebrow">${icon('sparkles', 14)} Versión 2.4.0 · Flutter &amp; PWA React/Vite</span>
-        <h1 class="mk-title">SICPES Residencial</h1>
-        <p class="mk-subtitle">Sistema Integral de Control de Pensión de Estudiantes · Conectando estudiantes con hogares seguros.</p>
-        <div class="mk-cta-stack" style="margin-top:16px">
-          <button type="button" class="mk-btn mk-primary mk-block" data-mk-go="landing">Entrar al Portal del Residente ${icon('arrowRight', 16)}</button>
-          <button type="button" class="mk-btn mk-secondary mk-block" data-mk-go="adminLogin">${icon('shield', 16)} Consola de Administración</button>
+      <div class="mk-splash-screen" data-mk-go="${nextScreen}" role="button" tabindex="0" aria-label="Pantalla de arranque SICPES">
+        <div class="mk-splash-center">
+          <div class="mk-splash-emblem">
+            <img class="mk-splash-logo" src="../images/SICPES_Producto.png" alt="Logo SICPES">
+          </div>
+          <span class="mk-splash-badge">RESIDENCIAL UNIVERSITARIO</span>
+          <h1 class="mk-splash-brand">SICPES</h1>
+          <p class="mk-splash-title">Sistema Integral de Control de Pensión de Estudiantes</p>
+          <p class="mk-splash-motto">“Una pensión más ordenada para un mejor estudiar”</p>
         </div>
-        <div class="mk-btn-row" style="margin-top:10px">
-          <button type="button" class="mk-btn mk-secondary" data-mk-go="aboutSoftware">Acerca del software</button>
-          <button type="button" class="mk-btn mk-secondary" data-mk-go="aboutTeam">Acerca del equipo</button>
-        </div>
+        <footer class="mk-splash-foot">
+          <div class="mk-splash-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="mk-splash-ver">VERSIÓN 2.4.0 · FLUTTER &amp; PWA REACT/VITE · UTXJ</span>
+        </footer>
       </div>`;
   }
 
@@ -910,8 +951,9 @@
   }
 
   function frameFor(id, content) {
+    if (id === 'splash') return splashFrame(content);
     if (id === 'landing') return landingFrame(content);
-    if (id === 'loading' || id === 'splash') return loadingFrame(content);
+    if (id === 'loading') return loadingFrame(content);
     if (AUTH.has(id)) return authFrame(state.role, content);
     return state.platform === 'mobile' ? mobileShell(state.role, activeNav(id), content) : pwaShell(state.role, activeNav(id), content);
   }
@@ -937,8 +979,18 @@
     renderScreenList();
     renderDestinations();
     fitMockup();
-    if (state.screen === 'loading' && (!window.SicpesShell || window.SicpesShell.getState().section === 'prototype')) startLoading();
+    const isProto = !window.SicpesShell || window.SicpesShell.getState().section === 'prototype';
+    if (state.screen === 'loading' && isProto) startLoading();
+    if (state.screen === 'splash' && isProto) startSplash();
     if(window.SicpesShell&&(window.SicpesShell.getState().section==='mockups'||window.SicpesShell.getState().section==='prototype')){window.dispatchEvent(new CustomEvent('sicpes:screen',{detail:{section:window.SicpesShell.getState().section,platform:state.platform,screen:state.screen,role:state.role}}));}
+  }
+
+  function startSplash() {
+    state.timer = setTimeout(() => {
+      if (state.screen !== 'splash') return;
+      if (window.SicpesShell && window.SicpesShell.getState().section !== 'prototype') return;
+      go(state.role === 'admin' ? 'adminLogin' : 'landing', { replace: true });
+    }, 1600);
   }
 
   function startLoading() {
@@ -947,9 +999,17 @@
       progress = Math.min(progress + 9, 100);
       const fill = canvas.querySelector('.mk-progress-fill');
       const pct = canvas.querySelector('#mkProgressPercent');
+      const txt = canvas.querySelector('#mkProgressText');
       if (!fill || !pct) { clearInterval(state.timer); return; }
       fill.style.width = progress + '%';
       pct.textContent = progress + '%';
+      if (txt) {
+        txt.textContent = progress < 40
+          ? 'Verificando sesión JWT y permisos…'
+          : progress < 80
+            ? 'Consultando habitación y reservas en TiDB…'
+            : 'Cargando estado de cuenta y avisos…';
+      }
       if (progress === 100) {
         clearInterval(state.timer);
         setTimeout(() => go(state.role === 'admin' ? 'reservations' : 'home', { replace: true }), 420);

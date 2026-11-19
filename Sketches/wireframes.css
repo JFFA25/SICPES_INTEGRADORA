@@ -119,11 +119,13 @@
 #mobileView .mk-auth-m,
 #mobileView .mk-landing-m,
 #mobileView .mk-loading-m,
+#mobileView .mk-splash-m,
 #pwaView .mk-app,
 #pwaView .mk-pwa-app,
 #pwaView .mk-auth-pwa,
 #pwaView .mk-landing-pwa,
-#pwaView .mk-loading-pwa {
+#pwaView .mk-loading-pwa,
+#pwaView .mk-splash-pwa {
   background: #FFFFFF !important;
   color: #111111 !important;
 }
@@ -254,6 +256,10 @@
 #mobileView .mk-section-title,
 #mobileView .mk-logo-word,
 #mobileView .mk-logo-word small,
+#mobileView .mk-splash-brand,
+#mobileView .mk-splash-title,
+#pwaView .mk-splash-brand,
+#pwaView .mk-splash-title,
 #pwaView .mk-eyebrow,
 #pwaView .mk-page-title,
 #pwaView .mk-display,
@@ -273,6 +279,10 @@
 #mobileView .mk-body-text,
 #mobileView .mk-auth-note,
 #mobileView .mk-inline-link,
+#mobileView .mk-splash-motto,
+#mobileView .mk-splash-ver,
+#pwaView .mk-splash-motto,
+#pwaView .mk-splash-ver,
 #pwaView .mk-lead,
 #pwaView .mk-subtitle,
 #pwaView .mk-muted,
@@ -364,10 +374,12 @@
 #mobileView .mk-room-tags span,
 #mobileView .mk-stepper span,
 #mobileView .mk-loading-steps span,
+#mobileView .mk-splash-badge,
 #pwaView .mk-status,
 #pwaView .mk-room-tags span,
 #pwaView .mk-stepper span,
-#pwaView .mk-loading-steps span {
+#pwaView .mk-loading-steps span,
+#pwaView .mk-splash-badge {
   background: #F2F2F2 !important;
   color: #111111 !important;
   border: 1.1px solid #7A7A7A !important;
@@ -423,6 +435,8 @@
 #mobileView .mk-logo-img,
 #mobileView .mk-qr,
 #mobileView .mk-dropzone,
+#mobileView .mk-splash-emblem,
+#pwaView .mk-splash-emblem,
 #pwaView .mk-photo-wrap,
 #pwaView .mk-room-thumb,
 #pwaView .mk-gallery-main,
@@ -448,6 +462,8 @@
 #mobileView .mk-avatar-img,
 #mobileView .mk-logo-img,
 #mobileView .mk-qr svg,
+#mobileView .mk-splash-logo,
+#pwaView .mk-splash-logo,
 #pwaView .mk-photo,
 #pwaView .mk-avatar-img,
 #pwaView .mk-logo-img,
@@ -576,4 +592,44 @@ body.shell-section-wireframes #diagramCanvas .thumb.current .thumb-box,
 body.shell-section-wireframes #pwaMapCanvas .pwa-map-thumb.current {
   stroke: #111827 !important;
   filter: drop-shadow(0 0 6px rgba(17, 24, 39, 0.35)) !important;
+}
+
+/* ---------- Splash dots, Spinner y Skeleton UI en modo Wireframe B/N ---------- */
+#mobileView .mk-splash-dots i,
+#pwaView .mk-splash-dots i {
+  background: #BDBDBD !important;
+  border: 1px solid #111111 !important;
+  opacity: 1 !important;
+}
+
+#mobileView .mk-spinner,
+#pwaView .mk-spinner {
+  background: #F2F2F2 !important;
+  border: 1.4px solid #111111 !important;
+}
+
+#mobileView .mk-spinner-track,
+#pwaView .mk-spinner-track {
+  border-color: #D4D4D4 !important;
+  border-top-color: #111111 !important;
+  border-right-color: #111111 !important;
+  animation: none !important;
+}
+
+#mobileView .mk-skeleton-box,
+#mobileView .mk-skeleton-panel,
+#pwaView .mk-skeleton-box,
+#pwaView .mk-skeleton-panel {
+  background: #FAFAFA !important;
+  border: 1.2px dashed #7A7A7A !important;
+}
+
+#mobileView .mk-sk-circle,
+#mobileView .mk-sk-line,
+#mobileView .mk-sk-block,
+#pwaView .mk-sk-circle,
+#pwaView .mk-sk-line,
+#pwaView .mk-sk-block {
+  background: #E4E4E4 !important;
+  border: 1px solid #B0B0B0 !important;
 }
