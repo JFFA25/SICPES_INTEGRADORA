@@ -1,205 +1,171 @@
-# <p align="center">SICPES · Workflows del sistema</p>
+# <p align="center">SICPES · Workflow de reserva de habitación</p>
 
 <p align="center">
   <strong>Sistema Integral de Control de Pensión de Estudiantes</strong><br>
-  <em>Flujo operativo, flujo de desarrollo y flujos por rol · Diagramas interactivos con la identidad visual de SICPES</em>
+  <em>Simulación animada del flujo de una función de la app: el estudiante reserva una habitación y el administrador la asigna</em>
 </p>
 
 <p align="center">
-  <img src="../images/SICPES_Producto.png" alt="SICPES" width="180"/>
+  <img src="../images/SICPES_Producto.png" alt="SICPES" width="160"/>
 </p>
 
 <p align="center">
-  <img src="./capturas/flujo-operativo.light.png" alt="Flujo operativo del sistema SICPES" width="1100"/>
+  <a href="reserva-habitacion.html">
+    <img src="./capturas/paso-06.png" alt="Workflow de reserva de habitación de SICPES" width="1100"/>
+  </a>
 </p>
 
 <p align="center">
-  <a href="flujo-operativo.html"><strong>▶ Ver el flujo operativo interactivo</strong></a>
+  <a href="reserva-habitacion.html"><strong>▶ Abrir el workflow animado</strong></a>
   &nbsp;·&nbsp;
-  <a href="flujo-desarrollo.html"><strong>▶ Ver el flujo de desarrollo</strong></a>
-  &nbsp;·&nbsp;
-  <a href="flujos-por-rol.html"><strong>▶ Ver los flujos por rol</strong></a>
+  <a href="https://jffa25.github.io/SICPES_INTEGRADORA/workflow/reserva-habitacion.html"><strong>Ver en línea (GitHub Pages)</strong></a>
 </p>
 
 ## Contenido
 
-1. [Resumen](#resumen)
-2. [Flujo operativo del sistema](#flujo-operativo-del-sistema)
-3. [Flujo de desarrollo del proyecto](#flujo-de-desarrollo-del-proyecto)
-4. [Flujos por rol de usuario](#flujos-por-rol-de-usuario)
-5. [Cómo leer los diagramas](#cómo-leer-los-diagramas)
-6. [Temas y paleta de colores](#temas-y-paleta-de-colores)
-7. [Cómo abrir y ver los diagramas](#cómo-abrir-y-ver-los-diagramas)
-8. [Estructura de la carpeta](#estructura-de-la-carpeta)
-9. [Versión alternativa (Archify)](#versión-alternativa-archify)
+1. [¿Qué es este workflow?](#qué-es-este-workflow)
+2. [Por qué el proceso de reserva](#por-qué-el-proceso-de-reserva)
+3. [Participantes del flujo](#participantes-del-flujo)
+4. [Las 10 etapas](#las-10-etapas)
+5. [Camino alterno: solicitud rechazada](#camino-alterno-solicitud-rechazada)
+6. [Cómo usar la simulación](#cómo-usar-la-simulación)
+7. [Leyenda de comunicación](#leyenda-de-comunicación)
+8. [Identidad visual](#identidad-visual)
+9. [Fuente en formato Archify](#fuente-en-formato-archify)
+10. [Estructura de la carpeta](#estructura-de-la-carpeta)
+11. [Cambios respecto a la versión anterior](#cambios-respecto-a-la-versión-anterior)
 
-## Resumen
+## ¿Qué es este workflow?
 
-Esta carpeta concentra los **tres workflows** que describen cómo opera SICPES: quién hace qué,
-en qué orden y con qué decisiones intermedias. Cada workflow es un diagrama **HTML interactivo
-y autónomo** (SVG embebido) que se puede abrir sin servidor, con resaltado de relaciones por
-paso, panel de detalle, cambio de tema claro/oscuro e impresión a PDF.
+Es un **workflow de servicio**: muestra, paso a paso y en tiempo real, cómo viajan los datos entre
+las partes de SICPES cuando un estudiante **reserva una habitación**. No es un diagrama del negocio en
+general, sino el flujo de **una función concreta de la app**, como pidió el docente.
 
-Los tres se construyeron en el **estilo de casa de SICPES**: la paleta oficial, la tipografía
-Inter y los dos logotipos del proyecto (empresa y producto), igual que el
-[diagrama de arquitectura](../DiagramaDeArquitectura/arquitectura.html) y el
-[diagrama de roles de usuario](../RolesDeUsuario/diagrama-roles-usuario-sicpes.html).
+La página es un HTML autónomo con animación: un paquete de datos recorre los cables entre la app
+del estudiante, la API con su base de datos y el panel web del administrador. En cada etapa se ve
+la pantalla activa, el endpoint que se llama, la tabla de MySQL afectada, el estado de la solicitud y
+el JSON o SQL que se envía.
 
-| Workflow | Responde a la pregunta | Archivo |
+## Por qué el proceso de reserva
+
+La reserva de habitación es el **proceso central de SICPES**: une a los dos roles principales
+(Estudiante y Administrador), usa los dos canales (app móvil y web), pasa por la API, escribe en la
+base de datos y dispara notificaciones. También resuelve uno de los problemas planteados en el
+proyecto: el **empalme de reservaciones** (dar el mismo cuarto a dos personas).
+
+## Participantes del flujo
+
+| Carril | Tecnología | Pantallas | Qué hace en el flujo |
+| :--- | :--- | :--- | :--- |
+| **App móvil del estudiante** | Flutter / PWA | `E7` Inicio · `E8` Reservar · `E9` Detalle · `E10` Estado de mi petición · `E11` Pagos | Consulta habitaciones, envía la solicitud y sigue su estado. |
+| **API REST + base de datos** | Node.js + Express · MySQL en TiDB Serverless | — | Valida el token JWT, revisa disponibilidad, guarda la reserva y emite eventos. |
+| **Panel web del administrador** | React + TypeScript | `A2` Reservaciones · `A3` Asignar habitación | Recibe la solicitud en tiempo real, la revisa y la asigna o rechaza. |
+| **Servicios externos** | WebSocket · Mailtrap · Twilio (WhatsApp) | — | Avisan al administrador y al estudiante. |
+
+Las pantallas son las mismas de los [Sketches](../Sketches/README.md) y las tecnologías las del
+[Diagrama de Arquitectura](../DiagramaDeArquitectura/README.md).
+
+## Las 10 etapas
+
+| # | Etapa | Dirección | Endpoint / evento | Tabla | Resultado |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| 01 | **Abrir catálogo** | App → API | `GET /api/habitaciones?estado=disponible` | `usuarios` (token) | El estudiante entra a `E8 · Reservar`. |
+| 02 | **Responder disponibilidad** | API → App | `200 OK` con la lista | `habitaciones` | Se llenan los selectores de piso y número. |
+| 03 | **Ver detalle** | App → API | `GET /api/habitaciones/204` | `habitaciones · servicios` | Ficha `E9` con precio y servicios. |
+| 04 | **Enviar solicitud** | App → API | `POST /api/reservas` | `reservas` | Fecha de ingreso, modalidad, piso y número. |
+| 05 | **Validar y registrar** | Dentro de la API | Transacción MySQL | `reservas · habitaciones` | Reserva **Pendiente** y cuarto apartado, sin empalmes. |
+| 06 | **Avisar al administrador** | API → Web | WebSocket `reserva:nueva` | `reservas` | `A2` suma la solicitud a «Pendientes». |
+| 07 | **Revisar solicitud** | Web → API | `GET /api/reservas/R-0148` | `reservas` | Estado **En revisión**, visible para el estudiante. |
+| 08 | **Asignar habitación** | Web → API | `PATCH /api/reservas/R-0148` | `reservas` | Decisión del administrador (asignar o rechazar). |
+| 09 | **Confirmar y generar adeudo** | Dentro de la API | Transacción MySQL | `reservas · habitaciones · adeudos` | Reserva **Aceptada**, cuarto ocupado y primer cargo creado. |
+| 10 | **Notificar al estudiante** | API → App | WebSocket `reserva:aceptada` + Mailtrap + Twilio | `notificaciones` | `E10` muestra «Aceptada» y `E11` tiene el pago pendiente. |
+
+<p align="center">
+  <img src="./capturas/paso-01.png" alt="Paso 01: abrir catálogo" width="49%"/>
+  <img src="./capturas/paso-05.png" alt="Paso 05: validar y registrar" width="49%"/>
+</p>
+<p align="center">
+  <img src="./capturas/paso-08.png" alt="Paso 08: asignar habitación" width="49%"/>
+  <img src="./capturas/paso-10.png" alt="Paso 10: notificar al estudiante" width="49%"/>
+</p>
+
+## Camino alterno: solicitud rechazada
+
+En la etapa **08**, si no hay cupo en la fecha pedida, el administrador presiona **Rechazar** y escribe
+un motivo. La API cambia la reserva a **Rechazada**, libera el cuarto apartado y avisa al estudiante,
+que vuelve a `E8 · Reservar` para elegir otra habitación. El detalle del paso 08 muestra también el
+JSON de este camino.
+
+## Cómo usar la simulación
+
+| Control | Qué hace |
+| :--- | :--- |
+| **Pausar / Reproducir** (o barra espaciadora) | Detiene o reanuda la animación. |
+| **Anterior / Siguiente** (o flechas ← →) | Avanza o retrocede una etapa. |
+| **Reiniciar** | Vuelve a la etapa 01 y reproduce. |
+| **Velocidad** | 0.5×, 1×, 1.5× o 2×. |
+| **Secuencia del proceso** | Clic en cualquier etapa para saltar a ella. |
+| **URL** | `?step=6&paused=1` abre directamente una etapa en pausa (útil para capturas). |
+
+En pantallas pequeñas los tres carriles se apilan y se ocultan los cables; el resto funciona igual.
+Respeta la preferencia de *movimiento reducido* del sistema.
+
+## Leyenda de comunicación
+
+| Color | Significado |
+| :--- | :--- |
+| Verde claro | Petición REST (cliente → API) |
+| Ámbar | Respuesta JSON (API → cliente) |
+| Turquesa | Evento en tiempo real (WebSocket) |
+| Naranja | Notificación externa (Mailtrap / Twilio) |
+| Rojo | Camino alterno: solicitud rechazada |
+
+## Identidad visual
+
+El workflow usa el **logo del producto** (barra lateral) y el **logo de la empresa** (encabezado), la
+tipografía Inter y la paleta oficial de SICPES:
+
+| Color | Hex | Uso en el workflow |
 | :--- | :--- | :--- |
-| **Flujo operativo del sistema** | ¿Qué ocurre, paso a paso, desde que un estudiante se registra hasta que califica el servicio? | [flujo-operativo.html](flujo-operativo.html) |
-| **Flujo de desarrollo del proyecto** | ¿Cómo se construye, revisa y entrega SICPES como producto de software? | [flujo-desarrollo.html](flujo-desarrollo.html) |
-| **Flujos por rol de usuario** | ¿Qué hace el Estudiante y qué hace el Administrador, y dónde se cruzan? | [flujos-por-rol.html](flujos-por-rol.html) |
+| Verde bosque | `#2F8A5C` | Botones, menú activo y etapas completadas |
+| Verde | `#4CAF50` | Acciones principales e indicador «Animación activa» |
+| Verde claro | `#81C784` | Carriles activos, cables de petición y acentos |
+| Salvia | `#C7CCB9` | Texto secundario |
+| Crema | `#FDFBF7` | Texto sobre fondo oscuro y fondo del logo de empresa |
 
-Los tres comparten el mismo lenguaje visual: **carriles** (una franja horizontal por responsable),
-**fases** (bloques de tiempo que agrupan columnas), **nodos** (acciones y estados) y **tarjetas**
-de conclusión al pie.
+## Fuente en formato Archify
 
-## Flujo operativo del sistema
+En [`archify/reserva-habitacion.workflow.json`](archify/reserva-habitacion.workflow.json) está el mismo
+flujo descrito en el formato de la Skill **Archify** (`schema_version: 2`, `diagram_type: workflow`):
+carriles, fases, las 10 etapas como nodos, el camino principal y la relación de rechazo.
 
-Recorrido completo del negocio: registro y verificación del estudiante, búsqueda de pensión,
-solicitud de reserva, revisión del administrador, pago, validación, contrato en PDF y evaluación
-final. Incluye el **camino alterno de rechazo** cuando no hay cupo.
-
-<p align="center">
-  <a href="flujo-operativo.html">
-    <img src="./capturas/flujo-operativo.light.png" alt="Flujo operativo del sistema SICPES" width="1100"/>
-  </a>
-</p>
-
-| Elemento | Valor |
-| :--- | :--- |
-| **Carriles** | Estudiante · Sistema SICPES · Administrador · Rechazos y esperas *(excepción)* |
-| **Fases** | Acceso · Búsqueda y reserva *(énfasis)* · Pago y cierre *(entregable)* |
-| **Camino principal** | Registro → Verificación → Buscar pensión → Solicitar → Revisar → Pago y adeudo → Validar pago → Contrato PDF → Evaluación |
-| **Excepciones** | `sin cupo` (error) → **Sin cupo** → `busca otra opción` (retorno) → volver a **Buscar pensión** |
-| **Servicios externos** | Mailtrap (código de verificación) y Maps + OSRM (ruta a pie y distancia), anotados sobre las relaciones |
-
-## Flujo de desarrollo del proyecto
-
-Ciclo de vida con el que se construye SICPES: definición del alcance, Canvas, sketches, desarrollo,
-base de datos, revisión de código, pruebas y despliegue. El **bucle de corrección** de los hallazgos
-se representa como una relación de retorno desde la revisión hacia el desarrollo.
-
-<p align="center">
-  <a href="flujo-desarrollo.html">
-    <img src="./capturas/flujo-desarrollo.light.png" alt="Flujo de desarrollo del proyecto SICPES" width="1100"/>
-  </a>
-</p>
-
-| Elemento | Valor |
-| :--- | :--- |
-| **Carriles** | Análisis y diseño · Desarrollo · Calidad · Despliegue y entrega |
-| **Fases** | Definición y diseño · Construcción y calidad *(énfasis)* · Entrega *(entregable)* |
-| **Camino principal** | Definir alcance → Modelo Canvas → Sketches → Desarrollo → Revisión → Pruebas y QA → Despliegue → Documentación |
-| **Bucle de corrección** | `cambios solicitados` (retorno) desde **Revisión** hacia **Desarrollo** |
-| **Puertas de control** | Revisión de código (*pull request*) y pruebas **bloqueantes** antes de desplegar |
-
-## Flujos por rol de usuario
-
-Dos rutas en paralelo —Estudiante y Administrador— que nacen de la misma autenticación y se
-encuentran en los puntos compartidos de solicitud, pago y seguimiento.
-
-<p align="center">
-  <a href="flujos-por-rol.html">
-    <img src="./capturas/flujos-por-rol.light.png" alt="Flujos por rol de usuario en SICPES" width="1100"/>
-  </a>
-</p>
-
-| Elemento | Valor |
-| :--- | :--- |
-| **Carriles** | Estudiante · Administrador · Sistema SICPES |
-| **Fases** | Ingreso · Operación diaria *(énfasis)* · Pago y seguimiento *(entregable)* |
-| **Ruta del estudiante** | Acceso → Buscar pensión → Solicitar → Pago y estado → Evaluación |
-| **Ruta del administrador** | Acceso → Revisar → Validar pago → Adeudos |
-| **Puntos compartidos** | Autenticación común, solicitud que llega al panel del administrador y validación del pago |
-
-## Cómo leer los diagramas
-
-- **Carril (lane):** franja horizontal que representa a un responsable (rol, área o el sistema).
-  El carril *Rechazos y esperas* del flujo operativo se distingue por color (variante *excepción*).
-- **Fase (phase):** bloque superior que agrupa varias columnas y marca el momento del proceso.
-  Las fases con variante *énfasis* (trazo sólido) y *entregable* (trazo discontinuo) se distinguen por color.
-- **Nodo:** caja con un color de borde según su tipo semántico (interfaz, backend, datos, control,
-  infraestructura, excepción). Una **etiqueta** señala puertas de control (*gate humano*, *pull request*, *bloqueante*).
-- **Relación:** flecha ortogonal con una etiqueta de significado:
-  - **principal** = flujo normal del proceso;
-  - **retorno / corrección** (línea discontinua gris) = vuelve a un paso previo;
-  - **rechazo o control** (rojo) = decisión que detiene o desvía el flujo.
-- **Tarjetas:** resumen interpretativo al pie del diagrama (camino principal, control y resultado).
-- **Interacción:** al pasar el cursor sobre un paso se resaltan todas sus relaciones y se atenúa el
-  resto; al hacer clic se abre un panel con los pasos entrantes y salientes.
-- **Leyenda:** incluida en la propia página, con el mismo lenguaje visual en los tres workflows.
-
-## Temas y paleta de colores
-
-Cada diagrama incluye **tema claro y oscuro** intercambiables desde la barra superior (el botón
-*Tema claro / oscuro*), y también se puede fijar por URL con `?theme=light` o `?theme=dark`.
-
-Paleta oficial de SICPES usada en los tres diagramas:
-
-| Color | Hex | Uso |
-| :--- | :--- | :--- |
-| Verde bosque | `#2F8A5C` | Color principal / acentos fuertes |
-| Verde | `#4CAF50` | Estados activos y confirmaciones |
-| Verde claro | `#81C784` | Rellenos suaves y realce |
-| Salvia | `#C7CCB9` | Texto secundario y separadores |
-| Crema | `#FDFBF7` | Tinta sobre fondo oscuro / fondo base en claro |
-
-<p align="center">
-  <img src="./capturas/flujo-operativo.dark.png" alt="Flujo operativo en tema oscuro" width="900"/>
-</p>
-
-## Cómo abrir y ver los diagramas
-
-**En local.** Abre directamente el archivo `.html` en tu navegador (Chrome, Edge o Firefox). Cada
-archivo es autónomo: no necesita servidor (solo internet para cargar la tipografía Inter).
-
-**En línea (GitHub Pages).** Si el sitio del repositorio está publicado, los diagramas quedan
-disponibles en:
-
-- `https://jffa25.github.io/SICPES_INTEGRADORA/workflow/flujo-operativo.html`
-- `https://jffa25.github.io/SICPES_INTEGRADORA/workflow/flujo-desarrollo.html`
-- `https://jffa25.github.io/SICPES_INTEGRADORA/workflow/flujos-por-rol.html`
+La página animada se construyó en HTML/CSS/SVG porque Archify genera diagramas estáticos con sus
+propios presets de color y no admite la paleta ni los logotipos del proyecto. El JSON sirve para
+regenerar una versión estática con Archify si se necesita.
 
 ## Estructura de la carpeta
 
 ```text
 workflow/
-├── README.md                       # este documento
-├── flujo-operativo.html            # flujo operativo (estilo SICPES)
-├── flujo-desarrollo.html           # flujo de desarrollo (estilo SICPES)
-├── flujos-por-rol.html             # flujos por rol (estilo SICPES)
-├── capturas/                       # imágenes usadas en este README
-│   ├── flujo-operativo.light.png
-│   ├── flujo-operativo.dark.png
-│   ├── flujo-desarrollo.light.png
-│   ├── flujo-desarrollo.dark.png
-│   ├── flujos-por-rol.light.png
-│   └── flujos-por-rol.dark.png
-└── archify/                        # versión alternativa generada con la Skill Archify
-    ├── flujo-operativo.html
-    ├── flujo-desarrollo.html
-    ├── flujos-por-rol.html
-    ├── *.workflow.json             # fuentes (spec de Archify, schema_version: 2)
-    ├── *.visual-check.json         # evidencia de navegador
-    └── capturas/                   # capturas de la versión Archify
+├── README.md                          # este documento
+├── reserva-habitacion.html            # workflow animado (entrega)
+├── capturas/                          # imágenes de este README
+│   ├── paso-01.png
+│   ├── paso-05.png
+│   ├── paso-06.png
+│   ├── paso-08.png
+│   └── paso-10.png
+└── archify/
+    └── reserva-habitacion.workflow.json   # fuente en formato Archify
 ```
 
-Los tres `*.html` de la raíz son la **entrega** en la identidad visual del proyecto. La carpeta
-`archify/` conserva la **versión alternativa** generada con la Skill Archify (preset `classic`),
-que se mantiene como referencia.
+## Cambios respecto a la versión anterior
 
-## Versión alternativa (Archify)
-
-Antes del rediseño, los tres workflows se generaron con la Skill **Archify** a partir de fuentes
-JSON (`*.workflow.json`). Esa versión sigue disponible en la carpeta [`archify/`](archify/).
-
-> **Nota.** Archify no acepta colores hexadecimales propios ni logotipos: su contrato de autoría solo
-> expone presets semánticos (`classic`, `signal-flow`, `blueprint`, `editorial`) y las variantes de
-> significado de cada nodo y relación. Por eso la versión de `archify/` no usa la paleta oficial de
-> SICPES, y el rediseño en la raíz se hizo directamente en HTML/CSS/SVG para respetar la identidad visual.
+La versión anterior tenía tres diagramas generales (flujo operativo, flujo de desarrollo y flujos
+por rol) con su variante de Archify. Por indicación del docente, el workflow debe mostrar **el flujo de
+una función de la app**, así que se reemplazaron por esta simulación de la **reserva de habitación**.
+Los archivos anteriores se eliminaron de la carpeta y siguen disponibles en el historial de Git.
 
 ---
 
-<p align="center"><sub>SICPES · Diagramas de workflow · Identidad visual propia · versión alternativa con Archify en <code>archify/</code></sub></p>
+<p align="center"><sub>SICPES · Workflow de reserva de habitación · Identidad visual propia</sub></p>

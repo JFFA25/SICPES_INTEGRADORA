@@ -1,0 +1,51 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "SICPES · Workflow de reserva de habitación",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "app", "label": "App móvil del estudiante (Flutter / PWA)" },
+    { "id": "api", "label": "API REST + MySQL (Node.js · TiDB)" },
+    { "id": "web", "label": "Panel web del administrador (React)" },
+    { "id": "excepciones", "label": "Rechazo sin cupo", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "consulta", "label": "Consulta", "fromCol": 0, "toCol": 2 },
+    { "id": "solicitud", "label": "Solicitud y registro", "fromCol": 3, "toCol": 5, "variant": "emphasis" },
+    { "id": "asignacion", "label": "Revisión y asignación", "fromCol": 6, "toCol": 9, "variant": "dashed" }
+  ],
+  "mainPath": ["catalogo", "disponibilidad", "detalle", "enviar", "registrar", "avisar_admin", "revisar", "asignar", "confirmar", "notificar"],
+  "nodes": [
+    { "id": "catalogo", "lane": "app", "col": 0, "type": "frontend", "label": "01 Abrir catálogo", "sublabel": "GET /api/habitaciones", "width": 166 },
+    { "id": "disponibilidad", "lane": "api", "col": 1, "type": "backend", "label": "02 Disponibilidad", "sublabel": "SELECT habitaciones", "width": 166 },
+    { "id": "detalle", "lane": "app", "col": 2, "type": "frontend", "label": "03 Ver detalle", "sublabel": "E9 · Detalle", "width": 166 },
+    { "id": "enviar", "lane": "app", "col": 3, "type": "frontend", "label": "04 Enviar solicitud", "sublabel": "POST /api/reservas", "width": 166 },
+    { "id": "registrar", "lane": "api", "col": 4, "type": "database", "label": "05 Validar y registrar", "sublabel": "reserva Pendiente", "tag": "sin empalmes", "width": 166 },
+    { "id": "avisar_admin", "lane": "web", "col": 5, "type": "frontend", "label": "06 Aviso al admin", "sublabel": "WebSocket", "width": 166 },
+    { "id": "revisar", "lane": "web", "col": 6, "type": "security", "label": "07 Revisar solicitud", "sublabel": "A3 · En revisión", "tag": "gate humano", "width": 166 },
+    { "id": "asignar", "lane": "web", "col": 7, "type": "security", "label": "08 Asignar habitación", "sublabel": "PATCH /api/reservas", "width": 166 },
+    { "id": "rechazo", "lane": "excepciones", "col": 7, "type": "security", "label": "Rechazada", "sublabel": "sin cupo · libera cuarto", "width": 166 },
+    { "id": "confirmar", "lane": "api", "col": 8, "type": "database", "label": "09 Confirmar y adeudo", "sublabel": "Aceptada · cargo", "width": 166 },
+    { "id": "notificar", "lane": "app", "col": 9, "type": "frontend", "label": "10 Notificar", "sublabel": "App · Mailtrap · Twilio", "width": 166 }
+  ],
+  "edges": [
+    { "from": "catalogo", "to": "disponibilidad", "label": "JWT" },
+    { "from": "disponibilidad", "to": "detalle", "label": "200 OK" },
+    { "from": "detalle", "to": "enviar" },
+    { "from": "enviar", "to": "registrar" },
+    { "from": "registrar", "to": "avisar_admin", "label": "reserva:nueva" },
+    { "from": "avisar_admin", "to": "revisar" },
+    { "from": "revisar", "to": "asignar" },
+    { "from": "asignar", "to": "confirmar", "label": "asignar" },
+    { "from": "asignar", "to": "rechazo", "label": "sin cupo", "role": "error", "variant": "security" },
+    { "from": "rechazo", "to": "enviar", "label": "elige otra habitación", "role": "return", "variant": "dashed" },
+    { "from": "confirmar", "to": "notificar", "label": "reserva:aceptada" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Camino principal", "items": ["El estudiante consulta, elige y solicita una habitación", "La API valida disponibilidad y registra la reserva Pendiente", "El administrador revisa y asigna desde el panel web"] },
+    { "dot": "amber", "title": "Controles", "items": ["Token JWT y rol en cada petición", "Transacción que evita empalmes de cuarto", "Revisión humana antes de aceptar"] },
+    { "dot": "cyan", "title": "Resultado", "items": ["Reserva Aceptada y cuarto ocupado", "Primer adeudo creado en el estado de cuenta", "Aviso por app, correo y WhatsApp"] }
+  ]
+}
