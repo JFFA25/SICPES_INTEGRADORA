@@ -134,6 +134,7 @@ SICPES se apoya en servicios de terceros para capacidades que no conviene constr
 | **Sketches, Wireframes, Mockups y Prototipo** | 28 pantallas (Móvil Flutter y PWA React/Vite), apartado de 7 pantallas en común, cotas en px y diagrama de navegación interactivo. | [README](Sketches/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html) |
 | **Diagrama de Arquitectura** | Capas, tecnologías, bases de datos, servicios externos y despliegue, de forma interactiva. | [README](DiagramaDeArquitectura/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html) |
 | **Matriz RACI del Proyecto** | Asignación formal de roles y responsabilidades (R, A, C, I), balance de cargas por integrante y verificación de la regla de oro, desarrollada con el agente Archify. | [README](MatrizRACI/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/MatrizRACI/index.html) |
+| **Workflow de reserva de habitación** | Simulación animada de 10 etapas del flujo de reserva: app del estudiante (Flutter/PWA), API REST con MySQL y panel web del administrador (React), con camino alterno de rechazo. | [README](workflow/README.md) · [Ver en línea](https://jffa25.github.io/SICPES_INTEGRADORA/workflow/reserva-habitacion.html) |
 
 ### Diagrama de Arquitectura
 
@@ -147,6 +148,18 @@ SICPES sigue una **arquitectura cliente-servidor en capas**: clientes (Web React
 
 El diagrama es interactivo: al hacer clic en cada componente se abre su detalle, hay flujos animados (registro, búsqueda de pensión y generación de contrato) y se distingue lo existente de lo planeado. Más información en el [README del diagrama](DiagramaDeArquitectura/README.md).
 
+
+### Workflow de reserva de habitación
+
+El workflow muestra el flujo de **una función de la app**: cómo un estudiante reserva una habitación y cómo el administrador la revisa y la asigna. Un paquete de datos animado recorre la app del estudiante, la API REST con MySQL y el panel web del administrador en 10 etapas, con el endpoint, la tabla afectada y el estado de la solicitud en cada paso.
+
+<p align="center">
+  <a href="https://jffa25.github.io/SICPES_INTEGRADORA/workflow/reserva-habitacion.html">
+    <img src="./workflow/capturas/paso-06.png" alt="Workflow de reserva de habitación de SICPES" width="900"/>
+  </a>
+</p>
+
+Más información en el [README del workflow](workflow/README.md).
 
 # SICPES - Panel de Navegacion
 
@@ -163,6 +176,7 @@ El diagrama es interactivo: al hacer clic en cada componente se abre su detalle,
 - [Práctica 07 · Sketches y navegación](https://jffa25.github.io/SICPES_INTEGRADORA/Sketches/index.html)
 - [Diagrama de Arquitectura](https://jffa25.github.io/SICPES_INTEGRADORA/DiagramaDeArquitectura/arquitectura.html)
 - [Matriz RACI del Proyecto](https://jffa25.github.io/SICPES_INTEGRADORA/MatrizRACI/index.html)
+- [Workflow de reserva de habitación](https://jffa25.github.io/SICPES_INTEGRADORA/workflow/reserva-habitacion.html)
 
 ## Identidad Visual
 

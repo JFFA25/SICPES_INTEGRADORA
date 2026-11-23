@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SICPES · Workflow de reserva de habitación</title>
+<meta name="description" content="Workflow animado de SICPES: flujo de reserva de habitación entre la app del estudiante, la API REST con MySQL y el panel web del administrador.">
+<link rel="icon" href="../images/SICPES_Producto.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#2F8A5C; --green:#4CAF50; --light:#81C784; --sage:#C7CCB9; --cream:#FDFBF7;
+  --bg0:#0B1D14; --bg1:#0E2318; --bg2:#123322; --bg3:#153B28;
+  --panel:rgba(18,51,34,.72); --panel2:rgba(14,35,24,.9);
+  --line:rgba(129,199,132,.22); --line2:rgba(129,199,132,.45);
+  --ink:#FDFBF7; --soft:#E4F1E6; --muted:#C7CCB9; --dim:#8FA394;
+  --req:#81C784; --res:#F2C14E; --push:#6FD3C8; --ext:#E89A6B; --reject:#F08C8A;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  color:var(--ink);font:15px/1.5 Inter,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(1100px 650px at 12% -10%, #1d4d34 0%, rgba(21,59,40,0) 60%),
+    radial-gradient(900px 600px at 110% 10%, rgba(47,138,92,.35) 0%, rgba(14,35,24,0) 60%),
+    linear-gradient(160deg,var(--bg3) 0%,var(--bg1) 50%,var(--bg0) 100%);
+  background-attachment:fixed;
+}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--res);outline-offset:2px}
+
+/* ---------- Controles superiores ---------- */
+.controls{
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:10px clamp(12px,2vw,24px);background:rgba(11,29,20,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.btn{
+  border:1px solid var(--line2);background:rgba(18,51,34,.8);border-radius:10px;padding:8px 14px;
+  cursor:pointer;font-weight:600;font-size:.86rem;transition:transform .15s var(--ease),border-color .15s,background .15s;
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--light)}
+.btn.primary{background:linear-gradient(135deg,var(--green),var(--forest));border-color:transparent;color:#fff;min-width:104px}
+.controls label{font-size:.82rem;color:var(--muted);font-weight:600;margin-left:6px}
+.controls select{background:var(--bg2);border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:7px 10px;font:inherit;font-size:.85rem}
+.live{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding:6px 12px;border-radius:999px;
+  border:1px solid var(--line2);font-size:.8rem;font-weight:700;color:var(--light);background:rgba(76,175,80,.1)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(76,175,80,.7);animation:pulse 1.6s infinite}
+.live.paused{color:var(--muted)} .live.paused i{background:var(--dim);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(76,175,80,0)}100%{box-shadow:0 0 0 0 rgba(76,175,80,0)}}
+.stepnow{font-weight:800;font-size:.9rem;white-space:nowrap}
+.bar{width:180px;height:6px;border-radius:6px;background:rgba(199,204,185,.18);overflow:hidden}
+.bar b{display:block;height:100%;width:10%;background:linear-gradient(90deg,var(--light),var(--green));transition:width .4s var(--ease)}
+
+/* ---------- Layout ---------- */
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 58px)}
+aside{
+  border-right:1px solid var(--line);background:rgba(11,29,20,.55);padding:20px 14px;display:flex;flex-direction:column;gap:18px;
+}
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:14px 8px;border-radius:16px;
+  background:linear-gradient(160deg,rgba(47,138,92,.35),rgba(18,51,34,.4));border:1px solid var(--line)}
+.brand img{width:92px;height:92px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.brand strong{font-size:1.45rem;letter-spacing:.14em}
+.brand span{font-size:.7rem;color:var(--muted);line-height:1.3}
+nav{display:flex;flex-direction:column;gap:4px}
+nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--soft);text-decoration:none;font-size:.86rem;font-weight:500}
+nav a svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:2}
+nav a:hover{background:rgba(129,199,132,.08)}
+nav a.home-link{margin-top:10px;border:1px solid var(--line2);color:var(--light);font-weight:600}
+nav a.home-link:hover{background:rgba(129,199,132,.14);border-color:var(--light)}
+nav a.on{background:linear-gradient(135deg,var(--green),var(--forest));color:#fff;font-weight:700;box-shadow:0 6px 18px rgba(47,138,92,.35)}
+.aside-foot{margin-top:auto;font-size:.72rem;color:var(--dim);text-align:center}
+.aside-foot img{width:54px;display:block;margin:0 auto 6px;opacity:.9}
+
+main{padding:20px clamp(14px,2vw,28px) 40px;min-width:0}
+.hero{display:flex;align-items:center;gap:18px;padding:18px 22px;border-radius:18px;border:1px solid var(--line);
+  background:linear-gradient(120deg,rgba(47,138,92,.28),rgba(14,35,24,.85) 60%);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-40px;width:260px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(129,199,132,.25),transparent 70%)}
+.hero h1{font-size:1.7rem;font-weight:800;letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:var(--light)}
+.hero p{color:var(--muted);font-size:.92rem;margin-top:2px}
+.chip{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--light)}
+.chip::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid var(--light)}
+.hero .logo-co{margin-left:auto;height:92px;position:relative;z-index:1;background:var(--cream);border-radius:14px;padding:6px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.stat{border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:10px 14px;background:var(--panel)}
+.stat small{display:block;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.stat b{font-size:.98rem}
+.stat:nth-child(2){border-left-color:var(--light)} .stat:nth-child(3){border-left-color:var(--res)} .stat:nth-child(4){border-left-color:var(--push)}
+
+/* ---------- Escenario ---------- */
+.stage{position:relative;border:1px solid var(--line);border-radius:18px;padding:16px 18px 18px;background:var(--panel2)}
+.stage-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stage-head h2{font-size:.85rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.stage-head .badge{margin-left:auto;font-size:.72rem;font-weight:800;letter-spacing:.06em;padding:5px 12px;border-radius:999px;
+  background:rgba(242,193,78,.14);border:1px solid rgba(242,193,78,.5);color:var(--res);text-transform:uppercase}
+.lanes{display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:96px;position:relative;z-index:1}
+.lane{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(18,51,34,.55);transition:border-color .3s,box-shadow .3s}
+.lane.active{border-color:var(--light);box-shadow:0 0 0 1px var(--light),0 0 28px rgba(129,199,132,.28)}
+.lane h3{font-size:.78rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.lane .sub{font-size:.72rem;color:var(--dim);margin-bottom:10px}
+.lane .sub b{color:var(--light);font-weight:600}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(11,29,20,.6)}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;padding:4px 0;border-bottom:1px dashed rgba(199,204,185,.12)}
+.row:last-child{border-bottom:0}
+.row span{color:var(--dim)} .row b{font-weight:600;text-align:right}
+.screen{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.screen .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--green),var(--forest));flex:none}
+.screen .ico svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2}
+.screen strong{font-size:.9rem;display:block;line-height:1.2}
+.screen small{font-size:.72rem;color:var(--dim)}
+.pill{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:8px;font-size:.74rem;font-weight:700;width:100%;text-align:center;
+  background:rgba(129,199,132,.12);border:1px solid var(--line2);color:var(--light);transition:all .3s}
+.pill.warn{background:rgba(242,193,78,.12);border-color:rgba(242,193,78,.5);color:var(--res)}
+.pill.ok{background:rgba(76,175,80,.22);border-color:var(--green);color:#B9F0BC}
+.pill.bad{background:rgba(240,140,138,.12);border-color:rgba(240,140,138,.5);color:var(--reject)}
+.flash{animation:flash .7s var(--ease)}
+@keyframes flash{0%{background:rgba(242,193,78,.35)}100%{}}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center;background:rgba(18,51,34,.6)}
+.kpi b{display:block;font-size:1.05rem;transition:color .3s}
+.kpi small{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.kpi.hot b{color:var(--res)}
+
+.endpoint{font-family:var(--mono);font-size:.78rem;padding:8px 10px;border-radius:8px;background:#07140D;border:1px solid var(--line);margin-bottom:8px;word-break:break-all}
+.endpoint .m{font-weight:700;margin-right:6px;padding:1px 6px;border-radius:5px;background:rgba(129,199,132,.18);color:var(--light)}
+.endpoint .m.POST{background:rgba(242,193,78,.18);color:var(--res)}
+.endpoint .m.PATCH{background:rgba(111,211,200,.18);color:var(--push)}
+.endpoint .m.WS{background:rgba(232,154,107,.18);color:var(--ext)}
+.db{display:flex;gap:8px;margin-top:8px}
+.db div{flex:1;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.7rem;color:var(--dim)}
+.db b{display:block;color:var(--ink);font-family:var(--mono);font-size:.74rem}
+.ext{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ext span{font-size:.68rem;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim);transition:all .3s}
+.ext span.on{border-color:var(--ext);color:var(--ext);background:rgba(232,154,107,.12)}
+
+svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
+.wire{fill:none;stroke:rgba(129,199,132,.22);stroke-width:2;stroke-dasharray:6 6}
+.wire.on{stroke-width:3;stroke-dasharray:none;animation:none}
+.wire-label{font:700 11px Inter,sans-serif;fill:var(--muted);paint-order:stroke;stroke:#0E2318;stroke-width:4px}
+.packet{filter:drop-shadow(0 0 6px currentColor)}
+
+/* ---------- Secuencia y detalle ---------- */
+.seq{margin-top:16px;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--panel)}
+.seq h2,.legend h2,.detail h2{font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.steps{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+.step{border:1px solid var(--line);background:rgba(11,29,20,.55);border-radius:10px;padding:8px;text-align:left;cursor:pointer;
+  transition:all .2s var(--ease);min-width:0}
+.step:hover{border-color:var(--light)}
+.step .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:.7rem;font-weight:800;background:rgba(199,204,185,.15);margin-bottom:4px}
+.step b{display:block;font-size:.74rem;line-height:1.2}
+.step small{display:block;font-size:.64rem;color:var(--dim);margin-top:2px}
+.step.done .n{background:var(--forest);color:#fff}
+.step.cur{border-color:var(--res);background:rgba(242,193,78,.1);box-shadow:0 0 0 1px var(--res)}
+.step.cur .n{background:var(--res);color:#1b1b1b}
+
+.bottom{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+.detail,.legend{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--panel)}
+.detail h3{font-size:1.15rem;margin-bottom:4px}
+.detail p{color:var(--soft);font-size:.9rem}
+.detail .meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.detail .meta span{font-size:.72rem;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+.detail .meta span b{color:var(--ink)}
+pre{margin:0;font-family:var(--mono);font-size:.76rem;line-height:1.55;background:#07140D;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:#CDE8CF;overflow:auto;max-height:190px}
+.legend ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.legend li{display:flex;align-items:center;gap:10px;font-size:.84rem;color:var(--soft)}
+.legend li i{width:34px;height:4px;border-radius:3px;flex:none}
+.legend .note{margin-top:12px;font-size:.76rem;color:var(--dim);line-height:1.45}
+
+footer{margin-top:18px;text-align:center;font-size:.74rem;color:var(--dim)}
+
+@media (max-width:1200px){
+  .steps{grid-template-columns:repeat(5,1fr)}
+}
+@media (max-width:1050px){
+  .shell{grid-template-columns:1fr} aside{display:none}
+  .lanes{grid-template-columns:1fr;gap:14px} svg.wires{display:none}
+  .stats{grid-template-columns:repeat(2,1fr)} .bottom{grid-template-columns:1fr}
+  .bar{display:none}
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .lanes{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .stats{grid-template-columns:1fr} .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero .logo-co{display:none} .hero h1{font-size:1.35rem}
+  .live{margin-left:0} .stepnow{white-space:normal}
+  .row b{overflow-wrap:anywhere}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="controls" role="toolbar" aria-label="Controles de la simulación">
+  <button class="btn primary" id="play" aria-pressed="true">❚❚ Pausar</button>
+  <button class="btn" id="prev">‹ Anterior</button>
+  <button class="btn" id="next">Siguiente ›</button>
+  <button class="btn" id="reset">↻ Reiniciar</button>
+  <label for="speed">Velocidad</label>
+  <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+  <span class="live" id="live"><i></i><span>Animación activa</span></span>
+  <span class="stepnow" id="stepnow">01 · Abrir catálogo</span>
+  <span class="bar" aria-hidden="true"><b id="barfill"></b></span>
+</div>
+
+<div class="shell">
+  <aside>
+    <div class="brand">
+      <img src="../images/SICPES_Producto.png" alt="Logo del producto SICPES">
+      <strong>SICPES</strong>
+      <span>Sistema Integral de Control<br>de Pensión de Estudiantes</span>
+    </div>
+    <nav aria-label="Menú (ilustrativo)">
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10H3z"/></svg>Inicio</a>
+      <a href="#" class="on"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 17h11M15 4l3 3-3 3M15 14l3 3-3 3"/></svg>Workflow</a>
+      <a href="https://jffa25.github.io/SICPES_INTEGRADORA/index.html" class="home-link"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6M9 12h12"/></svg>Página principal del proyecto</a>
+    </nav>
+    <div class="aside-foot">
+      <img src="../images/SICPES_Empresa.png" alt="Logo de la empresa">
+      UTXJ · Proyecto Integrador
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1>SICPES | <em>Workflow de reserva de habitación</em></h1>
+        <p>Solicitud, validación, revisión y asignación de un cuarto, de la app del estudiante al panel del administrador.</p>
+        <span class="chip">Simulación de flujo · 10 etapas · API REST + WebSocket + MySQL</span>
+      </div>
+      <img class="logo-co" src="../images/SICPES_Empresa.png" alt="Logo de la empresa SICPES">
+    </section>
+
+    <section class="stats" aria-label="Resumen">
+      <div class="stat"><small>Etapas</small><b>10 pasos automatizados</b></div>
+      <div class="stat"><small>Canal móvil</small><b>Flutter / PWA · Estudiante</b></div>
+      <div class="stat"><small>Canal web</small><b>React · Administrador</b></div>
+      <div class="stat"><small>Persistencia</small><b>Node.js + Express · MySQL (TiDB)</b></div>
+    </section>
+
+    <section class="stage" id="stage">
+      <div class="stage-head">
+        <h2>Flujo de datos en tiempo real</h2>
+        <span class="badge" id="badge">Paso 01 · Catálogo</span>
+      </div>
+
+      <svg class="wires" id="wires" aria-hidden="true"></svg>
+
+      <div class="lanes">
+        <!-- App del estudiante -->
+        <div class="lane" id="lane-app">
+          <h3>App móvil del estudiante</h3>
+          <div class="sub"><b>Flutter / PWA</b> · solicita y consulta</div>
+          <div class="card">
+            <div class="screen">
+              <div class="ico"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+              <div><strong id="app-screen">E7 · Inicio</strong><small id="app-screen-sub">Panel del residente</small></div>
+            </div>
+            <div class="row"><span>Estudiante</span><b>Carlos M. · TI 5°</b></div>
+            <div class="row"><span>Habitación</span><b id="app-room">—</b></div>
+            <div class="row"><span>Ingreso</span><b id="app-date">—</b></div>
+            <div class="row"><span>Mensualidad</span><b id="app-price">—</b></div>
+            <small style="display:block;margin-top:8px;font-size:.66rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;font-weight:700">Estado actual</small>
+            <div class="pill" id="app-status">Explorando habitaciones</div>
+          </div>
+        </div>
+
+        <!-- API + BD -->
+        <div class="lane" id="lane-api">
+          <h3>API REST + Base de datos</h3>
+          <div class="sub"><b>Node.js · Express</b> · valida, persiste y notifica</div>
+          <div class="card">
+            <div class="screen">
+              <div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+              <div><strong>MySQL · TiDB Serverless</strong><small>Persistencia y eventos</small></div>
+            </div>
+            <div class="endpoint" id="api-endpoint"><span class="m GET">GET</span>/api/habitaciones?estado=disponible</div>
+            <div class="row"><span>Operación</span><b id="api-op">SELECT disponibles</b></div>
+            <div class="row"><span>Seguridad</span><b id="api-sec">JWT validado · rol estudiante</b></div>
+            <div class="db">
+              <div>Tabla afectada<b id="api-table">habitaciones</b></div>
+              <div>Respuesta<b id="api-code">200 OK</b></div>
+            </div>
+            <div class="ext" id="api-ext">
+              <span data-k="ws">WebSocket</span><span data-k="mail">Mailtrap</span><span data-k="wa">Twilio · WhatsApp</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Web admin -->
+        <div class="lane" id="lane-web">
+          <h3>Panel web del administrador</h3>
+          <div class="sub"><b>React + TypeScript</b> · revisa y asigna</div>
+          <div class="card">
+            <div class="screen">
+              <div class="ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              <div><strong id="web-screen">A2 · Reservaciones</strong><small id="web-screen-sub">Tablero de solicitudes</small></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><b id="k-total">12</b><small>Total</small></div>
+              <div class="kpi" id="kp-pend"><b id="k-pend">3</b><small>Pend.</small></div>
+              <div class="kpi"><b id="k-acc">8</b><small>Acept.</small></div>
+              <div class="kpi"><b id="k-rej">1</b><small>Rech.</small></div>
+            </div>
+            <div class="row"><span>Solicitud</span><b id="web-req">—</b></div>
+            <div class="row"><span>Rol activo</span><b>Administrador (Roberto)</b></div>
+            <div class="pill" id="web-status">Sin solicitudes nuevas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seq" aria-label="Secuencia del proceso">
+      <h2>Secuencia del proceso · selecciona un paso</h2>
+      <div class="steps" id="steps"></div>
+    </section>
+
+    <section class="bottom">
+      <div class="detail" aria-live="polite">
+        <h2>Detalle del paso</h2>
+        <h3 id="d-title"></h3>
+        <p id="d-desc"></p>
+        <div class="meta" id="d-meta"></div>
+        <pre id="d-payload"></pre>
+      </div>
+      <div class="legend">
+        <h2>Leyenda de comunicación</h2>
+        <ul>
+          <li><i style="background:var(--req)"></i>Petición REST (cliente → API)</li>
+          <li><i style="background:var(--res)"></i>Respuesta JSON (API → cliente)</li>
+          <li><i style="background:var(--push)"></i>Evento en tiempo real (WebSocket)</li>
+          <li><i style="background:var(--ext)"></i>Notificación externa (Mailtrap / Twilio)</li>
+          <li><i style="background:var(--reject)"></i>Camino alterno: solicitud rechazada</li>
+        </ul>
+        <p class="note">Pantallas tomadas de los sketches del proyecto (E7–E11 del estudiante y A2–A3 del administrador). El camino alterno (rechazo sin cupo) se describe en el paso 08.</p>
+      </div>
+    </section>
+
+    <footer>SICPES · Workflow de reserva de habitación · Paleta oficial (#2F8A5C · #4CAF50 · #81C784 · #C7CCB9 · #FDFBF7)</footer>
+  </main>
+</div>
+
+<script>
+// ---------------- Datos del flujo ----------------
+const ROOM = {num:"Hab. 204 · Piso 2", tipo:"Individual", precio:"$1,800 / mes", fecha:"05 ene 2027"};
+const STEPS = [
+  { title:"Abrir catálogo", short:"Estudiante", wire:"app-api", kind:"req",
+    desc:"Desde E7 · Inicio el estudiante toca «Reservar». La app envía una petición con su token JWT para obtener las habitaciones con cupo.",
+    app:{screen:"E8 · Reservar habitación", sub:"Formulario de reserva", status:["Consultando disponibilidad…","warn"]},
+    api:{m:"GET", ep:"/api/habitaciones?estado=disponible", op:"Verificar token", sec:"JWT validado · rol estudiante", table:"usuarios", code:"—"},
+    payload:'GET /api/habitaciones?estado=disponible\nAuthorization: Bearer eyJhbGciOi...\nAccept: application/json' },
+  { title:"Responder disponibilidad", short:"API → App", wire:"api-app", kind:"res",
+    desc:"La API consulta MySQL y devuelve solo las habitaciones disponibles, con tipo, piso y precio mensual. La app llena los selectores de piso y número.",
+    app:{screen:"E8 · Reservar habitación", sub:"Selectores de piso y número", status:["7 habitaciones disponibles",""]},
+    api:{m:"GET", ep:"/api/habitaciones?estado=disponible", op:"SELECT … WHERE estado='disponible'", table:"habitaciones", code:"200 OK"},
+    payload:'200 OK\n[\n  { "id": 204, "piso": 2, "tipo": "Individual", "precio": 1800 },\n  { "id": 207, "piso": 2, "tipo": "Compartida", "precio": 1200 },\n  ...\n]' },
+  { title:"Ver detalle", short:"Estudiante", wire:"app-api", kind:"req",
+    desc:"El estudiante abre E9 · Detalle de habitación: galería, piso, tarifa, servicios incluidos y estado del cuarto 204.",
+    app:{screen:"E9 · Detalle de habitación", sub:"Ficha de la habitación", room:true, status:["Revisando la habitación 204",""]},
+    api:{m:"GET", ep:"/api/habitaciones/204", op:"SELECT habitación + servicios", table:"habitaciones · servicios", code:"200 OK"},
+    payload:'200 OK\n{\n  "id": 204, "piso": 2, "tipo": "Individual",\n  "precio": 1800, "estado": "disponible",\n  "servicios": ["Wi-Fi", "Agua caliente", "Escritorio"]\n}' },
+  { title:"Enviar solicitud", short:"App → API", wire:"app-api", kind:"req",
+    desc:"En E8 elige fecha de ingreso, modalidad, piso y número y presiona «Reservar». La app envía la solicitud de reserva a la API.",
+    app:{screen:"E8 · Reservar habitación", sub:"Confirmación del formulario", room:true, date:true, status:["Enviando solicitud…","warn"]},
+    api:{m:"POST", ep:"/api/reservas", op:"Validar datos de entrada", table:"reservas", code:"—"},
+    payload:'POST /api/reservas\n{\n  "habitacionId": 204,\n  "fechaIngreso": "2027-01-05",\n  "modalidad": "Individual"\n}' },
+  { title:"Validar y registrar", short:"API · MySQL", wire:null, kind:"db",
+    desc:"La API valida que el cuarto siga disponible y que no haya empalme de fechas. En una transacción guarda la reserva con estado «Pendiente» y aparta el cuarto.",
+    app:{screen:"E10 · Estado de mi petición", sub:"Línea de tiempo", room:true, date:true, status:["Pendiente","warn"]},
+    api:{m:"POST", ep:"/api/reservas", op:"BEGIN · INSERT reserva · UPDATE cuarto · COMMIT", table:"reservas · habitaciones", code:"201 Created"},
+    payload:'INSERT INTO reservas (estudiante_id, habitacion_id,\n  fecha_ingreso, estado) VALUES (31, 204, "2027-01-05", "Pendiente");\nUPDATE habitaciones SET estado = "apartada" WHERE id = 204;\n-- 201 Created · { "reservaId": "R-0148", "estado": "Pendiente" }' },
+  { title:"Avisar al administrador", short:"WebSocket", wire:"api-web", kind:"push",
+    desc:"El backend emite un evento en tiempo real. El panel A2 · Reservaciones suma la solicitud a «Pendientes» sin recargar la página.",
+    app:{screen:"E10 · Estado de mi petición", sub:"Línea de tiempo", room:true, date:true, status:["Pendiente","warn"]},
+    api:{m:"WS", ep:"emit('reserva:nueva')", op:"Publicar evento", table:"reservas", code:"evento enviado", ext:["ws"]},
+    web:{screen:"A2 · Reservaciones", sub:"Tablero de solicitudes", req:"R-0148 · Carlos M.", pend:4, status:["Nueva solicitud R-0148","warn"]},
+    payload:'socket.emit("reserva:nueva", {\n  "reservaId": "R-0148",\n  "estudiante": "Carlos M.",\n  "habitacion": 204,\n  "estado": "Pendiente"\n})' },
+  { title:"Revisar solicitud", short:"Admin → API", wire:"web-api", kind:"req",
+    desc:"El administrador abre A3 · Asignar habitación. La API marca la reserva «En revisión» y avisa al estudiante, que lo ve en su línea de tiempo.",
+    app:{screen:"E10 · Estado de mi petición", sub:"Línea de tiempo", room:true, date:true, status:["En revisión","warn"]},
+    api:{m:"GET", ep:"/api/reservas/R-0148", op:"UPDATE estado = 'En revisión'", sec:"JWT validado · rol administrador", table:"reservas", code:"200 OK", ext:["ws"]},
+    web:{screen:"A3 · Asignar habitación", sub:"Ficha del solicitante", req:"R-0148 · Carlos M.", pend:4, status:["Revisando R-0148","warn"]},
+    payload:'GET /api/reservas/R-0148\n200 OK\n{ "reservaId": "R-0148", "estudiante": "Carlos M.",\n  "habitacion": 204, "fechaIngreso": "2027-01-05",\n  "estado": "En revisión" }' },
+  { title:"Asignar habitación", short:"Decisión", wire:"web-api", kind:"req",
+    desc:"El administrador confirma la habitación disponible y presiona «Asignar». Camino alterno: si no hay cupo presiona «Rechazar» con motivo, la reserva queda «Rechazada», el cuarto se libera y el estudiante vuelve a E8.",
+    app:{screen:"E10 · Estado de mi petición", sub:"Línea de tiempo", room:true, date:true, status:["En revisión","warn"]},
+    api:{m:"PATCH", ep:"/api/reservas/R-0148", op:"Validar decisión del admin", sec:"JWT validado · rol administrador", table:"reservas", code:"—"},
+    web:{screen:"A3 · Asignar habitación", sub:"Botones Asignar / Rechazar", req:"R-0148 · Carlos M.", pend:4, status:["Asignar ✓  ·  Rechazar ✕",""]},
+    payload:'PATCH /api/reservas/R-0148\n{ "accion": "asignar", "habitacionId": 204 }\n\n// Alterno:\n{ "accion": "rechazar", "motivo": "Sin cupo en la fecha" }' },
+  { title:"Confirmar y generar adeudo", short:"API · MySQL", wire:null, kind:"db",
+    desc:"La API cambia la reserva a «Aceptada», marca el cuarto como ocupado y crea el primer cargo (depósito + mensualidad) en el estado de cuenta del estudiante.",
+    app:{screen:"E10 · Estado de mi petición", sub:"Línea de tiempo", room:true, date:true, status:["Procesando…","warn"]},
+    api:{m:"PATCH", ep:"/api/reservas/R-0148", op:"UPDATE reserva · UPDATE cuarto · INSERT adeudo", sec:"JWT validado · rol administrador", table:"reservas · habitaciones · adeudos", code:"200 OK"},
+    web:{screen:"A2 · Reservaciones", sub:"Tablero de solicitudes", req:"R-0148 · Aceptada", pend:3, acc:9, status:["R-0148 aceptada","ok"]},
+    payload:'UPDATE reservas SET estado = "Aceptada" WHERE id = "R-0148";\nUPDATE habitaciones SET estado = "ocupada" WHERE id = 204;\nINSERT INTO adeudos (estudiante_id, concepto, monto, vence)\n  VALUES (31, "Depósito + enero", 3600, "2027-01-05");' },
+  { title:"Notificar al estudiante", short:"API → App", wire:"api-app", kind:"ext",
+    desc:"El estudiante recibe el aviso en la app (WebSocket), por correo (Mailtrap) y por WhatsApp (Twilio). E10 muestra «Aceptada» y E11 · Pagos ya tiene el cargo pendiente.",
+    app:{screen:"E10 → E11 · Pagos", sub:"Reserva aceptada", room:true, date:true, price:true, status:["Aceptada · pago pendiente","ok"]},
+    api:{m:"WS", ep:"emit('reserva:aceptada')", op:"Notificar al estudiante", sec:"JWT validado · rol administrador", table:"notificaciones", code:"enviado", ext:["ws","mail","wa"]},
+    web:{screen:"A2 · Reservaciones", sub:"Tablero de solicitudes", req:"R-0148 · Aceptada", pend:3, acc:9, status:["R-0148 aceptada","ok"]},
+    payload:'socket.emit("reserva:aceptada", { "reservaId": "R-0148" })\nmailtrap.send({ to: "carlos@…", template: "reserva-aceptada" })\ntwilio.messages.create({ channel: "whatsapp",\n  body: "Tu habitación 204 fue asignada. Pago: $3,600" })' }
+];
+const COLORS = {req:"#81C784", res:"#F2C14E", push:"#6FD3C8", ext:"#E89A6B", db:"#81C784"};
+const KIND_LABEL = {req:"Petición REST", res:"Respuesta JSON", push:"Evento WebSocket", ext:"Notificación externa", db:"Transacción en MySQL"};
+const ACTOR = {"app-api":"App → API", "api-app":"API → App", "api-web":"API → Web", "web-api":"Web → API"};
+
+// ---------------- Estado ----------------
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+let cur = Math.min(Math.max(parseInt(params.get("step")||"1",10),1),10)-1;
+let playing = params.get("paused") !== "1";
+let speed = 1, t0 = performance.now(), elapsed = 0;
+const STEP_MS = 4200;
+
+// ---------------- Secuencia ----------------
+const stepsEl = $("steps");
+STEPS.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.className="step"; b.type="button";
+  b.innerHTML=`<span class="n">${i+1}</span><b>${s.title}</b><small>${s.short}</small>`;
+  b.onclick=()=>go(i);
+  stepsEl.appendChild(b);
+});
+
+// ---------------- Cables SVG ----------------
+const NS="http://www.w3.org/2000/svg";
+const wires=$("wires"); let paths={};
+function anchor(el, side, dy){
+  const r=el.getBoundingClientRect(), s=$("stage").getBoundingClientRect();
+  return {x:(side==="r"?r.right:r.left)-s.left, y:r.top-s.top+r.height*dy};
+}
+function drawWires(){
+  wires.innerHTML=""; paths={};
+  const app=$("lane-app"), api=$("lane-api"), web=$("lane-web");
+  const defs=[
+    ["app-api", anchor(app,"r",.32), anchor(api,"l",.32), "solicitud →"],
+    ["api-app", anchor(api,"l",.72), anchor(app,"r",.72), "← respuesta"],
+    ["web-api", anchor(web,"l",.32), anchor(api,"r",.32), "← acción admin"],
+    ["api-web", anchor(api,"r",.72), anchor(web,"l",.72), "evento →"]
+  ];
+  defs.forEach(([k,a,b,label])=>{
+    const mx=(a.x+b.x)/2;
+    const p=document.createElementNS(NS,"path");
+    p.setAttribute("d",`M${a.x},${a.y} C${mx},${a.y} ${mx},${b.y} ${b.x},${b.y}`);
+    p.setAttribute("class","wire"); wires.appendChild(p); paths[k]=p;
+    const t=document.createElementNS(NS,"text");
+    t.setAttribute("x",mx); t.setAttribute("y",(a.y+b.y)/2-8); t.setAttribute("text-anchor","middle");
+    t.setAttribute("class","wire-label"); t.textContent=label; wires.appendChild(t);
+  });
+  const dot=document.createElementNS(NS,"circle");
+  dot.setAttribute("r","7"); dot.setAttribute("id","packet"); dot.setAttribute("class","packet");
+  wires.appendChild(dot);
+  render(false);
+}
+
+// ---------------- Render de un paso ----------------
+function setText(id,v){const e=$(id); if(e.textContent!==String(v)){e.textContent=v; e.classList.remove("flash"); void e.offsetWidth; e.classList.add("flash");}}
+function setPill(id,[txt,cls]){const e=$(id); e.textContent=txt; e.className="pill"+(cls?" "+cls:"");}
+function render(animate=true){
+  const s=STEPS[cur], n=String(cur+1).padStart(2,"0");
+  $("stepnow").textContent=`${n} · ${s.title}`;
+  $("badge").textContent=`Paso ${n} · ${s.short}`;
+  $("barfill").style.width=((cur+1)*10)+"%";
+  [...stepsEl.children].forEach((b,i)=>{b.classList.toggle("cur",i===cur); b.classList.toggle("done",i<cur); b.setAttribute("aria-current",i===cur?"step":"false");});
+
+  // App
+  const a=s.app;
+  setText("app-screen",a.screen); $("app-screen-sub").textContent=a.sub;
+  setText("app-room",a.room?`${ROOM.num} · ${ROOM.tipo}`:"—");
+  setText("app-date",a.date?ROOM.fecha:"—");
+  setText("app-price",a.price?"$3,600 (depósito + enero)":(a.room?ROOM.precio:"—"));
+  setPill("app-status",a.status);
+
+  // API
+  const p=s.api;
+  $("api-endpoint").innerHTML=`<span class="m ${p.m}">${p.m}</span>${p.ep}`;
+  setText("api-op",p.op); setText("api-sec",p.sec||"JWT validado · rol estudiante");
+  setText("api-table",p.table); setText("api-code",p.code);
+  [...$("api-ext").children].forEach(x=>x.classList.toggle("on",(p.ext||[]).includes(x.dataset.k)));
+
+  // Web
+  const w=s.web||{screen:"A2 · Reservaciones",sub:"Tablero de solicitudes",req:"—",pend:3,status:["Sin solicitudes nuevas",""]};
+  setText("web-screen",w.screen); $("web-screen-sub").textContent=w.sub;
+  setText("web-req",w.req);
+  setText("k-pend",w.pend); setText("k-acc",w.acc||8);
+  $("kp-pend").classList.toggle("hot",w.pend===4);
+  setPill("web-status",w.status);
+
+  // Carriles activos
+  const act={"app-api":["app","api"],"api-app":["api","app"],"api-web":["api","web"],"web-api":["web","api"]}[s.wire]||["api"];
+  ["app","api","web"].forEach(k=>$("lane-"+k).classList.toggle("active",act.includes(k)));
+
+  // Cables
+  Object.entries(paths).forEach(([k,el])=>{
+    const on=k===s.wire; el.classList.toggle("on",on);
+    el.style.stroke=on?COLORS[s.kind]:"";
+  });
+  const dot=$("packet"); if(dot){dot.style.display=s.wire?"":"none"; dot.setAttribute("fill",COLORS[s.kind]); dot.style.color=COLORS[s.kind];}
+
+  // Detalle
+  $("d-title").textContent=`${n}. ${s.title}`;
+  $("d-desc").textContent=s.desc;
+  $("d-meta").innerHTML=
+    `<span>Tipo: <b>${KIND_LABEL[s.kind]}</b></span>`+
+    `<span>Dirección: <b>${s.wire?ACTOR[s.wire]:"Dentro del backend"}</b></span>`+
+    `<span>Tabla: <b>${p.table}</b></span>`;
+  $("d-payload").textContent=s.payload;
+  if(!animate) movePacket(playing?0:.55);
+}
+
+function movePacket(f){
+  const s=STEPS[cur], dot=$("packet");
+  if(!dot||!s.wire||!paths[s.wire]) return;
+  const path=paths[s.wire], L=path.getTotalLength();
+  const pt=path.getPointAtLength(Math.min(Math.max(f,0),1)*L);
+  dot.setAttribute("cx",pt.x); dot.setAttribute("cy",pt.y);
+}
+
+// ---------------- Reproducción ----------------
+function go(i){cur=(i+STEPS.length)%STEPS.length; elapsed=0; t0=performance.now(); render(); movePacket(playing?0:.55);}
+function setPlaying(v){
+  playing=v; t0=performance.now();
+  $("play").textContent=v?"❚❚ Pausar":"▶ Reproducir"; $("play").setAttribute("aria-pressed",String(v));
+  $("live").classList.toggle("paused",!v); $("live").lastElementChild.textContent=v?"Animación activa":"En pausa";
+}
+function tick(now){
+  if(playing){
+    elapsed+=(now-t0)*speed; t0=now;
+    const f=elapsed/STEP_MS;
+    movePacket(Math.min(f/0.7,1));
+    if(f>=1) go(cur+1);
+  } else t0=now;
+  requestAnimationFrame(tick);
+}
+$("play").onclick=()=>setPlaying(!playing);
+$("prev").onclick=()=>go(cur-1);
+$("next").onclick=()=>go(cur+1);
+$("reset").onclick=()=>{go(0); setPlaying(true);};
+$("speed").onchange=e=>speed=parseFloat(e.target.value);
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="SELECT") return;
+  if(e.key===" "){e.preventDefault(); setPlaying(!playing);}
+  if(e.key==="ArrowRight") go(cur+1);
+  if(e.key==="ArrowLeft") go(cur-1);
+});
+window.addEventListener("resize",drawWires);
+setPlaying(playing);
+drawWires();
+document.fonts && document.fonts.ready.then(drawWires);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Matriz RACI · SICPES",
+    "output": "matriz-raci-sicpes.html",
+    "animation": "none",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "cuenta-acceso", "label": "Cuenta y acceso", "focus": ["a_cuenta", "r_cuenta_tec"], "note": "Registro, login, verificación OTP y recuperación. A: Líder | R: Equipo Técnico | C: Base Datos | I: Asesor (ver tarjetas)." },
+      { "id": "cuartos-reservas", "label": "Cuartos y reservas", "focus": ["a_cuartos", "i_cuartos_lp"], "note": "Catálogo, solicitud, asignación y seguimiento. A: Backend | R: Equipo Técnico | C: Base Datos | I: Líder+Asesor (ver tarjetas)." },
+      { "id": "pagos", "label": "Pagos y adeudos", "focus": ["a_pagos", "c_pagos_lp"], "note": "Comprobantes, validación contable, cartera vencida. A: Backend | R: Base Datos | C: Líder+Frontend | I: Asesor (ver tarjetas)." },
+      { "id": "evaluacion-servicio", "label": "Evaluación del servicio", "focus": ["a_evaluacion", "r_evaluacion_tec"], "note": "HU-SIC-05: calificación 1-5. A: Líder | R: Frontend | C: Backend+Asesor | I: Base Datos (ver tarjetas)." },
+      { "id": "infra-despliegue", "label": "Infra y despliegue", "focus": ["a_infra", "r_infra_tec"], "note": "Docker, Render, TiDB, MySQL, MongoDB, servicios externos. A: Líder | R: Backend+Base Datos | C: Frontend | I: Asesor (ver tarjetas)." }
+    ]
+  },
+  "lanes": [
+    { "id": "lider_proyecto", "label": "Líder Proyecto / Doc" },
+    { "id": "tecnico", "label": "Equipo Técnico (Back+Front+BD)" }
+  ],
+  "phases": [
+    { "id": "f_cuenta", "label": "Cuenta y acceso", "fromCol": 0, "toCol": 0 },
+    { "id": "f_cuartos", "label": "Cuartos y reservas", "fromCol": 1, "toCol": 1 },
+    { "id": "f_pagos", "label": "Pagos y adeudos", "fromCol": 2, "toCol": 2 },
+    { "id": "f_evaluacion", "label": "Evaluación servicio", "fromCol": 3, "toCol": 3 },
+    { "id": "f_infra", "label": "Infra y despliegue", "fromCol": 4, "toCol": 4 }
+  ],
+  "mainPath": ["a_cuenta", "a_cuartos", "a_pagos", "a_evaluacion", "a_infra"],
+  "nodes": [
+    { "id": "a_cuenta", "lane": "lider_proyecto", "col": 0, "type": "external", "label": "Líder", "tag": "A", "sublabel": "Cuenta y acceso", "width": 76 },
+    { "id": "r_cuenta_tec", "lane": "tecnico", "col": 0, "type": "backend", "label": "Técnico", "tag": "R" },
+    { "id": "i_cuartos_lp", "lane": "lider_proyecto", "col": 1, "type": "external", "label": "Líder", "tag": "I" },
+    { "id": "a_cuartos", "lane": "tecnico", "col": 1, "type": "backend", "label": "Técnico", "tag": "A", "sublabel": "Cuartos y reservas", "width": 76 },
+    { "id": "c_pagos_lp", "lane": "lider_proyecto", "col": 2, "type": "external", "label": "Líder", "tag": "C" },
+    { "id": "a_pagos", "lane": "tecnico", "col": 2, "type": "backend", "label": "Técnico", "tag": "A", "sublabel": "Pagos y adeudos", "width": 76 },
+    { "id": "a_evaluacion", "lane": "lider_proyecto", "col": 3, "type": "external", "label": "Líder", "tag": "A", "sublabel": "Evaluación", "width": 84 },
+    { "id": "r_evaluacion_tec", "lane": "tecnico", "col": 3, "type": "backend", "label": "Técnico", "tag": "R" },
+    { "id": "a_infra", "lane": "lider_proyecto", "col": 4, "type": "external", "label": "Líder", "tag": "A", "sublabel": "Infra y despliegue", "width": 76 },
+    { "id": "r_infra_tec", "lane": "tecnico", "col": 4, "type": "backend", "label": "Técnico", "tag": "R" }
+  ],
+  "edges": [
+    { "from": "a_cuenta", "to": "a_cuartos", "label": "siguiente módulo", "role": "main", "variant": "emphasis" },
+    { "from": "a_cuartos", "to": "a_pagos", "label": "siguiente módulo", "role": "main", "variant": "emphasis" },
+    { "from": "a_pagos", "to": "a_evaluacion", "label": "siguiente módulo", "role": "main", "variant": "emphasis" },
+    { "from": "a_evaluacion", "to": "a_infra", "label": "siguiente módulo", "role": "main", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "R = Responsable", "items": ["Quien ejecuta la tarea", "Puede haber más de uno por actividad"] },
+    { "dot": "rose", "title": "A = Accountable", "items": ["Quien responde del resultado", "Una sola A por actividad", "Marca el nodo principal de cada columna"] },
+    { "dot": "cyan", "title": "C = Consultado", "items": ["Quien aporta información previa", "Sin ejecución directa"] },
+    { "dot": "slate", "title": "I = Informado", "items": ["Quien recibe el resultado o aviso", "Sin intervención en la ejecución"] },
+    { "dot": "orange", "title": "Matriz RACI completa · SICPES", "items": ["Cuenta y acceso: A=Líder, R=Técnico, C=Base Datos, I=Asesor", "Cuartos y reservas: A=Backend, R=Técnico, C=Base Datos, I=Líder+Asesor", "Pagos y adeudos: A=Backend, R=Base Datos, C=Líder+Frontend, I=Asesor", "Evaluación servicio: A=Líder, R=Frontend, C=Backend+Asesor, I=Base Datos", "Infra y despliegue: A=Líder, R=Backend+Base Datos, C=Frontend, I=Asesor", "Asesor (M.T.I. Marco Antonio R.): Informado en todas salvo Evaluación (Consultado)"] }
+  ]
+}
